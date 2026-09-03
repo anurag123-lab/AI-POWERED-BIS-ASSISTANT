@@ -21,16 +21,16 @@
       <div class="navbar-container" style="max-width: 1380px;">
         
         <!-- Brand Title -->
-        <a href="{{ url_for('index') }}" class="brand-title">
+        <a href="{{ url_for('home') if session.get('user_id') else url_for('index') }}" class="brand-title">
           <span>BIS</span> COPILOT
         </a>
 
         <!-- Right Side User Authentication Controls -->
         <div class="nav-actions">
           {% if session.get('user_id') %}
-            <span style="font-size: 0.85rem; color: var(--text-secondary); margin-right: 8px;">
+            <a href="{{ url_for('home') }}" style="font-size: 0.85rem; color: var(--text-secondary); margin-right: 8px; text-decoration: none;">
               {{ session.get('user_name', 'Manufacturer') }}
-            </span>
+            </a>
             <a href="{{ url_for('logout') }}" class="btn-pill btn-dark-outline">Logout</a>
           {% else %}
             <a href="{{ url_for('login') }}" class="btn-pill btn-dark-outline">Login</a>
@@ -40,6 +40,12 @@
 
       </div>
     </header>
+    {% if session.get('user_id') %}
+      {% include 'partials/feature_nav.html' %}
+    {% endif %}
+    {% if tour_ctx is defined and tour_ctx.active %}
+      {% include 'partials/tour_bar.html' %}
+    {% endif %}
     {% endif %}
 
     <!-- Flash Messages -->

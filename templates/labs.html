@@ -14,9 +14,15 @@
     <span class="badge-tag badge-emerald">VERIFIED ACCREDITED LABS</span>
   </div>
 
-  <div class="directory-grid">
+  <div class="glass-panel" style="margin-bottom: 24px;">
+    <label class="form-label" for="labFilter">Filter by city, state or standard</label>
+    <input type="text" id="labFilter" class="form-input" placeholder="e.g. Mumbai, Maharashtra, IS 302..."
+           oninput="filterLabs(this.value)">
+  </div>
+
+  <div class="directory-grid" id="labGrid">
     {% for lab in labs %}
-    <div class="glass-panel lab-card">
+    <div class="glass-panel lab-card" data-search="{{ (lab.lab_name ~ ' ' ~ lab.location ~ ' ' ~ (lab.supported_standards | join(' ')))|lower }}">
       <div>
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
           <div>
@@ -36,11 +42,12 @@
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; pt: 16px; border-top: 1px solid var(--border-subtle); margin-top: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid var(--border-subtle); margin-top: 16px;">
         <div style="font-size: 0.82rem; color: var(--text-secondary);">
           ✉️ {{ lab.contact_email }}
         </div>
-        <button class="btn-pill btn-orange" onclick="triggerApprovalModal('{{ lab.lab_name }}', '{{ lab.contact_email }}', 'IS 302-2-25')" style="font-size: 0.78rem; padding: 6px 14px;">Dispatch Enquiry ↗</button>
+        {% set lab_std = lab.supported_standards[0] if lab.supported_standards else 'IS 302-2-25' %}
+        <button class="btn-pill btn-orange" onclick="triggerApprovalModal('{{ lab.lab_name }}', '{{ lab.contact_email }}', '{{ lab_std }}')" style="font-size: 0.78rem; padding: 6px 14px;">Dispatch Enquiry ↗</button>
       </div>
     </div>
     {% endfor %}
@@ -88,4 +95,12 @@
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/copilot.js') }}"></script>
+<script>
+function filterLabs(q) {
+  q = (q || '').trim().toLowerCase();
+  document.querySelectorAll('#labGrid .lab-card').forEach(card => {
+    card.style.display = (!q || (card.dataset.search || '').includes(q)) ? '' : 'none';
+  });
+}
+</script>
 {% endblock %}

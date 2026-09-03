@@ -3,8 +3,16 @@
 {% block title %}Case Roadmap: {{ case.product_name }} — BIS Copilot{% endblock %}
 
 {% block content %}
+{% set step_index = {
+  'Standard Identified': 1, 'Scheme Identified': 1,
+  'Factory SIT Prepared': 2, 'Equipment Calibrated': 2,
+  'Testing In Progress': 3, 'Samples Submitted': 3,
+  'Application Submitted': 4, 'Factory Audit': 4,
+  'Certified': 5, 'Licence Granted': 5
+}.get(case.current_step, 1) %}
+{% macro step_class(n) %}{% if n < step_index %}is-done{% elif n == step_index %}is-current{% else %}is-pending{% endif %}{% endmacro %}
 <div class="page-container">
-  
+
   <div class="glass-panel" style="margin-bottom: 28px;">
     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
       <div>
@@ -29,23 +37,23 @@
       <span class="eyebrow-tag">CERTIFICATION ROADMAP</span>
       <h3 style="font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-bottom: 20px;">Step-by-Step BIS Compliance Path</h3>
 
-      <div class="roadmap-step active">
-        <div class="node-num" style="background: var(--accent-orange); color: white;">1</div>
+      <div class="roadmap-step {{ step_class(1) }}">
+        <div class="node-num">1</div>
         <div>
           <strong style="color: #ffffff; font-size: 0.95rem;">Identify Indian Standard & QCO Applicability</strong>
           <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.5;">Matched IS {{ case.is_number }}. Compulsory Quality Control Order verified in BIS ground truth database.</p>
         </div>
       </div>
 
-      <div class="roadmap-step active">
-        <div class="node-num" style="background: var(--accent-orange); color: white;">2</div>
+      <div class="roadmap-step {{ step_class(2) }}">
+        <div class="node-num">2</div>
         <div>
           <strong style="color: #ffffff; font-size: 0.95rem;">Prepare Factory SIT & Testing Equipment</strong>
           <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.5;">Establish Scheme of Inspection and Testing (SIT) and calibrate in-house high voltage breakdown / leakage equipment.</p>
         </div>
       </div>
 
-      <div class="roadmap-step">
+      <div class="roadmap-step {{ step_class(3) }}">
         <div class="node-num">3</div>
         <div>
           <strong style="color: #ffffff; font-size: 0.95rem;">NABL / BIS Recognized Laboratory Type Testing</strong>
@@ -53,7 +61,7 @@
         </div>
       </div>
 
-      <div class="roadmap-step">
+      <div class="roadmap-step {{ step_class(4) }}">
         <div class="node-num">4</div>
         <div>
           <strong style="color: #ffffff; font-size: 0.95rem;">Online Portal Application & BIS Factory Audit</strong>

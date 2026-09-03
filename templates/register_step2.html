@@ -1,0 +1,60 @@
+{% extends 'auth_layout.html' %}
+{% set active_step = 2 %}
+
+{% block title %}Create Account · Step 2 — BIS Compliance Copilot{% endblock %}
+
+{% macro select_field(name, label, options, data, errors, placeholder='Select one') %}
+  <div class="form-field">
+    <label class="form-label" for="{{ name }}">{{ label }}</label>
+    <select class="form-input" id="{{ name }}" name="{{ name }}" required>
+      <option value="">{{ placeholder }}</option>
+      {% for opt in options %}
+        <option value="{{ opt }}" {{ 'selected' if data[name] == opt }}>{{ opt }}</option>
+      {% endfor %}
+    </select>
+    {% if errors[name] %}<div class="form-error">{{ errors[name] }}</div>{% endif %}
+  </div>
+{% endmacro %}
+
+{% block auth_form %}
+  <span class="eyebrow-tag">Your profile</span>
+  <h2>Tell us about your work</h2>
+  <p class="auth-sub">Step 2 of 3 — this shapes every answer you get.</p>
+
+  <form method="POST" action="{{ url_for('register_step2') }}" novalidate style="margin-top:16px;">
+
+    {{ select_field('user_type', 'Who are you?',
+        ['Student', 'Consumer', 'Startup', 'SME business', 'Manufacturer', 'Exporter', 'Compliance consultant'],
+        data, errors) }}
+
+    {{ select_field('business_stage', 'Business stage',
+        ['Idea / research', 'Prototype / testing', 'Pilot production', 'Commercial production', 'Scale-up / export'],
+        data, errors) }}
+
+    {{ select_field('product_category', 'Product category',
+        ['Electrical Appliances', 'Solar & Renewable', 'Steel & Civil', 'Consumer Goods', 'Industrial Equipment', 'Packaging / Safety', 'Other'],
+        data, errors) }}
+
+    <div class="form-field">
+      <label class="form-label" for="product_name">Product name</label>
+      <input class="form-input" id="product_name" type="text" name="product_name"
+             value="{{ data.product_name or '' }}" required placeholder="e.g. Electric Water Heater">
+      {% if errors.product_name %}<div class="form-error">{{ errors.product_name }}</div>{% endif %}
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="product_description">Product description</label>
+      <textarea class="form-input" id="product_description" name="product_description" rows="3"
+                placeholder="Briefly describe the product and its use case">{{ data.product_description or '' }}</textarea>
+    </div>
+
+    {{ select_field('monthly_quantity', 'Monthly production quantity',
+        ['Below 100 units', '100-500 units', '500-2000 units', '2000-10000 units', 'Above 10000 units'],
+        data, errors) }}
+
+    <div class="auth-actions">
+      <a href="{{ url_for('register') }}" class="btn-pill btn-dark-outline" style="text-decoration:none;">&larr; Back</a>
+      <button type="submit" class="btn-pill btn-orange">Continue &rarr;</button>
+    </div>
+  </form>
+{% endblock %}

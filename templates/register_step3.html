@@ -1,0 +1,40 @@
+{% extends 'auth_layout.html' %}
+{% set active_step = 3 %}
+
+{% block title %}Create Account · Step 3 — BIS Compliance Copilot{% endblock %}
+
+{% block auth_form %}
+  <span class="eyebrow-tag">Almost there</span>
+  <h2>Where are you based?</h2>
+  <p class="auth-sub">Step 3 of 3 — we use this to surface nearby labs.</p>
+
+  <form method="POST" action="{{ url_for('register_step3') }}" novalidate style="margin-top:16px;">
+
+    <div class="form-field">
+      <label class="form-label">Location</label>
+      <div class="form-row">
+        <div>
+          <input class="form-input" type="text" name="city" value="{{ data.city or '' }}" required placeholder="City">
+          {% if errors.city %}<div class="form-error">{{ errors.city }}</div>{% endif %}
+        </div>
+        <div>
+          <input class="form-input" type="text" name="state" value="{{ data.state or '' }}" required placeholder="State">
+          {% if errors.state %}<div class="form-error">{{ errors.state }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-field" style="margin-top:20px;">
+      <label class="checkbox-row">
+        <input type="checkbox" name="agree_terms" value="yes" {{ 'checked' if data.get('agree_terms') }}>
+        <span>I agree to the Terms &amp; Conditions and understand this platform is not officially affiliated with BIS.</span>
+      </label>
+      {% if errors.agree_terms %}<div class="form-error">{{ errors.agree_terms }}</div>{% endif %}
+    </div>
+
+    <div class="auth-actions">
+      <a href="{{ url_for('register_step2') }}" class="btn-pill btn-dark-outline" style="text-decoration:none;">&larr; Back</a>
+      <button type="submit" class="btn-pill btn-orange">Create account &amp; verify email</button>
+    </div>
+  </form>
+{% endblock %}

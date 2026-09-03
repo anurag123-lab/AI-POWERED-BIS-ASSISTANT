@@ -1,0 +1,17 @@
+{# Guided-tour bar. Rendered from base.html when tour_ctx.active (see inject_tour_context in app.py). #}
+<div class="tour-bar no-print">
+  <div class="tour-bar__inner">
+    <div class="tour-bar__meta">
+      <div class="tour-bar__step">Guided tour · Step {{ tour_ctx.index }} of {{ tour_ctx.total }}</div>
+      <div class="tour-bar__label">{{ tour_ctx.label }}</div>
+      <div class="tour-bar__blurb">{{ tour_ctx.blurb }}</div>
+      <div class="tour-bar__progress"><span style="width: {{ tour_ctx.percent }}%;"></span></div>
+    </div>
+    <div class="tour-bar__actions">
+      <a href="{{ tour_ctx.skip_url }}" class="btn-pill btn-dark-outline">Skip tour</a>
+      <a href="{{ tour_ctx.next_url }}" class="btn-pill btn-orange">
+        {{ 'Finish' if tour_ctx.is_last else 'Next' }} &rarr;
+      </a>
+    </div>
+  </div>
+</div>

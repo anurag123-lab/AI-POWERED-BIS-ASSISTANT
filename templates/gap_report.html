@@ -2,10 +2,6 @@
 
 {% block title %}BIS Documentation Gap Report — Ministry & Admin Dashboard{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/gap_report.css') }}">
-{% endblock %}
-
 {% block content %}
 <div class="page-container">
   
@@ -27,28 +23,26 @@
 
   <div class="glass-panel">
     <div style="overflow-x: auto;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+      <table class="data-table">
         <thead>
-          <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary);">
-            <th style="padding: 12px;"># Log ID</th>
-            <th style="padding: 12px;">Unanswered Citizen Query</th>
-            <th style="padding: 12px;">Max RAG Grounding Score</th>
-            <th style="padding: 12px;">Refusal Action</th>
-            <th style="padding: 12px;">Timestamp</th>
+          <tr>
+            <th># Log ID</th>
+            <th>Unanswered Citizen Query</th>
+            <th>Outcome</th>
+            <th>Timestamp</th>
           </tr>
         </thead>
         <tbody>
           {% for gap in gaps %}
-          <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-primary);">
-            <td style="padding: 12px;"><strong style="color: var(--accent-orange);">#{{ gap.id }}</strong></td>
-            <td style="padding: 12px;">{{ gap.details }}</td>
-            <td style="padding: 12px;"><span class="badge-tag badge-amber">0.28 (Refused)</span></td>
-            <td style="padding: 12px;"><span class="badge-tag badge-orange">REFUSED (NO HALLUCINATION)</span></td>
-            <td style="padding: 12px;">{{ gap.timestamp }}</td>
+          <tr>
+            <td><strong style="color: var(--accent-orange);">#{{ gap.id }}</strong></td>
+            <td>{{ gap.details }}</td>
+            <td><span class="badge-tag badge-orange">Refused — below grounding threshold</span></td>
+            <td>{{ gap.timestamp }}</td>
           </tr>
           {% else %}
           <tr>
-            <td colspan="5" style="padding: 24px; text-align: center; color: var(--text-secondary);">
+            <td colspan="4" style="padding: 24px; text-align: center; color: var(--text-secondary);">
               No documentation gap refusals logged yet. All tested queries matched ground truth BIS evidence.
             </td>
           </tr>
@@ -59,8 +53,4 @@
   </div>
 
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/gap_report.js') }}"></script>
 {% endblock %}

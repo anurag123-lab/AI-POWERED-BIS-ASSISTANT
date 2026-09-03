@@ -2,11 +2,13 @@
 
 {% block title %}Compliance Cases Workspace — BIS Copilot{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/cases.css') }}">
-{% endblock %}
-
 {% block content %}
+{% set progress_map = {
+  'Standard Identified': 25, 'Scheme Identified': 25,
+  'Testing In Progress': 50, 'Samples Submitted': 50,
+  'Application Submitted': 75, 'Factory Audit': 75,
+  'Certified': 100, 'Licence Granted': 100
+} %}
 <div class="page-container">
   
   <div class="page-header">
@@ -30,18 +32,19 @@
           <span class="badge-tag badge-amber">{{ c.current_step }}</span>
         </div>
 
+        {% set pct = progress_map.get(c.current_step, 15) %}
         <div style="margin: 16px 0;">
           <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px;">
             <span>Certification Roadmap Progress</span>
-            <strong style="color: var(--accent-orange);">60% Complete</strong>
+            <strong style="color: var(--accent-orange);">{{ pct }}% Complete</strong>
           </div>
           <div class="progress-bar-bg">
-            <div class="progress-bar-fill" style="width: 60%;"></div>
+            <div class="progress-bar-fill" style="width: {{ pct }}%;"></div>
           </div>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; pt: 16px; border-top: 1px solid var(--border-subtle); margin-top: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid var(--border-subtle); margin-top: 16px;">
         <span style="font-size: 0.78rem; color: var(--text-muted);">Created: {{ c.created_at }}</span>
         <div style="display: flex; gap: 10px;">
           <a href="{{ url_for('get_case_pdf', case_id=c.id) }}" class="btn-pill btn-dark-outline" style="font-size: 0.78rem; padding: 6px 12px;">📄 PDF Report</a>
@@ -65,8 +68,4 @@
   </div>
 
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/cases.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Home — BIS Compliance Copilot{% endblock %}
+
+{% set feature_cards = [
+  ('product_finder',     '📘', 'Find Your Standard',    'Search 900+ compulsory products and get the exact IS number that applies.'),
+  ('scheme_identifier',  '✅', 'Check Your Scheme',     'See which BIS scheme covers your product — and which explicitly do not, with reasons.'),
+  ('licensing_timeline', '📝', 'Licensing Timeline',    'A day-by-day roadmap plus a printable document checklist for your licence.'),
+  ('labs_view',          '🧭', 'Labs Near You',         'Find NABL / BIS-recognised testing labs and draft an enquiry email.'),
+  ('isi_photo_check',    '🔎', 'Verify an ISI Mark',    'Check an ISI mark / hallmark carries every mandatory regulatory element.'),
+  ('copilot_view',       '💬', 'Ask the Copilot',       'A source-cited assistant for any BIS compliance question.'),
+  ('cases_list',         '📦', 'Your Compliance Cases', 'Track certification roadmaps and download factory audit PDF reports.'),
+  ('documents_view',     '🗂️', 'Document Library',      'Official BIS notices, QCOs and standards indexed for search.'),
+] %}
+
+{% block content %}
+<div class="page-container">
+
+  <div class="hub-hero">
+    <span class="eyebrow-tag">Your workspace</span>
+    <h1>Welcome, {{ user.full_name.split(' ')[0] }}.</h1>
+    <p>What would you like to do? Everything below is shaped around the profile you saved.</p>
+  </div>
+
+  {% if show_tour %}
+  <div class="hub-tour-banner">
+    <div style="font-size:1.8rem;">🧭</div>
+    <div class="banner-copy">
+      <h3>Take the 1-minute guided tour</h3>
+      <p>We'll walk you through each tool one screen at a time. You can skip any time.</p>
+    </div>
+    <div class="banner-actions">
+      <a href="{{ url_for('home', tour='done') }}" class="btn-pill btn-dark-outline">Not now</a>
+      <a href="{{ url_for('product_finder', tour=1, step=1) }}" class="btn-pill btn-orange">Start tour &rarr;</a>
+    </div>
+  </div>
+  {% else %}
+  <p class="hub-replay">
+    Want a refresher? <a href="{{ url_for('product_finder', tour=1, step=1) }}">Replay the guided tour</a>.
+  </p>
+  {% endif %}
+
+  {% if profile_rows %}
+  <div class="glass-panel profile-panel">
+    <div class="profile-head">
+      <div>
+        <span class="eyebrow-tag">Saved profile</span>
+        <div style="font-size:1.05rem; font-weight:800; color:#fff;">Your account details</div>
+      </div>
+      <span class="badge-tag badge-emerald">✓ Stored in database</span>
+    </div>
+    <div class="profile-grid">
+      {% for k, v in profile_rows %}
+      <div class="profile-item">
+        <div class="k">{{ k }}</div>
+        <div class="v">{{ v }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% if user.product_description %}
+    <div class="profile-item" style="margin-top:14px;">
+      <div class="k">Product description</div>
+      <div class="v">{{ user.product_description }}</div>
+    </div>
+    {% endif %}
+    <div class="form-hint" style="margin-top:14px;">
+      Account created {{ user.created_at }} · {{ case_count }} compliance case{{ '' if case_count == 1 else 's' }} ·
+      signed in as {{ user.email }}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="hub-grid">
+    {% for endpoint, icon, title, desc in feature_cards %}
+    <a class="hub-card" href="{{ url_for(endpoint) }}">
+      <div class="hub-card__icon">{{ icon }}</div>
+      <div class="hub-card__title">{{ title }}</div>
+      <div class="hub-card__desc">{{ desc }}</div>
+      <span class="hub-card__cta">Open &rarr;</span>
+    </a>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

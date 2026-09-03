@@ -26,9 +26,50 @@ app.secret_key = os.getenv('SECRET_KEY', 'bis_copilot_secret_key_sih2026_ianurag
 init_db()
 seed_database()
 
+# Ordered guided-tour walkthrough shown right after a user verifies their email.
+TOUR_STEPS = [
+    {'endpoint': 'product_finder',     'label': 'Find Your Standard',   'blurb': 'Search 900+ compulsory products and get the exact IS number that applies.'},
+    {'endpoint': 'scheme_identifier',  'label': 'Check Your Scheme',    'blurb': 'See which BIS scheme covers your product — and which ones explicitly do not.'},
+    {'endpoint': 'licensing_timeline', 'label': 'Licensing Timeline',   'blurb': 'A day-by-day roadmap and a printable document checklist for your licence.'},
+    {'endpoint': 'labs_view',          'label': 'Labs Near You',        'blurb': 'Find NABL / BIS-recognised testing labs and draft an enquiry email.'},
+    {'endpoint': 'isi_photo_check',    'label': 'Verify an ISI Mark',   'blurb': 'Check that an ISI mark / hallmark carries every mandatory element.'},
+    {'endpoint': 'copilot_view',       'label': 'Ask the Copilot',      'blurb': 'A source-cited assistant for any BIS compliance question.'},
+]
+
+
+@app.context_processor
+def inject_tour_context():
+    """Expose tour state to every template (drives templates/partials/tour_bar.html)."""
+    try:
+        active = request.args.get('tour') == '1'
+        idx = int(request.args.get('step', '1'))
+    except (ValueError, TypeError):
+        active, idx = False, 1
+
+    ctx = {'active': False, 'index': idx, 'total': len(TOUR_STEPS)}
+    if active and 1 <= idx <= len(TOUR_STEPS):
+        this_step = TOUR_STEPS[idx - 1]
+        if idx < len(TOUR_STEPS):
+            nxt = TOUR_STEPS[idx]
+            next_url = url_for(nxt['endpoint'], tour=1, step=idx + 1)
+        else:
+            next_url = url_for('home', tour='done')
+        ctx.update({
+            'active': True,
+            'label': this_step['label'],
+            'blurb': this_step['blurb'],
+            'next_url': next_url,
+            'skip_url': url_for('home', tour='done'),
+            'percent': int(idx / len(TOUR_STEPS) * 100),
+            'is_last': idx == len(TOUR_STEPS),
+        })
+    return {'tour_ctx': ctx, 'tour_steps': TOUR_STEPS}
+
+
 @app.before_request
 def ensure_default_session():
-    public_endpoints = {'index', 'login', 'register', 'register_verify', 'register_resend_otp',
+    public_endpoints = {'index', 'login', 'register', 'register_step2', 'register_step3',
+                        'register_verify', 'register_resend_otp',
                         'google_auth', 'logout', 'static'}
     if session.get('user_id') or request.endpoint in public_endpoints:
         return None
@@ -56,9 +97,9 @@ def login():
             session['user_city'] = user['city'] or ''
             session['user_state'] = user['state'] or ''
             flash(f"Welcome back, {user['full_name']}!", "success")
-            return redirect(url_for('index'))
+            return redirect(url_for('home'))
         else:
-            flash("Invalid credentials.", "error")
+            flash("Invalid credentials. Check your email and password and try again.", "error")
     return render_template('login.html')
 
 def _create_user_from_pending(pending):
@@ -76,6 +117,10 @@ def _create_user_from_pending(pending):
                      (user['id'], pending['user_type'], pending['business_stage'], pending['company_name'],
                       pending['product_category'], pending['product_name'], pending['product_description'],
                       pending['monthly_quantity'], pending['city'], pending['state']))
+        conn.execute("INSERT OR REPLACE INTO user_onboarding_profiles (user_id, persona_role, industry_sector, compliance_stage, product_name, product_description, monthly_production_quantity) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                     (user['id'], pending['user_type'] or 'Manufacturer', pending['product_category'] or 'Other',
+                      pending['business_stage'] or 'Commercial production', pending['product_name'] or '',
+                      pending['product_description'], pending['monthly_quantity']))
         conn.commit()
     finally:
         conn.close()
@@ -86,6 +131,28 @@ def _create_user_from_pending(pending):
     session['user_role'] = user['role']
     session['user_city'] = pending['city']
     session['user_state'] = pending['state']
+    session['show_tour'] = True
+    session.pop('reg_wizard', None)
+
+
+def get_full_user(user_id):
+    """Load the persisted user row + onboarding profile for display on the hub."""
+    conn = get_db_connection()
+    try:
+        user = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        onb = conn.execute("SELECT * FROM user_onboarding_profiles WHERE user_id = ?", (user_id,)).fetchone()
+    finally:
+        conn.close()
+    return (dict(user) if user else None), (dict(onb) if onb else None)
+
+
+def _wizard_guard(*required_keys):
+    """Return a redirect to step 1 if the wizard session is missing earlier steps."""
+    data = session.get('reg_wizard') or {}
+    if not all(data.get(k) for k in required_keys):
+        flash("Let's start your registration from the top.", "info")
+        return redirect(url_for('register'))
+    return None
 
 
 def _issue_registration_otp(pending):
@@ -98,61 +165,138 @@ def _issue_registration_otp(pending):
     return ok, detail
 
 
+# ------------------------------------------------------------------
+# Registration wizard — 3 server-driven steps, then the OTP screen.
+# Answers accumulate in session['reg_wizard'] until email is verified.
+# ------------------------------------------------------------------
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """Step 1 of 3 — account details."""
+    wiz = session.get('reg_wizard') or {}
     if request.method == 'POST':
         full_name = request.form.get('full_name', '').strip()
         company_name = request.form.get('company_name', '').strip() or request.form.get('business_name', '').strip()
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')
         confirm_password = request.form.get('confirm_password', '')
-        user_type = request.form.get('user_type', '').strip()
-        business_stage = request.form.get('business_stage', '').strip()
-        city = request.form.get('city', '').strip()
-        state = request.form.get('state', '').strip()
-        product_category = request.form.get('product_category', '').strip()
-        product_name = request.form.get('product_name', '').strip()
-        product_description = request.form.get('product_description', '').strip()
-        monthly_quantity = request.form.get('monthly_quantity', '').strip()
 
-        if not full_name or not email or not password:
-            flash("Please complete the required profile details.", "error")
-            return render_template('register.html')
-        if password != confirm_password:
-            flash("Passwords do not match. Please re-enter your password.", "error")
-            return render_template('register.html')
+        data = {'full_name': full_name, 'company_name': company_name, 'email': email}
+        errors = {}
+        if not full_name:
+            errors['full_name'] = "Please enter your full name."
+        if not email or '@' not in email:
+            errors['email'] = "Enter a valid email address."
+        if not password:
+            errors['password'] = "Choose a password."
+        elif len(password) < 6:
+            errors['password'] = "Use at least 6 characters."
+        if password and password != confirm_password:
+            errors['confirm_password'] = "Passwords do not match."
 
-        conn = get_db_connection()
-        existing = conn.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
-        conn.close()
-        if existing:
-            flash("Email already registered. Please sign in instead.", "error")
-            return render_template('register.html')
+        if not errors:
+            conn = get_db_connection()
+            existing = conn.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+            conn.close()
+            if existing:
+                errors['email'] = "That email is already registered. Sign in instead."
 
-        pending = {
+        if errors:
+            return render_template('register.html', active_step=1, data=data, errors=errors)
+
+        wiz.update({
             'full_name': full_name,
             'company_name': company_name,
             'email': email,
             'password_hash': generate_password_hash(password),
-            'user_type': user_type,
-            'business_stage': business_stage,
+        })
+        session['reg_wizard'] = wiz
+        return redirect(url_for('register_step2'))
+
+    return render_template('register.html', active_step=1, data=wiz, errors={})
+
+
+@app.route('/register/step-2', methods=['GET', 'POST'])
+def register_step2():
+    """Step 2 of 3 — about you & your product."""
+    guard = _wizard_guard('email', 'password_hash')
+    if guard:
+        return guard
+    wiz = session['reg_wizard']
+
+    if request.method == 'POST':
+        fields = ['user_type', 'business_stage', 'product_category',
+                  'product_name', 'product_description', 'monthly_quantity']
+        data = {f: request.form.get(f, '').strip() for f in fields}
+        errors = {}
+        for f, msg in [('user_type', "Tell us who you are."),
+                       ('business_stage', "Pick your business stage."),
+                       ('product_category', "Pick a product category."),
+                       ('product_name', "Name the product."),
+                       ('monthly_quantity', "Choose a monthly quantity.")]:
+            if not data[f]:
+                errors[f] = msg
+        if errors:
+            return render_template('register_step2.html', active_step=2, data=data, errors=errors)
+
+        wiz.update(data)
+        session['reg_wizard'] = wiz
+        return redirect(url_for('register_step3'))
+
+    return render_template('register_step2.html', active_step=2, data=wiz, errors={})
+
+
+@app.route('/register/step-3', methods=['GET', 'POST'])
+def register_step3():
+    """Step 3 of 3 — location & consent, then issue the OTP."""
+    guard = _wizard_guard('email', 'password_hash', 'user_type')
+    if guard:
+        return guard
+    wiz = session['reg_wizard']
+
+    if request.method == 'POST':
+        city = request.form.get('city', '').strip()
+        state = request.form.get('state', '').strip()
+        agree = request.form.get('agree_terms')
+        data = {'city': city, 'state': state}
+        errors = {}
+        if not city:
+            errors['city'] = "Enter your city."
+        if not state:
+            errors['state'] = "Enter your state."
+        if not agree:
+            errors['agree_terms'] = "Please accept the Terms & Conditions to continue."
+        if errors:
+            return render_template('register_step3.html', active_step=3, data=data, errors=errors)
+
+        wiz.update({'city': city, 'state': state})
+        session['reg_wizard'] = wiz
+
+        pending = {
+            'full_name': wiz['full_name'],
+            'company_name': wiz.get('company_name', ''),
+            'email': wiz['email'],
+            'password_hash': wiz['password_hash'],
+            'user_type': wiz.get('user_type', ''),
+            'business_stage': wiz.get('business_stage', ''),
             'city': city,
             'state': state,
-            'product_category': product_category,
-            'product_name': product_name,
-            'product_description': product_description,
-            'monthly_quantity': monthly_quantity,
+            'product_category': wiz.get('product_category', ''),
+            'product_name': wiz.get('product_name', ''),
+            'product_description': wiz.get('product_description', ''),
+            'monthly_quantity': wiz.get('monthly_quantity', ''),
         }
         ok, detail = _issue_registration_otp(pending)
         if ok:
             if smtp_is_configured():
-                flash(f"We emailed a 6-digit verification code to {email}. Enter it below to activate your account.", "info")
+                flash(f"We emailed a 6-digit verification code to {pending['email']}. Enter it below to activate your account.", "info")
             else:
                 flash("SMTP is not configured, so the verification code was printed to the server console (dev mode).", "info")
             return redirect(url_for('register_verify'))
         flash(f"Could not send the verification email ({detail}). Please check the SMTP settings and try again.", "error")
-        return render_template('register.html')
-    return render_template('register.html')
+        return render_template('register_step3.html', active_step=3, data=data, errors={})
+
+    return render_template('register_step3.html', active_step=3, data=wiz, errors={})
 
 
 @app.route('/register/verify', methods=['GET', 'POST'])
@@ -169,27 +313,25 @@ def register_verify():
 
         if not expected or time.time() > expires:
             flash("That code has expired. We can send you a new one.", "error")
-            return render_template('verify_otp.html', email=pending['email'])
+            return render_template('verify_otp.html', email=pending['email'], active_step=4)
         if entered != expected:
             flash("Incorrect verification code. Please try again.", "error")
-            return render_template('verify_otp.html', email=pending['email'])
+            return render_template('verify_otp.html', email=pending['email'], active_step=4)
 
         try:
             _create_user_from_pending(pending)
         except Exception:
             flash("Email already registered. Please sign in instead.", "error")
-            session.pop('pending_registration', None)
-            session.pop('reg_otp', None)
-            session.pop('reg_otp_expires', None)
+            for k in ('pending_registration', 'reg_otp', 'reg_otp_expires', 'reg_wizard'):
+                session.pop(k, None)
             return redirect(url_for('login'))
 
-        session.pop('pending_registration', None)
-        session.pop('reg_otp', None)
-        session.pop('reg_otp_expires', None)
+        for k in ('pending_registration', 'reg_otp', 'reg_otp_expires', 'reg_wizard'):
+            session.pop(k, None)
         flash("Email verified. Your account and compliance profile have been saved.", "success")
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
-    return render_template('verify_otp.html', email=pending['email'])
+    return render_template('verify_otp.html', email=pending['email'], active_step=4)
 
 
 @app.route('/register/resend-otp', methods=['POST'])
@@ -221,8 +363,10 @@ def google_auth():
     session['user_name'] = user['full_name']
     session['user_email'] = user['email']
     session['user_role'] = user['role']
+    session['user_city'] = (user['city'] if 'city' in user.keys() else '') or ''
+    session['user_state'] = (user['state'] if 'state' in user.keys() else '') or ''
     flash("Logged in via Google OAuth successfully!", "success")
-    return redirect(url_for('index'))
+    return redirect(url_for('home'))
 
 @app.route('/logout')
 def logout():
@@ -253,16 +397,46 @@ def sort_labs_for_user(labs, user_city=None, user_state=None):
 
 @app.route('/')
 def index():
+    if session.get('user_id'):
+        return redirect(url_for('home'))
+    return render_template('index.html')
+
+
+@app.route('/home')
+def home():
+    """Post-signup hub: shows the saved profile + a card per feature + the guided tour."""
+    user, onboarding = get_full_user(session['user_id'])
+    if not user:
+        session.clear()
+        flash("Please sign in again.", "info")
+        return redirect(url_for('login'))
+
+    if request.args.get('tour') == 'done':
+        session['show_tour'] = False
+        flash("You're all set — jump into any tool below whenever you need it.", "success")
+        return redirect(url_for('home'))
+
     conn = get_db_connection()
-    standards = conn.execute("SELECT * FROM standards").fetchall()
-    qcos = conn.execute("SELECT * FROM qcos").fetchall()
-    labs = conn.execute("SELECT * FROM laboratories").fetchall()
-    user_id = session.get('user_id', 1)
-    cases = conn.execute("SELECT * FROM compliance_cases WHERE user_id = ?", (user_id,)).fetchall()
+    case_count = conn.execute("SELECT COUNT(*) AS c FROM compliance_cases WHERE user_id = ?",
+                              (user['id'],)).fetchone()['c']
     conn.close()
-    labs = [dict(l) for l in labs]
-    labs = sort_labs_for_user(labs, session.get('user_city'), session.get('user_state'))
-    return render_template('index.html', standards=standards, qcos=qcos, labs=labs, active_cases_count=len(cases))
+
+    profile_rows = [
+        ("Full name", user.get('full_name')),
+        ("Email", user.get('email')),
+        ("Company", user.get('company_name')),
+        ("You are a", user.get('user_type')),
+        ("Business stage", user.get('business_stage')),
+        ("Product category", user.get('product_category')),
+        ("Product", user.get('product_name')),
+        ("Monthly quantity", user.get('monthly_quantity')),
+        ("Location", ", ".join([p for p in [user.get('city'), user.get('state')] if p])),
+    ]
+    profile_rows = [(k, v) for k, v in profile_rows if v]
+
+    return render_template('hub.html', user=user, onboarding=onboarding,
+                           profile_rows=profile_rows, case_count=case_count,
+                           show_tour=session.get('show_tour', False))
 
 @app.route('/copilot')
 def copilot_view():

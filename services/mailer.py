@@ -27,12 +27,18 @@ from email.utils import formataddr
 
 
 def _cfg():
+    try:
+        port = int(os.getenv("SMTP_PORT", "587") or "587")
+    except ValueError:
+        port = 587
     return {
-        "host": os.getenv("SMTP_HOST", "smtp.gmail.com"),
-        "port": int(os.getenv("SMTP_PORT", "587")),
+        "host": (os.getenv("SMTP_HOST") or "smtp.gmail.com").strip(),
+        "port": port,
         "user": os.getenv("SMTP_USER", "").strip(),
-        "password": os.getenv("SMTP_PASSWORD", "").strip(),
-        "from_name": os.getenv("SMTP_FROM_NAME", "BIS Compliance Copilot"),
+        # Gmail shows App Passwords as 4 space-separated groups; the real
+        # secret has no spaces. Strip ALL whitespace so a pasted value works.
+        "password": "".join(os.getenv("SMTP_PASSWORD", "").split()),
+        "from_name": (os.getenv("SMTP_FROM_NAME") or "BIS Compliance Copilot").strip(),
         "from_addr": (os.getenv("SMTP_FROM") or os.getenv("SMTP_USER") or "no-reply@bis-copilot.local").strip(),
     }
 
@@ -84,15 +90,27 @@ def send_email(to_addr, subject, text_body, html_body=None):
 
     try:
         context = ssl.create_default_context()
-        with smtplib.SMTP(c["host"], c["port"], timeout=20) as server:
-            server.ehlo()
-            server.starttls(context=context)
-            server.ehlo()
-            server.login(c["user"], c["password"])
-            server.send_message(msg)
+        if c["port"] == 465:
+            # Implicit TLS
+            with smtplib.SMTP_SSL(c["host"], c["port"], timeout=20, context=context) as server:
+                server.login(c["user"], c["password"])
+                server.send_message(msg)
+        else:
+            # STARTTLS (587)
+            with smtplib.SMTP(c["host"], c["port"], timeout=20) as server:
+                server.ehlo()
+                server.starttls(context=context)
+                server.ehlo()
+                server.login(c["user"], c["password"])
+                server.send_message(msg)
+        print(f"[MAILER] Sent '{subject}' to {to_addr} via {c['host']}:{c['port']}")
         return True, "sent"
+    except smtplib.SMTPAuthenticationError as exc:
+        print(f"[MAILER:AUTH ERROR] {exc}")
+        return False, ("SMTP login rejected — check SMTP_USER and that SMTP_PASSWORD "
+                       "is a Gmail App Password (16 chars, 2-Step Verification enabled).")
     except Exception as exc:  # noqa: BLE001 - surface any SMTP failure to caller
-        print(f"[MAILER:ERROR] Failed to send email to {to_addr}: {exc}")
+        print(f"[MAILER:ERROR] Failed to send email to {to_addr}: {exc!r}")
         return False, str(exc)
 
 

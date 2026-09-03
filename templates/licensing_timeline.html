@@ -22,8 +22,8 @@
       <h3 style="font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-bottom: 20px;">BIS Application Days Breakdown</h3>
 
       {% for step in timeline.timeline_steps %}
-      <div class="roadmap-step active">
-        <div class="node-num" style="background: var(--accent-orange); color: white;">{{ step.step }}</div>
+      <div class="roadmap-step {{ 'is-current' if loop.first else 'is-pending' }}">
+        <div class="node-num">{{ step.step }}</div>
         <div>
           <span class="badge-tag badge-orange" style="float: right;">{{ step.days }}</span>
           <strong style="color: #ffffff; font-size: 0.95rem;">{{ step.title }}</strong>

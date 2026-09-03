@@ -1,175 +1,66 @@
-{% extends 'base.html' %}
+{% extends 'auth_layout.html' %}
+{% set active_step = 1 %}
 
-{% block title %}Create Account - BIS Compliance Copilot{% endblock %}
+{% block title %}Create Account · Step 1 — BIS Compliance Copilot{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
-{% endblock %}
+{% block auth_form %}
+  <span class="eyebrow-tag">Get started</span>
+  <h2>Create your account</h2>
+  <p class="auth-sub">Step 1 of 3 — your login details.</p>
 
-{% block content %}
-<div class="auth-split-wrapper">
-  
-  <!-- LEFT SIDE: BRANDING & MOTIVATION (MATCHING REFERENCE VIDEO FRAME 00:20 - 00:21) -->
-  <div class="auth-brand-side">
-    <span class="eyebrow-tag">START STRONG</span>
-    <h1 style="font-size: 3.2rem; font-weight: 800; color: #ffffff; line-height: 1.1; margin-bottom: 20px;">
-      Build your<br>compliance edge.
-    </h1>
-    <p style="font-size: 1.05rem; color: var(--text-secondary); max-width: 480px; line-height: 1.6; margin-bottom: 40px;">
-      Join a focused, high-signal BIS compliance routine designed to keep your momentum alive and your products market-certified.
-    </p>
+  <a href="{{ url_for('google_auth') }}" class="btn-pill btn-dark-outline" style="width:100%; margin-top:16px; text-decoration:none;">
+    <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right:8px;">
+      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
+      <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.21 0 10.05 0 12s.47 3.79 1.29 5.42l3.99-3.15z"/>
+      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+    </svg>
+    Sign up with Google
+  </a>
 
-    <!-- METRIC STAT PILLS -->
-    <div style="display: flex; gap: 32px;">
-      <div>
-        <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-orange);">5+ STANDARDS</div>
-        <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;">GROUND TRUTH DB</div>
-      </div>
-      <div>
-        <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff;">24/7</div>
-        <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;">SMART TRACKING</div>
-      </div>
+  <div class="auth-divider">OR</div>
+
+  <form method="POST" action="{{ url_for('register') }}" novalidate>
+    <div class="form-field">
+      <label class="form-label" for="full_name">Full name</label>
+      <input class="form-input" id="full_name" type="text" name="full_name"
+             value="{{ data.full_name or '' }}" required placeholder="Enter your full name">
+      {% if errors.full_name %}<div class="form-error">{{ errors.full_name }}</div>{% endif %}
     </div>
-  </div>
 
-  <!-- RIGHT SIDE: REGISTRATION FORM CARD (MATCHING VIDEO FRAME 00:20 - 00:21) -->
-  <div class="auth-form-side">
-    <div class="auth-form-box">
-      
-      <div style="margin-bottom: 24px;">
-        <span class="eyebrow-tag" style="margin-bottom: 4px;">GET STARTED</span>
-        <h2 style="font-size: 1.8rem; font-weight: 800; color: #ffffff;">Create account</h2>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Set up your BIS Copilot profile.</p>
-      </div>
-
-      <!-- DIRECT GOOGLE SIGNUP BUTTON -->
-      <a href="{{ url_for('google_auth') }}" class="btn-pill btn-dark-outline" style="width: 100%; justify-content: center; padding: 12px; margin-bottom: 20px; text-decoration: none;">
-        <svg width="18" height="18" viewBox="0 0 24 24" style="margin-right: 8px;">
-          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
-          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.21 0 10.05 0 12s.47 3.79 1.29 5.42l3.99-3.15z"/>
-          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-        </svg>
-        Sign up with Google
-      </a>
-
-      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-        <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
-        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">OR REGISTER FORM</span>
-        <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
-      </div>
-
-      <form method="POST" action="{{ url_for('register') }}">
-        <div style="margin-bottom: 14px;">
-          <label class="form-label">Full Name</label>
-          <input type="text" name="full_name" class="form-input" required placeholder="Enter your full name">
-        </div>
-
-        <div style="margin-bottom: 14px;">
-          <label class="form-label">Company / Business Name</label>
-          <input type="text" name="company_name" class="form-input" placeholder="Enter your company or business name">
-        </div>
-
-        <div style="margin-bottom: 14px;">
-          <label class="form-label">Email</label>
-          <input type="email" name="email" class="form-input" required placeholder="Enter your email">
-        </div>
-
-        <div style="margin-bottom: 14px;">
-          <label class="form-label">Password</label>
-          <input type="password" name="password" class="form-input" required placeholder="Create a password">
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <label class="form-label">Confirm Password</label>
-          <input type="password" name="confirm_password" class="form-input" required placeholder="Confirm your password">
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <label class="form-label">Who are you?</label>
-          <select name="user_type" class="form-input" required>
-            <option value="">Select one</option>
-            <option>Student</option>
-            <option>Consumer</option>
-            <option>Startup</option>
-            <option>SME business</option>
-            <option>Manufacturer</option>
-            <option>Exporter</option>
-            <option>Compliance consultant</option>
-          </select>
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <label class="form-label">Business stage</label>
-          <select name="business_stage" class="form-input" required>
-            <option value="">Select one</option>
-            <option>Idea / research</option>
-            <option>Prototype / testing</option>
-            <option>Pilot production</option>
-            <option>Commercial production</option>
-            <option>Scale-up / export</option>
-          </select>
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <label class="form-label">Product category</label>
-          <select name="product_category" class="form-input" required>
-            <option value="">Select one</option>
-            <option>Electrical Appliances</option>
-            <option>Solar & Renewable</option>
-            <option>Steel & Civil</option>
-            <option>Consumer Goods</option>
-            <option>Industrial Equipment</option>
-            <option>Packaging / Safety</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <label class="form-label">Where are you located?</label>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <input type="text" name="city" class="form-input" placeholder="City" required>
-            <input type="text" name="state" class="form-input" placeholder="State" required>
-          </div>
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <label class="form-label">Product name</label>
-          <input type="text" name="product_name" class="form-input" required placeholder="e.g. Electric Water Heater">
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <label class="form-label">Product description</label>
-          <textarea name="product_description" class="form-input" rows="3" required placeholder="Briefly describe the product and its use case"></textarea>
-        </div>
-
-        <div style="margin-bottom: 20px;">
-          <label class="form-label">Monthly production quantity</label>
-          <select name="monthly_quantity" class="form-input" required>
-            <option value="">Select one</option>
-            <option>Below 100 units</option>
-            <option>100-500 units</option>
-            <option>500-2000 units</option>
-            <option>2000-10000 units</option>
-            <option>Above 10000 units</option>
-          </select>
-        </div>
-
-        <div style="margin-bottom: 24px;">
-          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer;">
-            <input type="checkbox" required checked style="accent-color: var(--accent-orange);"> I agree to the Terms & Conditions
-          </label>
-        </div>
-
-        <button type="submit" class="btn-pill btn-orange" style="width: 100%; justify-content: center; padding: 14px; font-size: 0.95rem;">Create Account</button>
-      </form>
-
-      <div style="text-align: center; margin-top: 24px; font-size: 0.85rem; color: var(--text-secondary);">
-        Already have an account? <a href="{{ url_for('login') }}" style="color: var(--accent-orange); font-weight: 600; text-decoration: underline;">Sign In</a>
-      </div>
-
+    <div class="form-field">
+      <label class="form-label" for="company_name">Company / business name</label>
+      <input class="form-input" id="company_name" type="text" name="company_name"
+             value="{{ data.company_name or '' }}" placeholder="Optional">
     </div>
-  </div>
 
-</div>
+    <div class="form-field">
+      <label class="form-label" for="email">Email</label>
+      <input class="form-input" id="email" type="email" name="email"
+             value="{{ data.email or '' }}" required autocomplete="username" placeholder="you@company.com">
+      {% if errors.email %}<div class="form-error">{{ errors.email }}</div>{% endif %}
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="password">Password</label>
+      <input class="form-input" id="password" type="password" name="password"
+             required autocomplete="new-password" placeholder="At least 6 characters">
+      {% if errors.password %}<div class="form-error">{{ errors.password }}</div>{% endif %}
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="confirm_password">Confirm password</label>
+      <input class="form-input" id="confirm_password" type="password" name="confirm_password"
+             required autocomplete="new-password" placeholder="Re-enter your password">
+      {% if errors.confirm_password %}<div class="form-error">{{ errors.confirm_password }}</div>{% endif %}
+    </div>
+
+    <div class="auth-actions">
+      <button type="submit" class="btn-pill btn-orange">Continue &rarr;</button>
+    </div>
+  </form>
+
+  <div class="auth-alt-link">
+    Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+  </div>
 {% endblock %}

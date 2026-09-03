@@ -1,0 +1,20 @@
+{# Persistent feature bar for logged-in users. Rendered from base.html. #}
+{% set nav_links = [
+  ('home', 'Home'),
+  ('product_finder', 'Product Finder'),
+  ('scheme_identifier', 'Scheme Identifier'),
+  ('licensing_timeline', 'Licensing Timeline'),
+  ('labs_view', 'Labs'),
+  ('isi_photo_check', 'ISI Photo Check'),
+  ('copilot_view', 'Copilot'),
+  ('cases_list', 'Cases'),
+  ('documents_view', 'Documents'),
+] %}
+<nav class="app-nav" aria-label="Features">
+  <div class="app-nav__inner">
+    {% for endpoint, label in nav_links %}
+      <a href="{{ url_for(endpoint) }}"
+         class="{{ 'is-active' if request.endpoint == endpoint }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+</nav>
