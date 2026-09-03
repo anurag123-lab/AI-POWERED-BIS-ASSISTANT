@@ -1,0 +1,18 @@
+# Secrets / environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Local database (regenerated on first run by init_db + seed_database)
+bis_compliance.db
+
+# Editor / OS
+.DS_Store
+Thumbs.db
