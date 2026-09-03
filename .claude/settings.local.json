@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import ast; ast.parse\\(open\\('app.py'\\).read\\(\\)\\); ast.parse\\(open\\('services/mailer.py'\\).read\\(\\)\\); print\\('syntax OK'\\)\")",
+      "Bash(python -c \"from services.mailer import generate_otp, send_registration_otp, smtp_is_configured, otp_exp_minutes; print\\('import OK', generate_otp\\(\\), smtp_is_configured\\(\\), otp_exp_minutes\\(\\)\\)\")"
+    ]
+  }
+}

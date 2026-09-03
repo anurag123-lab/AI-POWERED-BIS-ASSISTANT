@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Knowledge Base Repository — BIS Copilot{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/documents.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  
+  <div class="page-header">
+    <div>
+      <span class="eyebrow-tag">KNOWLEDGE REPOSITORY</span>
+      <h1 class="page-title">Parsed BIS Documents & QCO Orders</h1>
+      <p class="page-subtext">Official Indian Standards, Product Manuals, and Quality Control Orders indexed for Hybrid RAG Search.</p>
+    </div>
+    <span class="badge-tag badge-orange">GROUND TRUTH COLLECTION</span>
+  </div>
+
+  <div class="directory-grid">
+    {% for doc in documents %}
+    <div class="glass-panel doc-card">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+          <div>
+            <span class="badge-tag badge-orange">{{ doc.doc_code }}</span>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin-top: 6px;">{{ doc.title }}</h3>
+          </div>
+          <span class="badge-tag badge-muted">{{ doc.category|upper }}</span>
+        </div>
+
+        <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 16px;">
+          Published: {{ doc.publication_date }} | Version: {{ doc.version }} | Status: Active Notice
+        </div>
+      </div>
+
+      <div style="pt: 16px; border-top: 1px solid var(--border-subtle); margin-top: 16px;">
+        <a href="{{ doc.url }}" target="_blank" class="btn-pill btn-dark-outline" style="width: 100%; justify-content: center; font-size: 0.82rem;">🔗 Open Official Document (PDF) ↗</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
+
+  {% block extra_js %}
+  <script src="{{ url_for('static', filename='js/documents.js') }}"></script>
+  {% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Email - BIS Compliance Copilot{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-split-wrapper">
+
+  <!-- LEFT SIDE: BRANDING -->
+  <div class="auth-brand-side">
+    <span class="eyebrow-tag">ONE LAST STEP</span>
+    <h1 style="font-size: 3.2rem; font-weight: 800; color: #ffffff; line-height: 1.1; margin-bottom: 20px;">
+      Confirm it's<br>really you.
+    </h1>
+    <p style="font-size: 1.05rem; color: var(--text-secondary); max-width: 480px; line-height: 1.6; margin-bottom: 40px;">
+      We sent a 6-digit verification code to your email over SMTP. Enter it to activate your
+      BIS Compliance Copilot account.
+    </p>
+  </div>
+
+  <!-- RIGHT SIDE: OTP FORM CARD -->
+  <div class="auth-form-side">
+    <div class="auth-form-box">
+
+      <div style="margin-bottom: 24px;">
+        <span class="eyebrow-tag" style="margin-bottom: 4px;">EMAIL VERIFICATION</span>
+        <h2 style="font-size: 1.8rem; font-weight: 800; color: #ffffff;">Enter your code</h2>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+          Sent to <strong style="color: var(--text-secondary);">{{ email }}</strong>
+        </p>
+      </div>
+
+      <form method="POST" action="{{ url_for('register_verify') }}">
+        <div style="margin-bottom: 20px;">
+          <label class="form-label">6-Digit Verification Code</label>
+          <input type="text" name="otp_code" class="form-input" required autofocus
+                 inputmode="numeric" pattern="[0-9 ]{6,8}" maxlength="8"
+                 autocomplete="one-time-code"
+                 placeholder="------"
+                 style="letter-spacing: 10px; text-align: center; font-size: 1.4rem; font-weight: 700;">
+        </div>
+
+        <button type="submit" class="btn-pill btn-orange" style="width: 100%; justify-content: center; padding: 14px; font-size: 0.95rem;">
+          Verify &amp; Create Account
+        </button>
+      </form>
+
+      <form method="POST" action="{{ url_for('register_resend_otp') }}" style="margin-top: 16px;">
+        <button type="submit" class="btn-pill btn-dark-outline" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.9rem;">
+          Resend code
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 24px; font-size: 0.85rem; color: var(--text-secondary);">
+        Wrong email? <a href="{{ url_for('register') }}" style="color: var(--accent-orange); font-weight: 600; text-decoration: underline;">Start over</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

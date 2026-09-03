@@ -1,0 +1,278 @@
+/* YouTube Mindmap feature styles aligned with PrepPulse dashboard look */
+
+.yt-shell {
+    position: relative !important;
+    z-index: 2 !important;
+    display: grid !important;
+    grid-template-columns: 0.9fr 1.3fr !important;
+    align-items: start !important;
+    gap: 32px !important;
+    padding: 72px 5vw 6vh !important;
+    min-height: 100vh !important;
+}
+
+.yt-intro {
+    position: static;
+    max-width: none !important;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.yt-intro .auth-title {
+    font-size: 2.6rem;
+    margin-bottom: 4px;
+}
+
+.yt-form-card,
+.yt-tip-card {
+    padding: 22px 24px;
+    border-radius: 20px;
+    background: linear-gradient(160deg, rgba(45, 40, 36, 0.6), rgba(25, 22, 20, 0.7));
+    border: 1px solid rgba(255, 180, 140, 0.1);
+}
+
+.yt-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.yt-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.yt-form label {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.yt-form input {
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.yt-form input:focus {
+    outline: none;
+    border-color: #ff6b35;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.12);
+}
+
+.yt-submit-btn {
+    padding: 12px 26px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: #ff6b35;
+    border: none;
+    border-radius: 12px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.yt-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(255, 107, 53, 0.35);
+}
+
+.yt-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-loader {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: 6px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.form-alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.form-alert.success {
+    background: rgba(99, 230, 211, 0.1);
+    border: 1px solid rgba(99, 230, 211, 0.25);
+    color: #63e6d3;
+}
+
+.form-alert.error {
+    background: rgba(255, 80, 80, 0.1);
+    border: 1px solid rgba(255, 80, 80, 0.25);
+    color: #ff8b8b;
+}
+
+.yt-tip-card h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.yt-tip-card ul {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.86rem;
+}
+
+.yt-result-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.yt-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.meta-item {
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.meta-label {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.meta-value {
+    font-size: 0.9rem;
+    color: #fff;
+    word-break: break-word;
+}
+
+.yt-preview-wrap,
+.yt-code-wrap {
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 14px;
+}
+
+.yt-preview-header,
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.yt-preview-header h3,
+.code-header h3 {
+    font-size: 0.95rem;
+    margin: 0;
+    color: #fff;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-mini {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.78rem;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-mini:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.mindmap-image {
+    width: 100%;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mermaid-code-block {
+    margin: 0;
+    max-height: 300px;
+    overflow: auto;
+    background: rgba(8, 8, 8, 0.65);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.yt-empty {
+    border-radius: 14px;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    padding: 38px 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.yt-empty .empty-icon {
+    margin-bottom: 8px;
+}
+
+.yt-empty .empty-text {
+    font-weight: 600;
+    color: #fff;
+}
+
+.yt-empty .empty-hint {
+    margin-top: 4px;
+    font-size: 0.86rem;
+}
+
+@media (max-width: 1100px) {
+    .yt-shell {
+        grid-template-columns: 1fr !important;
+        padding: 72px 4vw 6vh !important;
+    }
+
+    .yt-meta-grid {
+        grid-template-columns: 1fr;
+    }
+}

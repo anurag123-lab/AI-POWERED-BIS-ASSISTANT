@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Product Finder (Deterministic Instant Search) — BIS Copilot{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product_finder.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  
+  <div class="page-header">
+    <div>
+      <span class="eyebrow-tag">DETERMINISTIC PRODUCT FINDER</span>
+      <h1 class="page-title">Compulsory Certification Product Directory</h1>
+      <p class="page-subtext">Instant deterministic search over 900+ products. No AI latency, no rate limits, no hallucinations.</p>
+    </div>
+    <span class="badge-tag badge-emerald">900+ COMPULSORY ITEMS</span>
+  </div>
+
+  <div class="glass-panel" style="margin-bottom: 28px;">
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <input type="text" id="productSearchInput" oninput="performProductSearch()" placeholder="Type a product name (e.g. iron, kettle, solar, helmet, toy, cable, steel, stove)..." class="form-input" style="flex: 1; padding: 14px 20px; font-size: 1rem;">
+      <span style="font-size: 0.85rem; color: var(--text-secondary);" id="searchCountBadge">Showing 20 items</span>
+    </div>
+  </div>
+
+  <div id="productResultsGrid" class="directory-grid">
+    <!-- Populated dynamically via JS -->
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/product_finder.js') }}"></script>
+<script>
+async function performProductSearch() {
+  const query = document.getElementById('productSearchInput').value.trim();
+  const grid = document.getElementById('productResultsGrid');
+  const countBadge = document.getElementById('searchCountBadge');
+
+  try {
+    const res = await fetch('/api/products/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: query })
+    });
+    const data = await res.json();
+
+    countBadge.textContent = `Found ${data.count} matching products`;
+    grid.innerHTML = '';
+
+    if (data.products.length === 0) {
+      grid.innerHTML = '<div class="glass-panel" style="grid-column: span 2; text-align: center;"><p style="color: var(--text-secondary);">No matching compulsory products found.</p></div>';
+      return;
+    }
+
+    data.products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'glass-panel doc-card';
+      card.innerHTML = `
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div>
+              <span class="badge-tag badge-orange">${p.is_number}</span>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin-top: 6px;">${p.product_name}</h3>
+            </div>
+            <span class="badge-tag badge-muted">${p.category}</span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 6px;">
+            <strong>Mandated Scheme:</strong> ${p.scheme}
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted);">
+            📄 <strong>Citation:</strong> ${p.doc_page_citation} (${p.qco_title})
+          </div>
+        </div>
+        <div style="margin-top: 16px; pt: 12px; border-top: 1px solid var(--border-subtle);">
+          <button onclick="buildChecklistFromProduct('${p.product_name}', '${p.is_number}')" class="btn-pill btn-orange" style="width: 100%; justify-content: center; font-size: 0.82rem;">Build Full Compliance Checklist ↗</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  } catch (err) {
+    grid.innerHTML = '<p style="color: red;">Search error.</p>';
+  }
+}
+
+function buildChecklistFromProduct(name, isNum) {
+  createComplianceCase(name, isNum);
+}
+
+document.addEventListener('DOMContentLoaded', performProductSearch);
+</script>
+{% endblock %}

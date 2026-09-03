@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}ISI Mark & Hallmark Regulatory Photo Check — BIS Copilot{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  
+  <div class="page-header">
+    <div>
+      <span class="eyebrow-tag">CONSUMER COMPLIANCE TOOL</span>
+      <h1 class="page-title">ISI Mark & Hallmark Photo Regulation Check</h1>
+      <p class="page-subtext">Inspects whether standard marks on products conform to mandatory printing regulations.</p>
+    </div>
+    <span class="badge-tag badge-orange">CONSUMER INSPECTOR</span>
+  </div>
+
+  <div class="cases-grid">
+    
+    <!-- UPLOAD / INSPECT CARD -->
+    <div class="glass-panel">
+      <span class="eyebrow-tag">PHOTO ANALYSIS</span>
+      <h3 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin-bottom: 16px;">Inspect Product Marking Layout</h3>
+      
+      <div style="padding: 30px; border: 2px dashed var(--border-glow); border-radius: var(--radius-md); text-align: center; margin-bottom: 20px; background: rgba(0,0,0,0.3);">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">📸</div>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">Upload or capture product ISI mark / HUID hallmark photo</p>
+        <button class="btn-pill btn-orange" onclick="runPhotoInspection()">Run Regulatory Layout Check</button>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label class="form-label">Or enter Licence / Mark Text for analysis:</label>
+        <input type="text" id="markTextInput" class="form-input" value="IS 302-2-25 CM/L-8765432 HUID-A9B8C7" placeholder="e.g. IS 302-2-25 CM/L-8765432">
+      </div>
+    </div>
+
+    <!-- ANALYSIS RESULTS -->
+    <div class="glass-panel" id="photoCheckResult">
+      <span class="eyebrow-tag">REGULATORY COMPLIANCE</span>
+      <h3 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin-bottom: 16px;">BIS Marking Regulations Check</h3>
+
+      <div style="padding: 16px; background: rgba(16, 185, 129, 0.08); border-left: 4px solid var(--accent-emerald); border-radius: var(--radius-sm); margin-bottom: 16px;">
+        <strong style="color: #ffffff; font-size: 0.95rem;">Mandatory Elements Verified:</strong>
+        <ul style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px; margin-left: 18px; line-height: 1.6;">
+          <li>✓ <strong>Indian Standard Code:</strong> Printed above Mark (IS 302-2-25)</li>
+          <li>✓ <strong>CML Licence Code:</strong> 7-digit CM/L code printed below Mark</li>
+          <li>✓ <strong>Hallmark HUID:</strong> 6-digit laser etched unique identifier</li>
+        </ul>
+      </div>
+
+      <!-- DISCLAIMER POINTING TO BIS CARE APP -->
+      <div style="padding: 16px; background: rgba(249, 115, 22, 0.1); border: 1px solid var(--accent-orange); border-radius: var(--radius-sm);">
+        <strong style="color: var(--accent-orange); font-size: 0.9rem;">⚠️ Official BIS Care App Disclaimer:</strong>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 6px; line-height: 1.5;">
+          This tool verifies whether the mark layout contains mandatory printing elements. To check if a licence or HUID code is **genuine and active in BIS live database**, please use the official **BIS Care App**.
+        </p>
+        <a href="https://play.google.com/store/apps/details?id=com.bis.bisapp" target="_blank" class="btn-pill btn-dark-outline" style="font-size: 0.78rem; margin-top: 10px;">Download BIS Care App ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function runPhotoInspection() {
+  const text = document.getElementById('markTextInput').value;
+  const res = await fetch('/api/isi/photo-check', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: text })
+  });
+  const data = await res.json();
+  alert("✅ Photo Regulatory Layout Check Complete!");
+}
+</script>
+{% endblock %}

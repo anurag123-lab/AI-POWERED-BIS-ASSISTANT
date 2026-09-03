@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Case Roadmap: {{ case.product_name }} — BIS Copilot{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  
+  <div class="glass-panel" style="margin-bottom: 28px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <span class="badge-tag badge-orange">{{ case.is_number }}</span>
+        <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 6px;">{{ case.product_name }}</h1>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 6px;">
+          QCO Status: <strong style="color: var(--accent-amber);">{{ case.qco_status }}</strong> | Certification Scheme: <strong style="color: var(--accent-orange);">{{ case.scheme }}</strong>
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <a href="{{ url_for('get_case_pdf', case_id=case.id) }}" class="btn-pill btn-orange" style="font-size: 0.88rem;">📄 Download PDF Audit Report</a>
+        <a href="{{ url_for('cases_list') }}" class="btn-pill btn-dark-outline" style="font-size: 0.88rem;">← Back to Cases</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="cases-grid">
+    
+    <!-- LEFT: 4-STEP VERTICAL ROADMAP -->
+    <div class="glass-panel">
+      <span class="eyebrow-tag">CERTIFICATION ROADMAP</span>
+      <h3 style="font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-bottom: 20px;">Step-by-Step BIS Compliance Path</h3>
+
+      <div class="roadmap-step active">
+        <div class="node-num" style="background: var(--accent-orange); color: white;">1</div>
+        <div>
+          <strong style="color: #ffffff; font-size: 0.95rem;">Identify Indian Standard & QCO Applicability</strong>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.5;">Matched IS {{ case.is_number }}. Compulsory Quality Control Order verified in BIS ground truth database.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-step active">
+        <div class="node-num" style="background: var(--accent-orange); color: white;">2</div>
+        <div>
+          <strong style="color: #ffffff; font-size: 0.95rem;">Prepare Factory SIT & Testing Equipment</strong>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.5;">Establish Scheme of Inspection and Testing (SIT) and calibrate in-house high voltage breakdown / leakage equipment.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-step">
+        <div class="node-num">3</div>
+        <div>
+          <strong style="color: #ffffff; font-size: 0.95rem;">NABL / BIS Recognized Laboratory Type Testing</strong>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.5;">Submit product samples to accredited testing laboratory (e.g. National Test House Ghaziabad).</p>
+        </div>
+      </div>
+
+      <div class="roadmap-step">
+        <div class="node-num">4</div>
+        <div>
+          <strong style="color: #ffffff; font-size: 0.95rem;">Online Portal Application & BIS Factory Audit</strong>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.5;">Submit formal application on manakonline.in and host official BIS inspection assessment.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: FACTORY QUALITY CHECKLIST -->
+    <div class="glass-panel">
+      <span class="eyebrow-tag">QUALITY CONTROL</span>
+      <h3 style="font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-bottom: 20px;">Mandatory Testing Checklist</h3>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        {% for item in checklist %}
+        <label style="display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-size: 0.88rem; color: var(--text-primary); cursor: pointer;">
+          <input type="checkbox" checked style="accent-color: var(--accent-orange); width: 16px; height: 16px;">
+          <span>{{ item }}</span>
+        </label>
+        {% endfor %}
+      </div>
+
+      <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-subtle);">
+        <a href="{{ url_for('labs_view') }}" class="btn-pill btn-dark-outline" style="width: 100%; justify-content: center;">Find Accredited Testing Labs ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

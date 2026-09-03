@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Scheme Identifier — Applies vs Does Not Apply{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/scheme_identifier.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  
+  <div class="page-header">
+    <div>
+      <span class="eyebrow-tag">SCHEME EVALUATOR</span>
+      <h1 class="page-title">BIS Scheme Identifier & Exclusion Rationale</h1>
+      <p class="page-subtext">Explains which BIS scheme covers your product AND explicitly details which schemes DO NOT apply and WHY.</p>
+    </div>
+    <span class="badge-tag badge-orange">SCHEME DISAMBIGUATION</span>
+  </div>
+
+  <div class="glass-panel" style="margin-bottom: 28px;">
+    <label class="form-label">Enter Indian Standard or Product Code:</label>
+    <div style="display: flex; gap: 14px;">
+      <input type="text" id="schemeStandardInput" class="form-input" value="IS 302-2-25" style="flex: 1;">
+      <button onclick="analyzeScheme()" class="btn-pill btn-orange">Analyze Scheme Applicability</button>
+    </div>
+  </div>
+
+  <div class="cases-grid" id="schemeResultsGrid">
+    
+    <!-- APPLICABLE SCHEME -->
+    <div class="glass-panel" style="border-color: var(--accent-emerald);">
+      <span class="badge-tag badge-emerald">✅ APPLICABLE SCHEME</span>
+      <h3 style="font-size: 1.3rem; font-weight: 800; color: #ffffff; margin-top: 10px;">Scheme I (ISI Mark Certification)</h3>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;">
+        <strong>What You Receive:</strong> BIS Licence Certificate & Right to affix Standard Mark (ISI Logo with CM/L Number).
+      </p>
+      <p style="font-size: 0.85rem; color: var(--accent-emerald); margin-top: 10px;">
+        <strong>Legal Rationale:</strong> Mandated under Household Electrical Appliances QCO 2023 requiring compulsory factory audit inspection and type testing.
+      </p>
+    </div>
+
+    <!-- NON-APPLICABLE SCHEMES WITH REASONS -->
+    <div class="glass-panel" style="border-color: rgba(255, 85, 0, 0.3);">
+      <span class="badge-tag badge-orange">🚫 SCHEMES THAT DO NOT APPLY & WHY</span>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #ffffff; margin-top: 10px;">Excluded Scheme Exclusions:</h3>
+
+      <div style="margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+        <div style="padding: 10px; background: rgba(0,0,0,0.3); border-radius: 6px; margin-bottom: 8px;">
+          <strong style="color: #ffffff;">Scheme II (CRS):</strong> DOES NOT APPLY.<br>
+          <em>Reason:</em> CRS applies only to designated IT/electronics items under MeitY/MNRE self-declaration. Household appliances mandate full ISI Mark under Scheme-I.
+        </div>
+
+        <div style="padding: 10px; background: rgba(0,0,0,0.3); border-radius: 6px;">
+          <strong style="color: #ffffff;">Scheme X:</strong> DOES NOT APPLY.<br>
+          <em>Reason:</em> Scheme X applies to custom heavy industrial equipment built to customer specs.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/scheme_identifier.js') }}"></script>
+<script>
+async function analyzeScheme() {
+  const code = document.getElementById('schemeStandardInput').value;
+  const res = await fetch('/api/schemes/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ is_number: code })
+  });
+  const data = await res.json();
+  alert(`Analyzed Scheme for ${code}! Applicable: ${data.analysis.applicable_scheme[0].scheme}`);
+}
+</script>
+{% endblock %}

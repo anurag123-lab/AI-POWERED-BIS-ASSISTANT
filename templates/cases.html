@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Compliance Cases Workspace — BIS Copilot{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cases.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  
+  <div class="page-header">
+    <div>
+      <span class="eyebrow-tag">COMPLIANCE WORKSPACE</span>
+      <h1 class="page-title">Active Product Cases</h1>
+      <p class="page-subtext">Track product certification roadmaps, factory quality checklists, and testing lab milestones.</p>
+    </div>
+    <a href="{{ url_for('copilot_view') }}" class="btn-pill btn-orange">+ New Product Case</a>
+  </div>
+
+  <div class="cases-grid">
+    {% for c in cases %}
+    <div class="glass-panel case-card">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div>
+            <span class="badge-tag badge-orange">{{ c.is_number }}</span>
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-top: 6px;">{{ c.product_name }}</h3>
+          </div>
+          <span class="badge-tag badge-amber">{{ c.current_step }}</span>
+        </div>
+
+        <div style="margin: 16px 0;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 6px;">
+            <span>Certification Roadmap Progress</span>
+            <strong style="color: var(--accent-orange);">60% Complete</strong>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 60%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; pt: 16px; border-top: 1px solid var(--border-subtle); margin-top: 16px;">
+        <span style="font-size: 0.78rem; color: var(--text-muted);">Created: {{ c.created_at }}</span>
+        <div style="display: flex; gap: 10px;">
+          <a href="{{ url_for('get_case_pdf', case_id=c.id) }}" class="btn-pill btn-dark-outline" style="font-size: 0.78rem; padding: 6px 12px;">📄 PDF Report</a>
+          <a href="{{ url_for('case_detail', case_id=c.id) }}" class="btn-pill btn-orange" style="font-size: 0.78rem; padding: 6px 12px;">View Case ↗</a>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <!-- STRIKING EMPTY STATE WHEN ZERO CASES EXIST -->
+    <div class="glass-panel" style="grid-column: span 2; text-align: center; padding: 60px 40px;">
+      <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 85, 0, 0.1); border: 1px solid var(--accent-orange); color: var(--accent-orange); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 20px auto;">
+        📋
+      </div>
+      <h3 style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">No Active Compliance Cases Yet</h3>
+      <p style="font-size: 0.95rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 28px auto; line-height: 1.6;">
+        Ask BIS Copilot RAG to analyze your manufactured product and click "Create Compliance Case" to build your automated roadmap.
+      </p>
+      <a href="{{ url_for('copilot_view') }}" class="btn-pill btn-orange" style="padding: 12px 28px; font-size: 0.95rem;">Launch Copilot Analysis ↗</a>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/cases.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}BIS Compliance Copilot{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+  {% if request.endpoint != 'index' %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  {% endif %}
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% if request.endpoint == 'index' %}landing-body{% endif %}">
+  {% if request.endpoint != 'index' %}<div class="bg-glow-orb"></div>{% endif %}
+
+  <div style="display: flex; flex-direction: column; min-height: 100vh;">
+    
+    {% if request.endpoint != 'index' %}
+    <header class="app-header">
+      <div class="navbar-container" style="max-width: 1380px;">
+        
+        <!-- Brand Title -->
+        <a href="{{ url_for('index') }}" class="brand-title">
+          <span>BIS</span> COPILOT
+        </a>
+
+        <!-- Right Side User Authentication Controls -->
+        <div class="nav-actions">
+          {% if session.get('user_id') %}
+            <span style="font-size: 0.85rem; color: var(--text-secondary); margin-right: 8px;">
+              {{ session.get('user_name', 'Manufacturer') }}
+            </span>
+            <a href="{{ url_for('logout') }}" class="btn-pill btn-dark-outline">Logout</a>
+          {% else %}
+            <a href="{{ url_for('login') }}" class="btn-pill btn-dark-outline">Login</a>
+            <a href="{{ url_for('register') }}" class="btn-pill btn-orange">Register</a>
+          {% endif %}
+        </div>
+
+      </div>
+    </header>
+    {% endif %}
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="max-width: 1280px; margin: 16px auto 0 auto; width: 100%; padding: 0 40px;">
+          {% for category, message in messages %}
+            <div style="padding: 12px 20px; background: rgba(255, 85, 0, 0.15); border: 1px solid var(--accent-orange); border-radius: 8px; color: white; font-size: 0.88rem;">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Main Page Content -->
+    <main style="flex: 1;">
+      {% block content %}{% endblock %}
+    </main>
+
+    {% if request.endpoint != 'index' %}
+    <footer class="app-footer">
+      <div>&copy; 2026 BIS Compliance Copilot — Powered by 7-Searches Fanout RAG & Deterministic Rule Engine</div>
+    </footer>
+    {% endif %}
+
+  </div>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
