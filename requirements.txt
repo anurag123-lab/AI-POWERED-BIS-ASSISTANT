@@ -9,9 +9,8 @@ python-dotenv==1.2.3
 numpy==2.5.2
 rank-bm25==0.2.2
 
-# LLM providers (all optional at runtime; app falls back to the offline
-# knowledge-base engine when no key is set). llm.py tries OpenAI then Gemini.
-openai==3.6.0
+# LLM = Google Gemini only (optional at runtime; app falls back to the
+# offline BIS knowledge-base engine when GEMINI_API_KEY is unset).
 google-genai==2.22.0
 
 # Keyless Hindi / Telugu translation of answer bodies (deep-translator wraps

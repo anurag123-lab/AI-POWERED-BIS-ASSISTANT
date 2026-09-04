@@ -31,7 +31,8 @@ init_db()
 seed_database()
 
 _llm_ok, _llm_detail = llm.check_connectivity()
-print(f"[STARTUP] LLM: {'ON (' + (llm.active_provider() or '?') + ')' if _llm_ok else 'offline'} - {_llm_detail}")
+print(f"[STARTUP] LLM: {'Gemini ON' if _llm_ok else 'offline'} - {_llm_detail}")
+print(f"[STARTUP] Blend: {'70% BIS / 30% Gemini' if _llm_ok else '100% BIS (curated KB + ingested PDFs)'}")
 print(f"[STARTUP] Translation: deep-translator (keyless) -> hi/te answer bodies")
 print(f"[STARTUP] SMTP: {'configured' if smtp_is_configured() else 'dev mode (codes to console)'}")
 
