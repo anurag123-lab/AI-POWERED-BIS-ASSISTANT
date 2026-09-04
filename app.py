@@ -69,11 +69,15 @@ def inject_globals():
             case = dict(row) if row else None
         except Exception:
             case = None
+    lang = session.get('lang', 'en')
+    from translations import t as _t
     return {
-        'nav_links': NAV_LINKS,
+        'nav_links': [(ep, _t('nav.' + ep, lang) if _t('nav.' + ep, lang) else lbl)
+                      for ep, lbl in NAV_LINKS],
         'supported_langs': SUPPORTED_LANGS,
-        'current_lang': session.get('lang', 'en'),
+        'current_lang': lang,
         'active_case': case,
+        't': lambda key: _t(key, lang),
     }
 
 
@@ -988,17 +992,43 @@ def api_create_case():
     return jsonify({'status': 'success', 'case_id': case_id})
 
 @app.route('/api/case/<int:case_id>/pdf')
+@app.route('/my-cases/<int:case_id>/pdf')
 def get_case_pdf(case_id):
+    from io import BytesIO
+    from services.pdf_generator import generate_case_pdf
+    from translations import t as _t
+
+    uid = session.get('user_id')
     conn = get_db_connection()
-    row = conn.execute("SELECT * FROM compliance_cases WHERE id = ?", (case_id,)).fetchone()
+    row = conn.execute("SELECT * FROM compliance_cases WHERE id = ? AND (user_id = ? OR ? IS NULL)",
+                       (case_id, uid, uid)).fetchone()
     conn.close()
     if not row:
         return "Case not found", 404
-    case_data = dict(row)
-    case_data['checklist'] = json.loads(case_data['checklist_json']) if case_data.get('checklist_json') else []
-    pdf_bytes = generate_compliance_pdf(case_data)
-    from io import BytesIO
-    return send_file(BytesIO(pdf_bytes), mimetype='application/pdf', as_attachment=True, download_name=f"BIS_Compliance_Report_Case_{case_id}.pdf")
+    case = dict(row)
+
+    lang = (request.args.get('lang') or session.get('lang', 'en')).lower()
+    if lang not in ('en', 'hi', 'te'):
+        lang = 'en'
+    slug = case.get('product_slug')
+    views = []
+    if slug:
+        for area in ['standards', 'related_standards', 'certification', 'scheme',
+                     'testing', 'licensing', 'supporting']:
+            v = answer_engine.answer_area(slug, area, language=lang)
+            if not v.get('refused'):
+                views.append(v)
+
+    if views:
+        pdf_bytes = generate_case_pdf(case, views, language=lang,
+                                     report_title=_t('pdf.title', lang))
+    else:
+        case['checklist'] = json.loads(case['checklist_json']) if case.get('checklist_json') else []
+        pdf_bytes = generate_compliance_pdf(case)
+
+    name = f"BIS_Report_{(slug or 'case')}_{lang}.pdf"
+    return send_file(BytesIO(pdf_bytes), mimetype='application/pdf',
+                     as_attachment=True, download_name=name)
 
 @app.route('/api/actions/execute', methods=['POST'])
 def api_execute_action():

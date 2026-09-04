@@ -15,8 +15,12 @@
       <p class="page-subtext">{{ case.user_type }} &bull; {{ case.city }}, {{ case.state }}
         {% if case.is_number %}&bull; {{ case.is_number }}{% endif %}</p>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <a class="btn-pill btn-orange" href="{{ url_for('get_case_pdf', case_id=case.id) }}">Generate complete PDF</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <a class="btn-pill btn-orange" href="{{ url_for('get_case_pdf', case_id=case.id, lang=current_lang) }}">Generate complete PDF</a>
+      <span style="font-size:0.78rem;color:var(--text-muted);">PDF language:</span>
+      <a class="pdf-lang" href="{{ url_for('get_case_pdf', case_id=case.id, lang='en') }}">EN</a>
+      <a class="pdf-lang" href="{{ url_for('get_case_pdf', case_id=case.id, lang='hi') }}">HI</a>
+      <a class="pdf-lang" href="{{ url_for('get_case_pdf', case_id=case.id, lang='te') }}">TE</a>
       <a class="btn-pill btn-dark-outline" href="{{ url_for('my_cases') }}">&larr; All cases</a>
     </div>
   </div>

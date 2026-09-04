@@ -1,2 +1,5 @@
 /* case_detail.css - /my-cases/<id> (extends feature.css) */
 .case_detail-note { color: var(--text-muted); }
+
+.pdf-lang { font-size: 0.76rem; font-weight: 700; color: var(--accent-cyan); text-decoration: none; padding: 3px 8px; border: 1px solid var(--border-subtle); border-radius: 6px; }
+.pdf-lang:hover { border-color: var(--accent-orange); color: #fff; }
