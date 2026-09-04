@@ -52,7 +52,7 @@ SUPPORTED_LANGS = {'en': 'English', 'hi': 'हिंदी', 'te': 'తెలు
 # Endpoints a logged-in user may hit before finishing onboarding.
 _ONBOARDING_EXEMPT = {
     'onboarding', 'logout', 'static', 'set_language', 'index',
-    'my_cases', 'cases_list', 'google_auth',
+    'my_cases', 'case_detail', 'activate_case', 'get_case_pdf', 'google_auth',
 }
 
 
@@ -407,8 +407,15 @@ ONB_QUESTIONS = [
 
 @app.route('/onboarding', methods=['GET', 'POST'])
 def onboarding():
-    """Conversational onboarding: user type -> product -> location -> workspace."""
-    if session.get('active_case_id'):
+    """Conversational onboarding: user type -> product -> location -> workspace.
+    `?new=1` starts an ADDITIONAL product (My Cases -> Start Another Product)."""
+    starting_new = request.args.get('new') == '1' or session.get('onb_new')
+    if request.method == 'GET' and request.args.get('new') == '1':
+        session['onb_new'] = True
+        session.pop('onb', None)
+        session.pop('active_case_id', None)
+        return redirect(url_for('onboarding'))
+    if session.get('active_case_id') and not starting_new:
         return redirect(url_for('home'))
     onb = session.get('onb') or {}
 
@@ -470,6 +477,7 @@ def onboarding():
             session['user_city'] = onb["city"]
             session['user_state'] = onb["state"]
             session.pop('onb', None)
+            session.pop('onb_new', None)
             flash(f"Workspace ready for {meta.get('display_name', 'your product')}.", "success")
             return redirect(url_for('home'))
 
