@@ -16,7 +16,60 @@ import re
 from database import get_db_connection
 from services import knowledge_base as kb
 from services import llm
-from services.rag_engine import fanout_7_searches, MEASURED_REFUSAL_THRESHOLD
+from services.rag_engine import fanout_7_searches, perform_hybrid_search, MEASURED_REFUSAL_THRESHOLD
+
+# area -> retrieval query for pulling a verbatim passage from the ingested BIS PDFs
+_AREA_QUERY = {
+    "standards": "scope specification requirements of this standard",
+    "related_standards": "normative references other standards referred",
+    "certification": "compulsory quality control order standard mark marking",
+    "scheme": "scheme of inspection and testing conformity assessment licence",
+    "licensing": "grant of licence application procedure fee",
+    "testing": "type test routine test acceptance test sampling",
+    "supporting": "documents required application scheme of inspection and testing",
+}
+
+_HAS_CHUNKS = {}
+
+
+def _product_has_chunks(slug):
+    if slug in _HAS_CHUNKS:
+        return _HAS_CHUNKS[slug]
+    try:
+        conn = get_db_connection()
+        n = conn.execute("SELECT COUNT(*) c FROM document_chunks WHERE product_slug = ?",
+                         (slug,)).fetchone()["c"]
+        conn.close()
+    except Exception:
+        n = 0
+    _HAS_CHUNKS[slug] = n > 0
+    return n > 0
+
+
+def verbatim_excerpts(slug, area, question=None, limit=2):
+    """Top matching passages from the product's ingested BIS PDFs (or [])."""
+    if not slug or not _product_has_chunks(slug):
+        return []
+    q = (question or "").strip() or _AREA_QUERY.get(area, area)
+    try:
+        hits = perform_hybrid_search(q, top_k=limit, product_slug=slug)
+    except Exception:
+        return []
+    out = []
+    for h in hits:
+        if h.get("relevance_score", 0) < 0.45:
+            continue
+        text = (h.get("content") or "").strip()
+        if len(text) > 480:
+            text = text[:480].rsplit(" ", 1)[0] + "…"
+        out.append({
+            "text": text,
+            "page": h.get("page_number"),
+            "doc": h.get("doc_title") or h.get("doc_code"),
+            "url": h.get("doc_url") or h.get("url"),
+            "score": round(h.get("relevance_score", 0), 3),
+        })
+    return out
 
 SEVEN_AREAS = kb.AREA_ORDER  # standards, certification, scheme, licensing, testing, related_standards, supporting
 
@@ -89,6 +142,7 @@ def answer_area(slug, area, question=None, language="en"):
         "title": view["title"],
         "body_md": body,
         "sources": view["sources"],
+        "excerpts": verbatim_excerpts(slug, area, question),
         "feature_endpoint": view["endpoint"],
         "grounded": True,
         "refused": False,

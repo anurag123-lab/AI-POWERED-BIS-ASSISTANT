@@ -149,3 +149,8 @@
   .home-layout { grid-template-columns: 1fr; }
   .home-sidebar { position: static; max-height: 260px; }
 }
+
+/* verbatim excerpts inside answer cards */
+.answer-card .verbatim__head { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-cyan); margin: 12px 0 6px; }
+.answer-card .verbatim__quote { margin: 0 0 8px; padding: 10px 12px; border-left: 3px solid var(--accent-cyan); background: rgba(56,189,248,0.07); border-radius: 0 8px 8px 0; font-size: 0.8rem; font-style: italic; color: var(--text-secondary); line-height: 1.55; }
+.answer-card .verbatim__quote cite { display: block; margin-top: 5px; font-style: normal; font-size: 0.72rem; color: var(--text-muted); }

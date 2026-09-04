@@ -28,15 +28,22 @@ def get_query_embedding(query_text):
         return vec
     return compute_local_embedding(query_text)
 
-def perform_hybrid_search(query, top_k=4):
+def perform_hybrid_search(query, top_k=4, product_slug=None):
+    """BM25 + embedding hybrid search over document_chunks.
+    When product_slug is given, only that product's ingested chunks are searched
+    (falls back to the whole corpus if that product has none)."""
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT c.id, c.document_id, c.doc_code, c.doc_title, c.page_number, c.section_heading, c.content, c.embedding_json, d.url
-        FROM document_chunks c
-        LEFT JOIN documents d ON c.document_id = d.id
-    """)
-    chunks = [dict(row) for row in cursor.fetchall()]
+    base = ("SELECT c.id, c.document_id, c.doc_code, c.doc_title, c.page_number, "
+            "c.section_heading, c.content, c.embedding_json, "
+            "COALESCE(c.source_url, d.url) AS url "
+            "FROM document_chunks c LEFT JOIN documents d ON c.document_id = d.id")
+    rows = []
+    if product_slug:
+        rows = cursor.execute(base + " WHERE c.product_slug = ?", (product_slug,)).fetchall()
+    if not rows:
+        rows = cursor.execute(base).fetchall()
+    chunks = [dict(r) for r in rows]
     conn.close()
 
     if not chunks:

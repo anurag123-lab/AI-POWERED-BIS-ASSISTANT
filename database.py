@@ -66,6 +66,18 @@ def ensure_schema_compatibility():
     if 'state' not in lab_cols:
         cursor.execute('ALTER TABLE laboratories ADD COLUMN state TEXT')
 
+    # documents / document_chunks get product scoping for verbatim-clause retrieval
+    doc_cols = {row[1] for row in cursor.execute("PRAGMA table_info(documents)").fetchall()}
+    if 'product_slug' not in doc_cols:
+        cursor.execute('ALTER TABLE documents ADD COLUMN product_slug TEXT')
+    if 'source_url' not in doc_cols:
+        cursor.execute('ALTER TABLE documents ADD COLUMN source_url TEXT')
+    ch_cols = {row[1] for row in cursor.execute("PRAGMA table_info(document_chunks)").fetchall()}
+    if 'product_slug' not in ch_cols:
+        cursor.execute('ALTER TABLE document_chunks ADD COLUMN product_slug TEXT')
+    if 'source_url' not in ch_cols:
+        cursor.execute('ALTER TABLE document_chunks ADD COLUMN source_url TEXT')
+
     # search_history (also created in init_db; here for already-migrated DBs)
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS search_history (

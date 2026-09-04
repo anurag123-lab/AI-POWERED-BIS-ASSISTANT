@@ -19,6 +19,18 @@
     <div class="area-block__body">{{ v.body_md | md }}</div>
   {% endif %}
 
+  {% if v.excerpts %}
+  <div class="verbatim">
+    <div class="verbatim__head">From the BIS document &mdash; verbatim</div>
+    {% for ex in v.excerpts %}
+    <blockquote class="verbatim__quote">
+      &ldquo;{{ ex.text }}&rdquo;
+      <cite>{{ ex.doc }}{% if ex.page %} &bull; page {{ ex.page }}{% endif %}{% if ex.url %} &bull; <a href="{{ ex.url }}" target="_blank" rel="noopener">source PDF &nearr;</a>{% endif %}</cite>
+    </blockquote>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   {% if v.sources %}
   <div class="source-table">
     <div class="source-table__head">BIS sources</div>

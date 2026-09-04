@@ -8,6 +8,17 @@
 
   <div class="answer-card__body">{{ a.body_md | md }}</div>
 
+  {% if a.excerpts %}
+  <div class="verbatim">
+    <div class="verbatim__head">From the BIS document &mdash; verbatim</div>
+    {% for ex in a.excerpts %}
+    <blockquote class="verbatim__quote">&ldquo;{{ ex.text }}&rdquo;
+      <cite>{{ ex.doc }}{% if ex.page %} &bull; page {{ ex.page }}{% endif %}</cite>
+    </blockquote>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   {% if a.sources %}
   <details class="answer-card__sources">
     <summary>{{ a.sources | length }} BIS source{{ '' if a.sources|length == 1 else 's' }}</summary>

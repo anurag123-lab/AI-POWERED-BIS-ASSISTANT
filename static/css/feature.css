@@ -67,3 +67,22 @@
 @media (max-width: 640px) {
   .source-row { grid-template-columns: 1fr; gap: 2px; }
 }
+
+/* verbatim BIS PDF excerpts */
+.verbatim { margin-top: 14px; }
+.verbatim__head {
+  font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--accent-cyan); margin-bottom: 8px;
+}
+.verbatim__quote {
+  margin: 0 0 10px; padding: 12px 14px;
+  border-left: 3px solid var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.07);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.82rem; font-style: italic; color: var(--text-secondary); line-height: 1.6;
+}
+.verbatim__quote cite {
+  display: block; margin-top: 6px; font-style: normal;
+  font-size: 0.74rem; color: var(--text-muted);
+}
+.verbatim__quote cite a { color: var(--accent-cyan); }
