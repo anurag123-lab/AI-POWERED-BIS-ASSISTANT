@@ -1031,3 +1031,22 @@ h1, h2, h3, h4 {
   .app-nav__lang select { padding: 7px 26px; font-size: 0.76rem; }
   .app-nav__lang::before { left: 9px; font-size: 0.78rem; }
 }
+
+/* --- native <option> readability + onboarding options (dark on light) --- */
+select.form-input option, .form-input option { background: #ffffff; color: #1e2937; }
+.onb-choice, .onb-progress li, .onb-prompt, .onb-title, .onb-thread .a { color: #1e2937 !important; }
+
+/* --- nav bar: raise it, give it room to seat the language pill --- */
+.app-header { padding: 12px 40px; }
+.app-nav { top: 52px; }
+.app-nav__inner {
+  min-height: 46px;
+  align-items: center;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+.app-nav a { padding: 12px 15px; }
+.app-nav__lang select { padding-top: 9px; padding-bottom: 9px; }
+@media (max-width: 900px) {
+  .app-header { padding: 12px 16px; }
+}
