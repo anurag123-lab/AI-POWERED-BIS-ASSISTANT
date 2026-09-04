@@ -34,18 +34,15 @@ AREA_TITLES = {
     "supporting": "Documents & Recognised Laboratories",
 }
 
-# area -> Flask endpoint for the "View <feature>" button.
-# NOTE: these are the current endpoint names; milestone 3 renames the routes
-# (product_finder -> standards, scheme_identifier -> schemes, ...) and updates
-# this map in the same pass.
+# area -> Flask endpoint for the "View <feature>" button
 AREA_ENDPOINT = {
-    "standards": "product_finder",
-    "certification": "scheme_identifier",
-    "scheme": "scheme_identifier",
-    "licensing": "licensing_timeline",
-    "testing": "labs_view",
-    "related_standards": "product_finder",
-    "supporting": "documents_view",
+    "standards": "standards",
+    "certification": "schemes",
+    "scheme": "schemes",
+    "licensing": "licensing",
+    "testing": "testing_labs",
+    "related_standards": "standards",
+    "supporting": "documents",
 }
 
 _lock = threading.Lock()

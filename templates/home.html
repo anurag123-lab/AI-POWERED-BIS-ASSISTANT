@@ -22,7 +22,7 @@
       {% if not llm_active %}
         <span class="badge-tag badge-muted" title="OpenAI account has no credits; answers are served from the curated BIS knowledge base.">Offline engine</span>
       {% endif %}
-      <a href="{{ url_for('cases_list') }}" class="btn-pill btn-dark-outline">Switch product</a>
+      <a href="{{ url_for('my_cases') }}" class="btn-pill btn-dark-outline">Switch product</a>
     </div>
   </div>
 

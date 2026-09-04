@@ -1,103 +1,45 @@
 {% extends 'base.html' %}
+{% block title %}Photo Check - ISI Mark / Hallmark{% endblock %}
 
-{% block title %}ISI Mark & Hallmark Regulatory Photo Check — BIS Copilot{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/feature.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/photo_check.css') }}">
+{% endblock %}
 
 {% block content %}
 <div class="page-container">
-
-  <div class="page-header">
-    <div>
-      <span class="eyebrow-tag">CONSUMER COMPLIANCE TOOL</span>
-      <h1 class="page-title">ISI Mark &amp; Hallmark Photo Regulation Check</h1>
-      <p class="page-subtext">Inspects whether standard marks on products conform to mandatory printing regulations.</p>
-    </div>
-    <span class="badge-tag badge-orange">CONSUMER INSPECTOR</span>
+  <div class="feature-head">
+    <span class="eyebrow-tag">Consumer tool</span>
+    <h1 class="page-title">Photo Check &mdash; ISI Mark / Hallmark</h1>
+    <p class="page-subtext">Checks whether the <strong>visible characteristics</strong> of a mark match
+      what BIS regulations require. It does <strong>not</strong> confirm the mark is genuinely issued by
+      BIS &mdash; use BIS Care for authenticity.</p>
   </div>
 
-  <div class="cases-grid">
-
-    <!-- UPLOAD / INSPECT CARD -->
+  <div class="pc-grid">
     <div class="glass-panel">
-      <span class="eyebrow-tag">PHOTO ANALYSIS</span>
-      <h3 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin-bottom: 16px;">Inspect Product Marking Layout</h3>
-
-      <label for="markPhotoInput" style="display:block; padding: 30px; border: 2px dashed var(--border-glow); border-radius: var(--radius-md); text-align: center; margin-bottom: 20px; background: rgba(0,0,0,0.3); cursor: pointer;">
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">📸</div>
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 8px;">Click to upload or capture the ISI mark / HUID hallmark photo</p>
-        <p id="photoFileName" class="form-hint">No file selected</p>
+      <label for="pcFile" class="pc-drop">
+        <div class="pc-drop__icon">&#128247;</div>
+        <div>Click to upload or capture the ISI mark / HUID photo</div>
+        <div id="pcFileName" class="form-hint">No file selected</div>
       </label>
-      <input type="file" id="markPhotoInput" accept="image/*" capture="environment" style="display:none;"
-             onchange="document.getElementById('photoFileName').textContent = this.files[0] ? this.files[0].name : 'No file selected';">
+      <input type="file" id="pcFile" accept="image/*" capture="environment" hidden>
 
-      <div style="margin-bottom: 16px;">
-        <label class="form-label" for="markTextInput">Or enter Licence / Mark text for analysis</label>
-        <input type="text" id="markTextInput" class="form-input" value="IS 302-2-25 CM/L-8765432 HUID-A9B8C7" placeholder="e.g. IS 302-2-25 CM/L-8765432">
-      </div>
+      <label class="form-label" for="pcText">Or type the licence / mark text</label>
+      <input id="pcText" class="form-input" type="text" value="IS 302-2-3 CM/L-1234567 HUID-A9B8C7">
 
-      <button class="btn-pill btn-orange" style="width:100%; justify-content:center;" onclick="runPhotoInspection()">Run Regulatory Layout Check</button>
+      <button id="pcRun" class="btn-pill btn-orange" style="width:100%;justify-content:center;margin-top:14px;">
+        Run regulatory layout check
+      </button>
     </div>
 
-    <!-- ANALYSIS RESULTS -->
-    <div class="glass-panel" id="photoCheckResult">
-      <span class="eyebrow-tag">REGULATORY COMPLIANCE</span>
-      <h3 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin-bottom: 16px;">BIS Marking Regulations Check</h3>
-      <div id="photoResultBody">
-        <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
-          Upload a photo or enter the mark text, then run the check to see which mandatory
-          regulatory elements are present.
-        </p>
-      </div>
+    <div class="glass-panel" id="pcResult">
+      <p class="area-block__body muted">Upload a photo or enter the mark text, then run the check.</p>
     </div>
-
   </div>
-
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script>
-function esc(s) {
-  return String(s == null ? '' : s).replace(/[&<>"]/g, c => (
-    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]
-  ));
-}
-
-async function runPhotoInspection() {
-  const fileInput = document.getElementById('markPhotoInput');
-  const textInput = document.getElementById('markTextInput');
-  const payloadText = (fileInput.files[0] && fileInput.files[0].name) || textInput.value || '';
-  const body = document.getElementById('photoResultBody');
-  body.innerHTML = '<p style="color: var(--text-secondary);">Running regulatory layout check…</p>';
-
-  try {
-    const res = await fetch('/api/isi/photo-check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: payloadText })
-    });
-    const data = await res.json();
-    const a = data.analysis || {};
-
-    const rows = (a.compliance_checks || []).map(c => `
-      <li style="margin-bottom: 10px;">
-        ${c.present ? '✅' : '❌'} <strong style="color:#fff;">${esc(c.element)}</strong>
-        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">${esc(c.regulation_citation)}</div>
-      </li>
-    `).join('');
-
-    body.innerHTML = `
-      <div style="padding: 14px 16px; background: rgba(16,185,129,0.08); border-left: 4px solid var(--accent-emerald); border-radius: var(--radius-sm); margin-bottom: 16px;">
-        <strong style="color:#fff;">${esc(a.status || 'Checked')}</strong>
-        <ul style="list-style:none; margin-top: 10px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">${rows}</ul>
-      </div>
-      <div style="padding: 14px 16px; background: rgba(249,115,22,0.1); border: 1px solid var(--accent-orange); border-radius: var(--radius-sm);">
-        <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55;">${esc(a.disclaimer || '')}</p>
-        ${a.bis_care_app_url ? `<a href="${esc(a.bis_care_app_url)}" target="_blank" class="btn-pill btn-dark-outline" style="font-size: 0.78rem; margin-top: 10px;">Download BIS Care App ↗</a>` : ''}
-      </div>
-    `;
-  } catch (err) {
-    body.innerHTML = '<p style="color:#f87171;">Could not run the check. Please try again.</p>';
-  }
-}
-</script>
+<script src="{{ url_for('static', filename='js/photo_check.js') }}"></script>
 {% endblock %}

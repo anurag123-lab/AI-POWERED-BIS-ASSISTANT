@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{#
+  Base for single-purpose KB feature pages (standards / schemes / licensing /
+  documents). Child sets: page_title, page_eyebrow, page_intro, and `css`
+  (page-specific stylesheet name) is passed from the view.
+#}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/feature.css') }}">
+{% if css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/' ~ css) }}">{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="feature-head">
+    <span class="eyebrow-tag">{{ page_eyebrow }}</span>
+    <h1 class="page-title">{{ page_title }}</h1>
+    <p class="page-subtext">{{ page_intro }}</p>
+    <div class="product-chip">For your product: <strong>{{ product.display_name or case.product_name }}</strong>
+      {% if product.is_number %}&bull; {{ product.is_number }}{% endif %}</div>
+  </div>
+
+  {% block feature_body %}
+    {% for v in views %}
+      {% include 'partials/area_section.html' %}
+    {% endfor %}
+  {% endblock %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/feature.js') }}"></script>
+{% block feature_js %}{% endblock %}
+{% endblock %}

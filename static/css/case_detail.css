@@ -1,0 +1,2 @@
+/* case_detail.css - /my-cases/<id> (extends feature.css) */
+.case_detail-note { color: var(--text-muted); }

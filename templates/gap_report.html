@@ -1,56 +1,54 @@
 {% extends 'base.html' %}
+{% block title %}Documentation Gap Report - Admin{% endblock %}
 
-{% block title %}BIS Documentation Gap Report — Ministry & Admin Dashboard{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/feature.css') }}">
+{% endblock %}
 
 {% block content %}
 <div class="page-container">
-  
-  <div class="page-header">
-    <div>
-      <span class="eyebrow-tag">MINISTRY & BIS ADMIN DASHBOARD</span>
-      <h1 class="page-title">Documentation Gap & Coverage Report</h1>
-      <p class="page-subtext">Logs every query where official document evidence fell below refusal threshold (0.40), highlighting citizen questions unaddressed in published BIS text.</p>
-    </div>
-    <span class="badge-tag badge-amber">MINISTRY FEEDBACK LOOP</span>
+  <div class="feature-head">
+    <span class="eyebrow-tag">Admin / Ministry</span>
+    <h1 class="page-title">Documentation Gap Report</h1>
+    <p class="page-subtext">Every question the assistant could not answer from the available BIS
+      knowledge base is logged here (measured refusal &mdash; no hallucination). Aggregated by topic,
+      this shows what citizens ask for that published BIS material does not adequately cover.</p>
   </div>
 
-  <div class="glass-panel" style="margin-bottom: 24px;">
-    <h3 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin-bottom: 12px;">Summary of Logged Documentation Gaps</h3>
-    <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
-      By tracking unanswerable queries, BIS can identify gaps in published product manuals, FAQs, and QCO guidelines to continuously improve public transparency.
-    </p>
-  </div>
-
-  <div class="glass-panel">
-    <div style="overflow-x: auto;">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th># Log ID</th>
-            <th>Unanswered Citizen Query</th>
-            <th>Outcome</th>
-            <th>Timestamp</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for gap in gaps %}
-          <tr>
-            <td><strong style="color: var(--accent-orange);">#{{ gap.id }}</strong></td>
-            <td>{{ gap.details }}</td>
-            <td><span class="badge-tag badge-orange">Refused — below grounding threshold</span></td>
-            <td>{{ gap.timestamp }}</td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="4" style="padding: 24px; text-align: center; color: var(--text-secondary);">
-              No documentation gap refusals logged yet. All tested queries matched ground truth BIS evidence.
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  {% if topics %}
+  <div class="glass-panel" style="margin-bottom:20px;">
+    <h2 style="font-size:1.05rem;font-weight:800;color:#fff;margin-bottom:12px;">Top information gaps</h2>
+    <div class="source-table">
+      {% for topic, count in topics %}
+      <div class="source-row" style="grid-template-columns:1fr auto;">
+        <span class="source-doc">&ldquo;{{ topic }}&rdquo;</span>
+        <span class="source-loc">{{ count }} unanswered quer{{ 'y' if count == 1 else 'ies' }}</span>
+      </div>
+      {% endfor %}
     </div>
   </div>
+  {% endif %}
 
+  <div class="glass-panel" style="overflow-x:auto;">
+    <table class="data-table">
+      <thead>
+        <tr><th>#</th><th>Unanswered query</th><th>Product</th><th>Topic</th><th>When</th></tr>
+      </thead>
+      <tbody>
+        {% for g in gaps %}
+        <tr>
+          <td><strong style="color:var(--accent-orange);">#{{ g.id }}</strong></td>
+          <td>{{ g.query }}</td>
+          <td>{{ g.product }}</td>
+          <td><span class="badge-tag badge-orange">{{ g.topic }}</span></td>
+          <td>{{ g.timestamp }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align:center;color:var(--text-secondary);padding:24px;">
+          No gap refusals logged yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

@@ -1,0 +1,69 @@
+/* feature.css - shared layout for the KB-driven feature pages
+   (standards / schemes / licensing / documents / testing-labs / case detail).
+   Each page also links its own <page>.css for specifics. */
+
+.feature-head { margin-bottom: 22px; }
+.feature-head .product-chip {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.feature-head .product-chip strong { color: var(--accent-orange); }
+
+.area-block { margin-bottom: 20px; }
+.area-block__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.area-block__head h2 { font-size: 1.15rem; font-weight: 800; color: #fff; }
+.area-block__meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.area-block__body { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.65; }
+.area-block__body.muted { color: var(--text-muted); }
+.area-block__body p { margin: 0 0 10px; }
+.area-block__body ul { margin: 8px 0 10px 20px; }
+.area-block__body li { margin-bottom: 4px; }
+.area-block__body strong { color: var(--text-primary); }
+.area-block__body em { color: var(--text-secondary); }
+.area-block__body a { color: var(--accent-cyan); }
+.area-block__body code { background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 4px; font-size: 0.85em; }
+
+.save-area-btn { font-size: 0.74rem; padding: 5px 12px; }
+.save-area-btn.is-done { border-color: var(--accent-emerald); color: #34d399; }
+
+/* source table */
+.source-table {
+  margin-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+}
+.source-table__head {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.source-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: baseline;
+  padding: 6px 0;
+  font-size: 0.78rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+}
+.source-row:last-child { border-bottom: none; }
+.source-doc { color: var(--text-secondary); }
+.source-loc { color: var(--text-muted); white-space: nowrap; }
+.source-link { color: var(--accent-cyan); white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .source-row { grid-template-columns: 1fr; gap: 2px; }
+}

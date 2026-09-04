@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Licensing - {{ product.display_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/feature.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/licensing.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="feature-head">
+    <span class="eyebrow-tag">Licensing</span>
+    <h1 class="page-title">Licensing process &mdash; {{ product.display_name or case.product_name }}</h1>
+    <p class="page-subtext">The full route to a BIS licence / registration for your product, with an
+      indicative timeline and direct links to the official portals. For the documents to prepare,
+      see the <a href="{{ url_for('documents') }}">Documents</a> page.</p>
+    <div class="product-chip">Scheme: <strong>{{ product.scheme or '-' }}</strong>
+      {% if product.is_number %}&bull; {{ product.is_number }}{% endif %}</div>
+  </div>
+
+  <div class="lic-layout">
+
+    <!-- LEFT: procedure + timeline -->
+    <div class="lic-main">
+      <section class="glass-panel">
+        <div class="area-block__head">
+          <h2>Full procedure</h2>
+          <button class="save-area-btn btn-pill btn-dark-outline" data-area="licensing">
+            {{ 'Reviewed &#10003;' if (saved.get('licensing') or {}).get('status') in ('Reviewed','Completed') else 'Mark reviewed' }}
+          </button>
+        </div>
+        {% if view.body_md %}<div class="area-block__body">{{ view.body_md | md }}</div>{% endif %}
+      </section>
+
+      <section class="glass-panel lic-timeline">
+        <h2>Timeline</h2>
+        <ol class="lt-rail">
+          {% for s in steps %}
+          <li class="lt-step">
+            <span class="lt-dot">{{ s.n }}</span>
+            <div class="lt-body">
+              <div class="lt-top">
+                <strong>{{ s.title }}</strong>
+                <span class="lt-time">{{ s.timeline or 'varies' }}</span>
+              </div>
+              <p>{{ s.detail }}</p>
+            </div>
+          </li>
+          {% else %}
+          <li class="lt-step"><div class="lt-body"><p>No step-by-step timeline is recorded for this product yet.</p></div></li>
+          {% endfor %}
+        </ol>
+      </section>
+
+      {% if lic_sources %}
+      <div class="source-table glass-panel">
+        <div class="source-table__head">BIS sources for this procedure</div>
+        {% for s in lic_sources %}
+        <div class="source-row">
+          <span class="source-doc">{{ s.doc }}</span>
+          <span class="source-loc">{% if s.page %}p.{{ s.page }}{% endif %}{% if s.clause %} &bull; cl.{{ s.clause }}{% endif %}</span>
+          {% if s.url %}<a class="source-link" href="{{ s.url }}" target="_blank" rel="noopener">View Source &nearr;</a>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- RIGHT: official portals -->
+    <aside class="lic-portals">
+      <h2>Official portals</h2>
+      <p class="lic-portals__note">These open the official Government of India / BIS portals in a new tab.</p>
+      {% for p in portals %}
+      <a class="portal-card" href="{{ p.url }}" target="_blank" rel="noopener">
+        <span class="portal-card__name">{{ p.name }} &nearr;</span>
+        <span class="portal-card__desc">{{ p.desc }}</span>
+      </a>
+      {% endfor %}
+    </aside>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/feature.js') }}"></script>
+{% endblock %}

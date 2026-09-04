@@ -36,15 +36,15 @@ print(f"[STARTUP] SMTP: {'configured' if smtp_is_configured() else 'dev mode (co
 # Top navigation shown to a logged-in user with an active product workspace.
 # (endpoint, label) — kept pointing at current endpoints; M3 renames the routes.
 NAV_LINKS = [
-    ('home',               'Home'),
-    ('product_finder',     'Standards'),
-    ('scheme_identifier',  'Schemes'),
-    ('labs_view',          'Testing & Labs'),
-    ('licensing_timeline', 'Licensing'),
-    ('documents_view',     'Documents'),
-    ('checklist',          'Checklist'),
-    ('cases_list',         'My Cases'),
-    ('isi_photo_check',    'Photo Check'),
+    ('home',         'Home'),
+    ('standards',    'Standards'),
+    ('schemes',      'Schemes'),
+    ('testing_labs', 'Testing & Labs'),
+    ('licensing',    'Licensing'),
+    ('documents',    'Documents'),
+    ('checklist',    'Checklist'),
+    ('my_cases',     'My Cases'),
+    ('photo_check',  'Photo Check'),
 ]
 
 SUPPORTED_LANGS = {'en': 'English', 'hi': 'हिंदी', 'te': 'తెలుగు'}
@@ -137,6 +137,26 @@ def set_language():
 # AUTHENTICATION & USER SESSION ROUTES
 # ==============================================================================
 
+def _resume_workspace(user_id):
+    """On login, re-attach the user's most recent product workspace so they
+    skip onboarding and land straight back on their Home. Returns the case id
+    or None."""
+    conn = get_db_connection()
+    row = conn.execute(
+        "SELECT id, product_slug, city, state FROM compliance_cases "
+        "WHERE user_id = ? AND product_slug IS NOT NULL ORDER BY id DESC LIMIT 1",
+        (user_id,),
+    ).fetchone()
+    conn.close()
+    if row:
+        session['active_case_id'] = row['id']
+        session['user_city'] = row['city'] or ''
+        session['user_state'] = row['state'] or ''
+        return row['id']
+    session.pop('active_case_id', None)
+    return None
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -152,6 +172,7 @@ def login():
             session['user_role'] = user['role']
             session['user_city'] = user['city'] or ''
             session['user_state'] = user['state'] or ''
+            _resume_workspace(user['id'])
             flash(f"Welcome back, {user['full_name']}!", "success")
             return redirect(url_for('home'))
         else:
@@ -321,6 +342,7 @@ def google_auth():
     session['user_role'] = user['role']
     session['user_city'] = (user['city'] if 'city' in user.keys() else '') or ''
     session['user_state'] = (user['state'] if 'state' in user.keys() else '') or ''
+    _resume_workspace(user['id'])
     flash("Logged in via Google OAuth successfully!", "success")
     return redirect(url_for('home'))
 
@@ -497,116 +519,301 @@ def home():
     )
 
 
-@app.route('/checklist')
-def checklist():
-    """Progress tracker across the 7 areas for the active product (full build in M3)."""
-    case = _active_case()
+# ==============================================================================
+# FEATURE PAGES — each renders the ACTIVE product's BIS knowledge-base area.
+# (spec sections 7-16). Old URLs are kept as 301 redirects.
+# ==============================================================================
+
+CHECKLIST_ROWS = [
+    ("Applicable Standard",       "standards",    "standards"),
+    ("Certification Requirement", "certification", "schemes"),
+    ("BIS Scheme",               "scheme",       "schemes"),
+    ("Testing Requirement",      "testing",      "testing_labs"),
+    ("Recognised Laboratory",    "labs",         "testing_labs"),
+    ("Required Documents",       "documents",    "documents"),
+    ("Licensing Process",        "licensing",    "licensing"),
+]
+
+
+def _feature_case():
+    """Return the active workspace case dict, or None (caller redirects)."""
+    return _active_case()
+
+
+def _saved_areas(case):
+    try:
+        return json.loads(case.get('saved_areas_json') or '{}')
+    except Exception:
+        return {}
+
+
+def _area_page(template, css, areas, extra=None):
+    """Shared render for a single-area feature page."""
+    case = _feature_case()
     if not case:
         return redirect(url_for('onboarding'))
+    slug = case.get('product_slug')
+    meta = kb.product_meta(slug) or {}
+    lang = session.get('lang', 'en')
+    views = [answer_engine.answer_area(slug, a, language=lang) for a in areas]
+    ctx = dict(case=case, product=meta, slug=slug, views=views, css=css,
+               saved=_saved_areas(case))
+    if extra:
+        ctx.update(extra)
+    return render_template(template, **ctx)
+
+
+@app.route('/standards')
+def standards():
+    return _area_page('standards.html', 'standards.css', ['standards', 'related_standards'])
+
+
+@app.route('/schemes')
+def schemes():
+    return _area_page('schemes.html', 'schemes.css', ['certification', 'scheme'])
+
+
+LICENSING_PORTALS = [
+    {"key": "manakonline", "name": "BIS Manak Online",
+     "desc": "Apply for a Scheme I (ISI Mark) licence, track applications, pay fees.",
+     "url": "https://www.manakonline.in/MANAK/login"},
+    {"key": "crsbis", "name": "BIS CRS Portal",
+     "desc": "Register a model under the Compulsory Registration Scheme (Scheme II).",
+     "url": "https://www.crsbis.in/BIS/registration-page.do"},
+    {"key": "bis_overview", "name": "BIS Product Certification",
+     "desc": "Official process overview, Scheme I guidelines and fee schedule.",
+     "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"},
+    {"key": "lims", "name": "BIS Recognised Labs (LIMS)",
+     "desc": "Find a BIS-recognised laboratory in your product's scope.",
+     "url": "https://lims.bis.gov.in/home/labs/"},
+    {"key": "care", "name": "BIS Care",
+     "desc": "Verify a licence / registration number and file complaints.",
+     "url": "https://www.bis.gov.in/"},
+]
+
+
+@app.route('/licensing')
+def licensing():
+    case = _feature_case()
+    if not case:
+        return redirect(url_for('onboarding'))
+    slug = case.get('product_slug')
+    meta = kb.product_meta(slug) or {}
+    lang = session.get('lang', 'en')
+    view = answer_engine.answer_area(slug, 'licensing', language=lang)
+
+    prod = kb.get_product(slug) or {}
+    lic = prod.get('areas', {}).get('licensing', {}) or {}
+    steps = lic.get('steps', [])
+    lic_sources = lic.get('sources', [])
+
+    # Which portals are relevant: CRS for Scheme II products, Manak Online otherwise;
+    # always include the BIS overview + LIMS + Care.
+    scheme = (meta.get('scheme') or '').lower()
+    is_crs = 'scheme ii' in scheme or 'crs' in scheme or 'registration' in scheme
+    portals = [p for p in LICENSING_PORTALS
+               if p['key'] not in (('manakonline',) if is_crs else ('crsbis',))]
+
+    return render_template('licensing.html', case=case, product=meta, slug=slug,
+                           view=view, steps=steps, lic_sources=lic_sources,
+                           portals=portals, saved=_saved_areas(case))
+
+
+@app.route('/documents')
+def documents():
+    return _area_page('documents.html', 'documents.css', ['supporting'])
+
+
+@app.route('/testing-labs')
+def testing_labs():
+    case = _feature_case()
+    if not case:
+        return redirect(url_for('onboarding'))
+    slug = case.get('product_slug')
+    meta = kb.product_meta(slug) or {}
+    lang = session.get('lang', 'en')
+    testing_view = answer_engine.answer_area(slug, 'testing', language=lang)
+
+    prod = kb.get_product(slug) or {}
+    kb_labs = (prod.get('areas', {}).get('labs', {}) or {})
+    labs = []
+    for e in kb_labs.get('entries', []):
+        labs.append({
+            'name': e.get('name'), 'city': e.get('city'), 'state': e.get('state'),
+            'scope': e.get('scope'), 'email': '', 'source': 'BIS knowledge base',
+        })
+    # plus any rows from the laboratories table whose standards match
     try:
-        saved = json.loads(case.get('saved_areas_json') or '{}')
+        conn = get_db_connection()
+        rows = conn.execute("SELECT * FROM laboratories").fetchall()
+        conn.close()
+        isnum = (meta.get('is_number') or '').split(':')[0].strip()
+        for r in rows:
+            r = dict(r)
+            try:
+                stds = json.loads(r.get('supported_standards_json') or '[]')
+            except Exception:
+                stds = []
+            if not isnum or any(isnum.split()[0] in str(s) for s in stds):
+                labs.append({
+                    'name': r.get('lab_name'), 'city': r.get('city'),
+                    'state': r.get('state') or r.get('city'), 'scope': ", ".join(stds),
+                    'email': r.get('contact_email') or '', 'source': 'BIS lab directory',
+                })
     except Exception:
-        saved = {}
-    rows = [
-        ("Applicable Standard", "standards"),
-        ("Certification Requirement", "certification"),
-        ("BIS Scheme", "scheme"),
-        ("Testing Requirement", "testing"),
-        ("Recognised Laboratory", "supporting"),
-        ("Required Documents", "supporting"),
-        ("Licensing Process", "licensing"),
-    ]
-    items = [{"label": lbl, "area": ar, "status": saved.get(ar, {}).get("status", "Not Started")}
-             for lbl, ar in rows]
+        pass
+
+    labs = sort_labs_for_user(labs, case.get('city'), case.get('state'))
+    states = sorted({(l.get('state') or '').strip() for l in labs if l.get('state')})
+    return render_template('testing_labs.html', case=case, product=meta, slug=slug,
+                           testing_view=testing_view, labs=labs, lab_states=states,
+                           default_state=case.get('state'), saved=_saved_areas(case))
+
+
+@app.route('/photo-check')
+def photo_check():
+    case = _feature_case()
+    if not case:
+        return redirect(url_for('onboarding'))
+    return render_template('photo_check.html', case=case,
+                           product=kb.product_meta(case.get('product_slug')) or {})
+
+
+@app.route('/checklist')
+def checklist():
+    case = _feature_case()
+    if not case:
+        return redirect(url_for('onboarding'))
+    saved = _saved_areas(case)
+    items = [{"label": lbl, "area": ar, "endpoint": ep,
+              "status": (saved.get(ar) or {}).get("status", "Not Started")}
+             for lbl, ar, ep in CHECKLIST_ROWS]
     reviewed = sum(1 for it in items if it["status"] in ("Reviewed", "Completed"))
-    return render_template('checklist.html', case=case, items=items,
-                           reviewed=reviewed, total=len(items))
+    return render_template('checklist.html', case=case,
+                           product=kb.product_meta(case.get('product_slug')) or {},
+                           items=items, reviewed=reviewed, total=len(items))
 
-@app.route('/copilot')
-def copilot_view():
-    if not session.get('user_id'):
-        flash("Please register or log in to use Copilot.", "info")
-        return redirect(url_for('login'))
-    return render_template('copilot.html')
 
-@app.route('/cases')
-def cases_list():
-    user_id = session.get('user_id', 1)
+@app.route('/my-cases')
+def my_cases():
+    uid = session.get('user_id')
     conn = get_db_connection()
-    cases_rows = conn.execute("SELECT * FROM compliance_cases WHERE user_id = ? ORDER BY id DESC", (user_id,)).fetchall()
+    rows = conn.execute(
+        "SELECT * FROM compliance_cases WHERE user_id = ? ORDER BY id DESC", (uid,)
+    ).fetchall()
     conn.close()
     cases = []
-    for row in cases_rows:
-        item = dict(row)
-        item['checklist'] = json.loads(item['checklist_json']) if item.get('checklist_json') else []
-        cases.append(item)
-    return render_template('cases.html', cases=cases)
+    for row in rows:
+        it = dict(row)
+        saved = {}
+        try:
+            saved = json.loads(it.get('saved_areas_json') or '{}')
+        except Exception:
+            pass
+        it['reviewed'] = sum(1 for a in saved.values()
+                             if (a or {}).get('status') in ('Reviewed', 'Completed'))
+        it['total'] = len(CHECKLIST_ROWS)
+        it['is_active'] = (it['id'] == session.get('active_case_id'))
+        cases.append(it)
+    return render_template('my_cases.html', cases=cases)
 
-@app.route('/cases/<int:case_id>')
+
+@app.route('/my-cases/<int:case_id>')
 def case_detail(case_id):
+    uid = session.get('user_id')
     conn = get_db_connection()
-    row = conn.execute("SELECT * FROM compliance_cases WHERE id = ?", (case_id,)).fetchone()
+    row = conn.execute("SELECT * FROM compliance_cases WHERE id = ? AND user_id = ?",
+                       (case_id, uid)).fetchone()
     conn.close()
     if not row:
-        flash("Compliance case not found.", "error")
-        return redirect(url_for('cases_list'))
+        flash("Case not found.", "error")
+        return redirect(url_for('my_cases'))
     case = dict(row)
-    checklist = json.loads(case['checklist_json']) if case.get('checklist_json') else []
-    return render_template('case_detail.html', case=case, checklist=checklist)
+    slug = case.get('product_slug')
+    meta = kb.product_meta(slug) or {}
+    lang = session.get('lang', 'en')
+    areas = ['standards', 'related_standards', 'certification', 'scheme',
+             'testing', 'licensing', 'supporting']
+    views = [answer_engine.answer_area(slug, a, language=lang) for a in areas] if slug else []
+    saved = _saved_areas(case)
+    return render_template('case_detail.html', case=case, product=meta, slug=slug,
+                           views=views, saved=saved)
 
-# 1. FEATURE: Instant Deterministic Product Finder (900+ items)
-@app.route('/product-finder')
-def product_finder():
-    return render_template('product_finder.html')
 
-# 2. FEATURE: Nearby Testing Labs Filtered by State
-@app.route('/labs')
-@app.route('/labs-by-state')
-def labs_view():
+@app.route('/my-cases/<int:case_id>/activate', methods=['POST'])
+def activate_case(case_id):
+    uid = session.get('user_id')
     conn = get_db_connection()
-    labs_rows = conn.execute("SELECT * FROM laboratories").fetchall()
+    row = conn.execute("SELECT id, city, state FROM compliance_cases WHERE id = ? AND user_id = ?",
+                       (case_id, uid)).fetchone()
     conn.close()
-    labs = []
-    for r in labs_rows:
-        item = dict(r)
-        try:
-            item['supported_standards'] = json.loads(item.get('supported_standards_json') or '[]')
-        except Exception:
-            item['supported_standards'] = []
-        labs.append(item)
-    labs = sort_labs_for_user(labs, session.get('user_city'), session.get('user_state'))
-    return render_template('labs.html', labs=labs)
+    if row:
+        session['active_case_id'] = row['id']
+        session['user_city'] = row['city'] or ''
+        session['user_state'] = row['state'] or ''
+        flash("Switched workspace.", "success")
+    return redirect(url_for('home'))
 
-# 3. FEATURE: Photo Check for ISI Mark / Hallmark
-@app.route('/isi-photo-check')
-def isi_photo_check():
-    return render_template('photo_check.html')
 
-# 4. FEATURE: Scheme Identifier (Applies vs DOES NOT Apply + Reasons)
-@app.route('/scheme-identifier')
-def scheme_identifier():
-    return render_template('scheme_identifier.html')
-
-# 5. FEATURE: Licensing Timeline & Printable Document Checklist
-@app.route('/licensing-timeline')
-def licensing_timeline():
-    timeline_data = get_msme_licensing_timeline()
-    return render_template('licensing_timeline.html', timeline=timeline_data)
-
-# 6. FEATURE: Documentation Gap Report for BIS & Ministry
 @app.route('/admin/gap-report')
 def admin_gap_report():
     conn = get_db_connection()
-    gaps = conn.execute("SELECT * FROM audit_logs WHERE action_type = 'DOCUMENTATION_GAP_REFUSAL' ORDER BY id DESC").fetchall()
+    gaps = conn.execute(
+        "SELECT * FROM audit_logs WHERE action_type = 'DOCUMENTATION_GAP_REFUSAL' ORDER BY id DESC"
+    ).fetchall()
     conn.close()
-    return render_template('gap_report.html', gaps=gaps)
+    # aggregate by extracted topic (details JSON)
+    from collections import Counter
+    topics = Counter()
+    parsed = []
+    for g in gaps:
+        g = dict(g)
+        try:
+            d = json.loads(g.get('details') or '{}')
+        except Exception:
+            d = {}
+        g['query'] = d.get('query', g.get('details', ''))
+        g['product'] = d.get('product') or '-'
+        g['topic'] = d.get('category') or 'unknown'
+        topics[g['topic']] += 1
+        parsed.append(g)
+    top = topics.most_common(12)
+    return render_template('gap_report.html', gaps=parsed, topics=top)
 
-@app.route('/documents')
-def documents_view():
-    conn = get_db_connection()
-    docs = conn.execute("SELECT * FROM documents").fetchall()
-    conn.close()
-    return render_template('documents.html', documents=docs)
+
+# ---- old URL -> new endpoint (301) ------------------------------------------
+@app.route('/product-finder')
+def _r_product_finder():
+    return redirect(url_for('standards'), 301)
+
+@app.route('/scheme-identifier')
+def _r_scheme_identifier():
+    return redirect(url_for('schemes'), 301)
+
+@app.route('/labs')
+@app.route('/labs-by-state')
+def _r_labs():
+    return redirect(url_for('testing_labs'), 301)
+
+@app.route('/licensing-timeline')
+def _r_licensing_timeline():
+    return redirect(url_for('licensing'), 301)
+
+@app.route('/isi-photo-check')
+def _r_photo_check():
+    return redirect(url_for('photo_check'), 301)
+
+@app.route('/cases')
+def _r_cases():
+    return redirect(url_for('my_cases'), 301)
+
+@app.route('/cases/<int:case_id>')
+def _r_case_detail(case_id):
+    return redirect(url_for('case_detail', case_id=case_id), 301)
+
+@app.route('/copilot')
+def _r_copilot():
+    return redirect(url_for('home'), 301)
 
 # ==============================================================================
 # API ENDPOINTS
@@ -800,6 +1007,74 @@ def api_execute_action():
     user_id = session.get('user_id', 1)
     res = execute_user_approved_action(action_id, data, user_id)
     return jsonify(res)
+
+
+@app.route('/api/case/save-area', methods=['POST'])
+def api_case_save_area():
+    """Mark a KB area as reviewed/completed on the active case (feeds the Checklist)."""
+    if not session.get('user_id') or not session.get('active_case_id'):
+        return jsonify({'status': 'error', 'message': 'No active workspace'}), 400
+    data = request.get_json() or {}
+    area = (data.get('area') or '').strip()
+    status = (data.get('status') or 'Reviewed').strip()
+    if status not in ('Not Started', 'In Progress', 'Reviewed', 'Completed'):
+        status = 'Reviewed'
+    conn = get_db_connection()
+    row = conn.execute("SELECT saved_areas_json FROM compliance_cases WHERE id = ? AND user_id = ?",
+                       (session['active_case_id'], session['user_id'])).fetchone()
+    if not row:
+        conn.close()
+        return jsonify({'status': 'error', 'message': 'Case not found'}), 404
+    try:
+        saved = json.loads(row['saved_areas_json'] or '{}')
+    except Exception:
+        saved = {}
+    saved[area] = {'status': status, 'at': time.strftime('%Y-%m-%d %H:%M')}
+    conn.execute("UPDATE compliance_cases SET saved_areas_json = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                 (json.dumps(saved), session['active_case_id']))
+    conn.commit()
+    conn.close()
+    reviewed = sum(1 for v in saved.values() if (v or {}).get('status') in ('Reviewed', 'Completed'))
+    return jsonify({'status': 'success', 'area': area, 'new_status': status,
+                    'reviewed': reviewed, 'total': len(CHECKLIST_ROWS)})
+
+
+@app.route('/api/labs/enquiry', methods=['POST'])
+def api_labs_enquiry():
+    """Send the (user-approved) testing enquiry email to the lab, cc the user."""
+    if not session.get('user_id'):
+        return jsonify({'status': 'error', 'message': 'Authentication required'}), 401
+    data = request.get_json() or {}
+    lab_name = (data.get('lab_name') or '').strip()
+    lab_email = (data.get('lab_email') or '').strip()
+    subject = (data.get('subject') or f'BIS type-testing enquiry - {lab_name}').strip()
+    body = (data.get('body') or '').strip()
+    if not lab_email or '@' not in lab_email:
+        return jsonify({'status': 'error', 'message': 'This lab has no contact email on record. '
+                                                     'Use the "Open in Google Maps" link to find its listed contact.'}), 400
+
+    from services.mailer import send_email
+    user_email = session.get('user_email')
+    to_list = lab_email + (f", {user_email}" if user_email else "")
+    ok, detail = send_email(to_list, subject, body)
+
+    if session.get('active_case_id'):
+        try:
+            conn = get_db_connection()
+            conn.execute("UPDATE compliance_cases SET lab_enquiry_status = 'Sent' WHERE id = ?",
+                         (session['active_case_id'],))
+            conn.execute("INSERT INTO audit_logs (user_id, action_type, details) VALUES (?, ?, ?)",
+                         (session['user_id'], 'LAB_ENQUIRY_SENT',
+                          json.dumps({'lab': lab_name, 'email': lab_email, 'ok': ok, 'detail': detail})))
+            conn.commit()
+            conn.close()
+        except Exception:
+            pass
+
+    if ok:
+        return jsonify({'status': 'success', 'lab_name': lab_name, 'detail': detail,
+                        'cc_user': bool(user_email)})
+    return jsonify({'status': 'error', 'message': f'Could not send the enquiry ({detail}).'}), 502
 
 if __name__ == '__main__':
     print("\n=======================================================")

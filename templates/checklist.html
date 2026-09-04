@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Checklist - {{ product.display_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/checklist.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="feature-head">
+    <span class="eyebrow-tag">Checklist</span>
+    <h1 class="page-title">BIS Compliance Checklist &mdash; {{ product.display_name or case.product_name }}</h1>
+    <p class="page-subtext">Your progress across the seven areas. Mark an area "reviewed" from its
+      feature page and it updates here. This is a tracker &mdash; it does not generate the PDF.</p>
+    <div class="checklist-count"><span id="checklistCount">{{ reviewed }} / {{ total }}</span> reviewed</div>
+  </div>
+
+  <ol class="checklist">
+    {% for it in items %}
+    <li class="checklist-row status-{{ it.status | lower | replace(' ', '-') }}">
+      <span class="ck-label">{{ it.label }}</span>
+      <span class="ck-status">{{ it.status }}</span>
+      <a class="ck-open" href="{{ url_for(it.endpoint) }}">Open &rarr;</a>
+    </li>
+    {% endfor %}
+  </ol>
+
+  <div class="checklist-foot">
+    <a class="btn-pill btn-dark-outline" href="{{ url_for('my_cases') }}">All my cases</a>
+  </div>
+</div>
+{% endblock %}

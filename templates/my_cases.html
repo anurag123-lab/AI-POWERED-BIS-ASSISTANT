@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}My Cases - BIS Assistant{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/my_cases.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="feature-head" style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;">
+    <div>
+      <span class="eyebrow-tag">My Cases</span>
+      <h1 class="page-title">Your product journeys</h1>
+      <p class="page-subtext">One case per product. Each keeps its own standards, scheme, tests,
+        labs, licensing, documents and checklist progress.</p>
+    </div>
+    <a class="btn-pill btn-orange" href="{{ url_for('onboarding') }}">+ Start another product</a>
+  </div>
+
+  <div class="case-grid">
+    {% for c in cases %}
+    <article class="case-card {{ 'is-active' if c.is_active }}">
+      <div class="case-card__head">
+        <h3>{{ c.product_name }}</h3>
+        {% if c.is_active %}<span class="badge-tag badge-orange">Active</span>{% endif %}
+      </div>
+      <div class="case-card__meta">
+        {{ c.user_type }} &bull; {{ c.city }}, {{ c.state }}
+        {% if c.is_number %}<br>{{ c.is_number }}{% endif %}
+      </div>
+      <div class="case-progress">
+        <div class="case-progress__bar"><span style="width: {{ (c.reviewed / c.total * 100) | round }}%;"></span></div>
+        <span>{{ c.reviewed }} / {{ c.total }} reviewed</span>
+      </div>
+      <div class="case-card__actions">
+        <a class="btn-pill btn-dark-outline" href="{{ url_for('case_detail', case_id=c.id) }}">Open case</a>
+        {% if not c.is_active %}
+        <form method="POST" action="{{ url_for('activate_case', case_id=c.id) }}">
+          <button class="btn-pill btn-orange" type="submit">Make active</button>
+        </form>
+        {% endif %}
+        <a class="btn-pill btn-dark-outline" href="{{ url_for('get_case_pdf', case_id=c.id) }}">PDF</a>
+      </div>
+    </article>
+    {% else %}
+    <p class="case-empty">No cases yet. <a href="{{ url_for('onboarding') }}">Set up your first product</a>.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

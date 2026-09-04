@@ -1,0 +1,15 @@
+/* my_cases.css - /my-cases */
+.case-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.case-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; }
+.case-card.is-active { border-color: var(--border-glow); box-shadow: var(--shadow-glow); }
+.case-card__head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.case-card__head h3 { font-size: 1.05rem; font-weight: 800; color: #fff; }
+.case-card__meta { font-size: 0.8rem; color: var(--text-secondary); margin: 8px 0 14px; line-height: 1.5; }
+.case-progress { font-size: 0.76rem; color: var(--text-muted); margin-bottom: 14px; }
+.case-progress__bar { height: 6px; border-radius: 9999px; background: rgba(255,255,255,0.1); overflow: hidden; margin-bottom: 5px; }
+.case-progress__bar span { display: block; height: 100%; background: var(--accent-orange); }
+.case-card__actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.case-card__actions .btn-pill { font-size: 0.76rem; padding: 6px 12px; }
+.case-card__actions form { display: inline; }
+.case-empty { font-size: 0.9rem; color: var(--text-muted); }
+.case-empty a { color: var(--accent-orange); }

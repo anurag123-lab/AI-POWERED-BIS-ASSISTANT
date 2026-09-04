@@ -1,0 +1,34 @@
+{# One KB area rendered on a feature page. Expects `v` = answer_area dict and
+   optional `saved` (dict of area->{status}). #}
+{% set st = (saved.get(v.area) or {}).get('status') if saved is defined else None %}
+<section class="area-block glass-panel" id="area-{{ v.area }}" data-area="{{ v.area }}">
+  <div class="area-block__head">
+    <h2>{{ v.title }}</h2>
+    <div class="area-block__meta">
+      {% if v.llm_used %}<span class="badge-tag badge-emerald">AI-refined</span>
+      {% else %}<span class="badge-tag badge-muted">From BIS KB</span>{% endif %}
+      <button class="save-area-btn btn-pill btn-dark-outline" data-area="{{ v.area }}">
+        {{ 'Reviewed ✓' if st in ('Reviewed','Completed') else 'Mark reviewed' }}
+      </button>
+    </div>
+  </div>
+
+  {% if v.refused %}
+    <p class="area-block__body muted">{{ v.body_md }}</p>
+  {% else %}
+    <div class="area-block__body">{{ v.body_md | md }}</div>
+  {% endif %}
+
+  {% if v.sources %}
+  <div class="source-table">
+    <div class="source-table__head">BIS sources</div>
+    {% for s in v.sources %}
+    <div class="source-row">
+      <span class="source-doc">{{ s.doc }}</span>
+      <span class="source-loc">{% if s.page %}p.{{ s.page }}{% endif %}{% if s.clause %} &bull; cl.{{ s.clause }}{% endif %}</span>
+      {% if s.url %}<a class="source-link" href="{{ s.url }}" target="_blank" rel="noopener">View Source &nearr;</a>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}Testing & Labs - {{ product.display_name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/feature.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/testing_labs.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="feature-head">
+    <span class="eyebrow-tag">Testing &amp; Labs</span>
+    <h1 class="page-title">Testing requirements &amp; recognised laboratories</h1>
+    <p class="page-subtext">The tests your product must pass, and BIS-recognised labs that can run them.</p>
+    <div class="product-chip">For your product: <strong>{{ product.display_name or case.product_name }}</strong>
+      {% if product.is_number %}&bull; {{ product.is_number }}{% endif %}</div>
+  </div>
+
+  {% set v = testing_view %}
+  {% include 'partials/area_section.html' %}
+
+  <section class="labs-section">
+    <div class="labs-section__head">
+      <h2>Recognised laboratories</h2>
+      <label class="lab-filter">
+        <span>State</span>
+        <select id="labStateFilter">
+          <option value="">All states</option>
+          {% for s in lab_states %}
+            <option value="{{ s }}" {{ 'selected' if s == default_state }}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <div id="labGrid" class="lab-grid">
+      {% for lab in labs %}
+      <article class="lab-card" data-state="{{ lab.state or '' }}">
+        <div class="lab-card__body">
+          <h3>{{ lab.name }}</h3>
+          <div class="lab-card__loc">{{ [lab.city, lab.state] | select | join(', ') }}</div>
+          {% if lab.scope %}<div class="lab-card__scope">{{ lab.scope }}</div>{% endif %}
+          <span class="badge-tag badge-muted">{{ lab.source }}</span>
+        </div>
+        <div class="lab-card__actions">
+          <a class="btn-pill btn-dark-outline lab-maps"
+             href="https://www.google.com/maps/search/?api=1&query={{ (lab.name ~ ' ' ~ (lab.city or '') ~ ' ' ~ (lab.state or '')) | urlencode }}"
+             target="_blank" rel="noopener">Open in Google Maps</a>
+          <button class="btn-pill btn-dark-outline lab-directions"
+                  data-dest="{{ (lab.name ~ ' ' ~ (lab.city or '') ~ ' ' ~ (lab.state or '')) | urlencode }}">
+            Directions from my location
+          </button>
+          {% if lab.email %}
+          <button class="btn-pill btn-orange lab-enquiry"
+                  data-name="{{ lab.name }}" data-email="{{ lab.email }}">
+            Draft enquiry &nearr;
+          </button>
+          {% endif %}
+        </div>
+      </article>
+      {% else %}
+      <p class="lab-empty">No recognised laboratory is listed for this product yet. Use the
+        <a href="https://lims.bis.gov.in/home/labs/" target="_blank" rel="noopener">BIS LIMS directory</a>
+        and confirm the standard is in the lab's recognised scope.</p>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<!-- Enquiry modal -->
+<div id="enquiryModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-box__head">
+      <div>
+        <span class="badge-tag badge-amber">Approval required before sending</span>
+        <h3>Laboratory testing enquiry</h3>
+      </div>
+      <button type="button" class="modal-close" id="enquiryClose">&times;</button>
+    </div>
+    <p class="modal-note">Review the draft. On send, this email goes to the lab and a copy to
+      <strong>{{ session.get('user_email') }}</strong>. No email leaves without your approval.</p>
+
+    <label class="form-label">To</label>
+    <div id="enqTo" class="modal-static"></div>
+    <label class="form-label" for="enqSubject">Subject</label>
+    <input id="enqSubject" class="form-input" type="text">
+    <label class="form-label" for="enqBody">Message</label>
+    <textarea id="enqBody" class="form-input" rows="9"></textarea>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-pill btn-dark-outline" id="enquiryCancel">Cancel</button>
+      <button type="button" class="btn-pill btn-orange" id="enquirySend">Approve &amp; send enquiry</button>
+    </div>
+  </div>
+</div>
+
+<!-- Completion card -->
+<div id="enquiryDone" class="modal-overlay">
+  <div class="modal-box completion-card">
+    <div class="completion-tick">&#10003;</div>
+    <h3>Enquiry submitted<span id="doneLab"></span></h3>
+    <p id="doneCopy">A copy has been emailed to you.</p>
+    <div class="modal-actions">
+      <a class="btn-pill btn-dark-outline" href="{{ url_for('testing_labs') }}">Back to Labs</a>
+      <a class="btn-pill btn-orange" href="{{ url_for('home') }}">Go to Home</a>
+    </div>
+    <p class="completion-redirect">Returning to Labs in <span id="rdct">4</span>s&hellip;</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/feature.js') }}"></script>
+<script src="{{ url_for('static', filename='js/testing_labs.js') }}"></script>
+{% endblock %}
