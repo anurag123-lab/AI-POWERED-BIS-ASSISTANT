@@ -78,17 +78,10 @@
           return "<li>" + line + "</li>";
         }).join("") + "</ul></details>";
     }
-    var exBlock = "";
-    if (a.excerpts && a.excerpts.length) {
-      exBlock = '<div class="verbatim__head">From the BIS document — verbatim</div>' +
-        a.excerpts.map(function (ex) {
-          return '<blockquote class="verbatim__quote">“' + esc(ex.text) + '”<cite>' +
-            esc(ex.doc || "") + (ex.page ? " &bull; page " + esc(ex.page) : "") + "</cite></blockquote>";
-        }).join("");
-    }
     var html =
       '<div class="answer-card__head"><h3>' + esc(a.title) + "</h3>" + badge + "</div>" +
-      '<div class="answer-card__body">' + md(a.body_md) + "</div>" + exBlock + srcBlock;
+      '<div class="answer-card__main"><div class="answer-card__body">' + md(a.body_md) +
+      "</div>" + srcBlock + "</div>";
     if (!el) {
       el = document.createElement("article");
       el.className = "answer-card";
@@ -115,6 +108,12 @@
     // product_info / other direct orchestrator answer
     if (data.action === "answer" && data.response && !data.answers && data.mode == null) {
       bubble("bot", md(data.response));
+      loadHistory();
+      return;
+    }
+    if (data.mode === "general") {
+      var g = data.answer || {};
+      bubble("bot", md(g.body_md || "I couldn't answer that."), "general");
       loadHistory();
       return;
     }

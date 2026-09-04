@@ -226,8 +226,14 @@ def _route_area(question):
 
 
 def _is_broad(question):
-    q = (question or "").lower()
-    return any(h in q for h in _BROAD_HINTS) or len(q.split()) <= 4
+    q = " " + (question or "").lower().strip() + " "
+    if len(q.split()) <= 3:
+        return True
+    for h in _BROAD_HINTS:
+        # word-boundary match so "all" doesn't fire inside "small"
+        if re.search(r"(?<![a-z])" + re.escape(h) + r"(?![a-z])", q):
+            return True
+    return False
 
 
 def _log_gap(query, product_slug, category, max_score):
@@ -255,22 +261,70 @@ def _topic_of(question):
     return (q.split()[0] if q.split() else "unknown")
 
 
-def answer_question(slug, question, location=None, language="en"):
+_GENERAL_SYSTEM = (
+    "You are a knowledgeable assistant for Indian manufacturers, importers and "
+    "consumers dealing with BIS (Bureau of Indian Standards) certification. The "
+    "user is currently working on the product: {product}. Answer their question "
+    "clearly and practically. The curated BIS knowledge base did not cover it, so "
+    "you MAY answer from general knowledge and industry practice. Begin the reply "
+    "with the line: _(General guidance - not quoted from an official BIS document. "
+    "Verify specifics on bis.gov.in.)_  Keep Indian Standard numbers exact. Be "
+    "concise (a short paragraph or a few bullets)."
+)
+
+
+def general_answer(question, product_name=None, language="en"):
+    """A normal-chatbot answer for questions the BIS knowledge base does not
+    cover. Used only by the Home assistant (allow_general=True)."""
+    if not llm.llm_available():
+        return {
+            "title": "Not in the BIS knowledge base",
+            "body_md": _maybe_translate(
+                "I could not find this in the available BIS sources, and the AI "
+                "assistant is offline right now, so I will not guess. Try asking "
+                "about your product's standard, scheme, testing, labs, licensing "
+                "or documents.", language),
+            "sources": [], "general": True,
+        }
+    out = llm.chat(_GENERAL_SYSTEM.format(product=product_name or "a BIS-regulated product"),
+                   question, temperature=0.3, max_tokens=550)
+    if out == llm.UNAVAILABLE or not out.strip():
+        return {
+            "title": "Couldn't answer that",
+            "body_md": "The assistant could not answer that just now. Please try again.",
+            "sources": [], "general": True,
+        }
+    return {
+        "title": "Assistant",
+        "body_md": _maybe_translate(out.strip(), language),
+        "sources": [], "general": True,
+    }
+
+
+def answer_question(slug, question, location=None, language="en", allow_general=False):
     """
     Intent-routed answer.
       mode 'seven'   -> broad certification/compliance question, returns 7 cards
       mode 'area'    -> narrow question, returns one (or few) area answers
+      mode 'general' -> not in the BIS KB; Home assistant answers from general
+                        knowledge (only when allow_general=True)
       mode 'refused' -> outside the BIS knowledge base, logged as a gap
     """
     question = (question or "").strip()
 
-    # No product context and none inferable -> measured refusal (spec 18/20).
+    # No product context and none inferable.
     if not slug:
         slug = kb.match_product(question)
     if not slug:
         chunks = fanout_7_searches(question) if question else []
         max_score = max((c["relevance_score"] for c in chunks), default=0.0)
         _log_gap(question, None, _topic_of(question), max_score)
+        if allow_general:
+            return {
+                "mode": "general", "product": None, "language": language,
+                "answer": general_answer(question, None, language),
+                "grounding_score": round(max_score, 3),
+            }
         return {
             "mode": "refused",
             "product": None,
@@ -295,7 +349,23 @@ def answer_question(slug, question, location=None, language="en"):
     meta = kb.product_meta(slug) or {}
     areas = _route_area(question)
 
-    if _is_broad(question) or not areas:
+    if _is_broad(question):
+        return {
+            "mode": "seven",
+            "product": slug,
+            "product_name": meta.get("display_name", slug),
+            "language": language,
+            "answers": answer_seven(slug, location, language, use_llm=True),
+        }
+
+    if not areas:
+        # A specific question that doesn't map to any of the 7 areas.
+        if allow_general:
+            return {
+                "mode": "general", "product": slug,
+                "product_name": meta.get("display_name", slug), "language": language,
+                "answer": general_answer(question, meta.get("display_name", slug), language),
+            }
         return {
             "mode": "seven",
             "product": slug,

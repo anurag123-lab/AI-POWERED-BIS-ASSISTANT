@@ -723,3 +723,82 @@ select.form-input {
   }
   .page-title, .page-subtext, h1, h2, h3, p, span, td, th { color: #000 !important; }
 }
+
+/* ==========================================================================
+   UI POLISH  (typography rhythm, gradients, structure)
+   ========================================================================== */
+:root {
+  --grad-accent: linear-gradient(135deg, #ff8a3d 0%, #ff5500 55%, #ff3d81 120%);
+  --grad-heading: linear-gradient(180deg, #ffffff 0%, #c9d2e3 100%);
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.006em;
+}
+
+h1, h2, h3, .page-title, .workspace-header h1, .onb-title, .feature-head .page-title,
+.auth-form-card h2, .hub-hero h1 {
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* gradient page titles */
+.page-title, .workspace-header h1, .hub-hero h1 {
+  background: var(--grad-heading);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* gradient primary buttons */
+.btn-orange, .btn-primary {
+  background: var(--grad-accent);
+  background-size: 140% 140%;
+  transition: background-position .35s ease, transform .2s ease, box-shadow .25s ease;
+}
+.btn-orange:hover, .btn-primary:hover {
+  background-position: 100% 100%;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(255, 85, 0, 0.45);
+}
+.btn-orange:active, .btn-primary:active { transform: translateY(0) scale(.985); }
+
+.btn-pill { border-radius: 9999px; letter-spacing: 0.01em; }
+
+/* eyebrow + kicker sharper */
+.eyebrow-tag { font-weight: 800; letter-spacing: 0.14em; }
+
+/* cards: deeper, softer elevation + hairline top light */
+.glass-panel, .answer-card, .area-block, .lab-card, .hub-card, .case-card,
+.chat-panel, .home-sidebar, .onb-card, .auth-form-card {
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 18px 40px -18px rgba(0,0,0,0.65);
+}
+.glass-panel:hover, .hub-card:hover { box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 22px 48px -18px rgba(0,0,0,0.7); }
+
+/* consistent focus ring */
+a:focus-visible, button:focus-visible, .btn-pill:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent-orange);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* app nav: active tab gets a gradient underline */
+.app-nav a.is-active { border-bottom-color: transparent; position: relative; }
+.app-nav a.is-active::after {
+  content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 2px;
+  background: var(--grad-accent); border-radius: 2px;
+}
+
+/* section headings on feature/home pages */
+.page-header, .feature-head, .workspace-header, .hub-hero { position: relative; }
+.page-subtext { max-width: 68ch; }
+
+/* scrollbars (webkit) */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 9999px; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+*::-webkit-scrollbar-track { background: transparent; }

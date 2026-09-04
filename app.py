@@ -954,17 +954,19 @@ def api_chat():
     product_id = session.get('active_case_id')
     orch = ai_orchestrator.orchestrate(product_id, message, 'home', language)
 
-    # Navigation / product-info / unsupported -> return the orchestrator verdict.
-    if orch['action'] != 'answer' or orch.get('intent') == 'product_info':
+    # A clear service-routing intent -> let the orchestrator navigate the user.
+    if orch['action'] == 'navigate' or orch.get('intent') == 'product_info':
         return jsonify({'status': 'success', **orch})
 
-    # Overview -> full KB result (mode seven/area) so Home can rebuild the cards.
+    # Everything else: the Home assistant answers - from the BIS KB when it can
+    # (mode seven / area), otherwise from general Gemini knowledge (mode general).
     case = _active_case()
     slug = case.get('product_slug') if case else None
     location = {'city': case.get('city'), 'state': case.get('state')} if case else None
-    result = answer_engine.answer_question(slug, message, location=location, language=language)
+    result = answer_engine.answer_question(slug, message, location=location,
+                                           language=language, allow_general=True)
     _save_search_history(message, result)
-    payload = {'status': 'success', 'intent': orch['intent'], 'action': 'answer'}
+    payload = {'status': 'success', 'intent': orch.get('intent'), 'action': 'answer'}
     payload.update(result)
     payload.setdefault('refusal_threshold', answer_engine.MEASURED_REFUSAL_THRESHOLD)
     return jsonify(payload)

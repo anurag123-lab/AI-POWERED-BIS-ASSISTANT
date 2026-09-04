@@ -1,4 +1,4 @@
-{# One of the 7 source-backed answer cards. Expects `a` = answer dict. #}
+{# One of the 7 source-backed answer cards (full-width horizontal box). Expects `a` = answer dict. #}
 <article class="answer-card" id="card-{{ a.area }}" data-area="{{ a.area }}">
   <div class="answer-card__head">
     <h3>{{ a.title }}</h3>
@@ -6,36 +6,26 @@
     <span class="badge-tag {{ 'badge-emerald' if bl.ai else 'badge-muted' }}"
           title="Grounded in BIS sources; AI only rephrases and connects within that context.">
       {{ bl.bis }}% BIS{% if bl.ai %} &middot; {{ bl.ai }}% AI{% endif %}</span>
+    {% if a.feature_endpoint and a.feature_endpoint != 'home' %}
+    <a class="answer-card__cta" href="{{ url_for(a.feature_endpoint) }}">Open {{ a.title }} &rarr;</a>
+    {% endif %}
   </div>
 
-  <div class="answer-card__body">{{ a.body_md | md }}</div>
+  <div class="answer-card__main">
+    <div class="answer-card__body">{{ a.body_md | md }}</div>
 
-  {% if a.excerpts %}
-  <div class="verbatim">
-    <div class="verbatim__head">From the BIS document &mdash; verbatim</div>
-    {% for ex in a.excerpts %}
-    <blockquote class="verbatim__quote">&ldquo;{{ ex.text }}&rdquo;
-      <cite>{{ ex.doc }}{% if ex.page %} &bull; page {{ ex.page }}{% endif %}</cite>
-    </blockquote>
-    {% endfor %}
+    {% if a.sources %}
+    <details class="answer-card__sources">
+      <summary>{{ a.sources | length }} BIS source{{ '' if a.sources|length == 1 else 's' }}</summary>
+      <ul>
+        {% for s in a.sources %}
+        <li>
+          {{ s.doc }}{% if s.page %} &bull; p.{{ s.page }}{% endif %}{% if s.clause %} &bull; cl.{{ s.clause }}{% endif %}
+          {% if s.url %} &mdash; <a href="{{ s.url }}" target="_blank" rel="noopener">View Source &nearr;</a>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
   </div>
-  {% endif %}
-
-  {% if a.sources %}
-  <details class="answer-card__sources">
-    <summary>{{ a.sources | length }} BIS source{{ '' if a.sources|length == 1 else 's' }}</summary>
-    <ul>
-      {% for s in a.sources %}
-      <li>
-        {{ s.doc }}{% if s.page %} &bull; p.{{ s.page }}{% endif %}{% if s.clause %} &bull; cl.{{ s.clause }}{% endif %}
-        {% if s.url %} &mdash; <a href="{{ s.url }}" target="_blank" rel="noopener">View Source &nearr;</a>{% endif %}
-      </li>
-      {% endfor %}
-    </ul>
-  </details>
-  {% endif %}
-
-  {% if a.feature_endpoint and a.feature_endpoint != 'home' %}
-  <a class="answer-card__cta" href="{{ url_for(a.feature_endpoint) }}">View {{ a.title }} &rarr;</a>
-  {% endif %}
 </article>
