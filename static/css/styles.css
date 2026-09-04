@@ -981,7 +981,8 @@ h1, h2, h3, h4 {
 .pc-disclaimer a { color: #5566cc !important; -webkit-text-fill-color: #5566cc !important; }
 
 /* --- language selector: floating pill, top-right corner of the nav layer --- */
-.app-nav { position: relative; }
+/* keep the nav sticky (position:sticky is a containing block for the pill) */
+.app-nav { position: sticky; }
 .app-nav__inner { padding-right: 160px; }
 .app-nav__lang {
   position: absolute;
@@ -1037,16 +1038,28 @@ select.form-input option, .form-input option { background: #ffffff; color: #1e29
 .onb-choice, .onb-progress li, .onb-prompt, .onb-title, .onb-thread .a { color: #1e2937 !important; }
 
 /* --- nav bar: raise it, give it room to seat the language pill --- */
-.app-header { padding: 12px 40px; }
-.app-nav { top: 52px; }
+.app-header { padding: 11px 40px; }
+/* nav sticks flush under the (~60px) header - no gap at rest, no overlap on scroll */
+.app-nav { top: 60px; }
 .app-nav__inner {
-  min-height: 46px;
+  min-height: 44px;
   align-items: center;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
-.app-nav a { padding: 12px 15px; }
-.app-nav__lang select { padding-top: 9px; padding-bottom: 9px; }
+.app-nav a { padding: 11px 15px; }
+.app-nav__lang select { padding-top: 8px; padding-bottom: 8px; }
 @media (max-width: 900px) {
-  .app-header { padding: 12px 16px; }
+  .app-header { padding: 11px 16px; }
+  .app-nav { top: 58px; }
+}
+
+/* screen-reader-only labels (was only defined in auth.css -> "Language" was
+   showing next to the selector on nav pages) */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
 }
