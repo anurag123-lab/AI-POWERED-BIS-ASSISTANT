@@ -1,0 +1,120 @@
+/* auth.css — register / verify / login screens.
+   Extends the shared design system in styles.css (tokens, buttons, .form-input). */
+
+.auth-split {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 48px;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 48px 40px 72px;
+  align-items: center;
+  min-height: calc(100vh - 160px);
+}
+
+.auth-brand-side { padding-right: 12px; }
+.auth-brand-side h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  margin: 14px 0 18px;
+  letter-spacing: -0.02em;
+}
+.auth-brand-side p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 460px;
+  line-height: 1.6;
+  margin-bottom: 34px;
+}
+
+.auth-stat-pills { display: flex; gap: 30px; flex-wrap: wrap; }
+.auth-stat-pills .stat-value { font-size: 1.5rem; font-weight: 800; color: #fff; }
+.auth-stat-pills .stat-value.is-accent { color: var(--accent-orange); }
+.auth-stat-pills .stat-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 4px;
+}
+
+.auth-form-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 480px;
+  justify-self: end;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+.auth-form-card h2 { font-size: 1.7rem; font-weight: 800; color: #fff; margin-top: 4px; }
+.auth-sub { font-size: 0.85rem; color: var(--text-muted); margin: 4px 0; }
+
+/* Stepper (Account -> Verify) */
+.auth-stepper { display: flex; align-items: center; gap: 6px; margin: 18px 0 24px; }
+.auth-step { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+.auth-step__dot {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 0.78rem; font-weight: 800;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+.auth-step__label {
+  font-size: 0.74rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.auth-step.is-active .auth-step__dot {
+  background: var(--accent-orange); border-color: var(--accent-orange);
+  color: #fff; box-shadow: 0 0 0 3px rgba(255, 85, 0, 0.18);
+}
+.auth-step.is-active .auth-step__label { color: #fff; }
+.auth-step.is-done .auth-step__dot {
+  background: rgba(255, 85, 0, 0.16); border-color: var(--accent-orange);
+  color: var(--accent-orange);
+}
+.auth-step__sep { width: 18px; height: 1px; background: var(--border-subtle); flex: 0 0 auto; }
+
+.auth-actions { display: flex; gap: 12px; margin-top: 22px; }
+.auth-actions .btn-pill { flex: 1; }
+
+.auth-google { width: 100%; justify-content: center; margin-top: 16px; text-decoration: none; }
+
+.auth-divider {
+  display: flex; align-items: center; gap: 12px; margin: 18px 0;
+  font-size: 0.72rem; font-weight: 700; color: var(--text-muted);
+}
+.auth-divider::before, .auth-divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--border-subtle);
+}
+
+.auth-alt-link { text-align: center; margin-top: 22px; font-size: 0.85rem; color: var(--text-secondary); }
+.auth-alt-link a { color: var(--accent-orange); font-weight: 600; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;
+}
+
+@media (max-width: 900px) {
+  .auth-split {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 32px 20px 56px;
+    min-height: 0;
+  }
+  .auth-brand-side { padding-right: 0; }
+  .auth-brand-side h1 { font-size: 2.1rem; }
+  .auth-form-card { justify-self: stretch; max-width: none; max-height: none; overflow: visible; }
+  .auth-stepper { flex-wrap: wrap; }
+}

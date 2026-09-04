@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.display_name or 'BIS Workspace' }} - BIS Assistant{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+  <div class="workspace-header">
+    <div>
+      <span class="eyebrow-tag">Your BIS Workspace</span>
+      <h1>{{ product.display_name or case.product_name }}</h1>
+      <p class="ws-meta">
+        {{ case.user_type }} &bull; {{ case.city }}, {{ case.state }}
+        {% if case.is_number %}&bull; {{ case.is_number }}{% endif %}
+      </p>
+    </div>
+    <div class="ws-actions">
+      {% if not llm_active %}
+        <span class="badge-tag badge-muted" title="OpenAI account has no credits; answers are served from the curated BIS knowledge base.">Offline engine</span>
+      {% endif %}
+      <a href="{{ url_for('cases_list') }}" class="btn-pill btn-dark-outline">Switch product</a>
+    </div>
+  </div>
+
+  <div class="home-layout">
+
+    <!-- LEFT: search history -->
+    <aside class="home-sidebar">
+      <div class="sidebar-head">
+        <span>History</span>
+        <button id="clearHistory" class="link-btn" type="button">Clear</button>
+      </div>
+      <ul id="historyList" class="history-list">
+        {% for h in history %}
+          <li class="history-item" data-id="{{ h.id }}">
+            <span class="hi-q">{{ h.query }}</span>
+            <span class="hi-meta">{{ h.mode }}{% if h.area %} &bull; {{ h.area }}{% endif %}</span>
+          </li>
+        {% else %}
+          <li class="history-empty">Ask the assistant anything about your product - your questions appear here.</li>
+        {% endfor %}
+      </ul>
+    </aside>
+
+    <!-- RIGHT: assistant + 7 answers -->
+    <main class="home-main">
+
+      <section class="chat-panel">
+        <div class="chat-panel__head">
+          <strong>AI Assistant</strong>
+          <span class="chat-panel__sub">Ask anything about {{ product.display_name or 'your product' }} - standards, scheme, tests, labs, documents, licensing.</span>
+        </div>
+        <div id="chatThread" class="chat-thread"></div>
+        <form id="chatForm" class="chat-bar">
+          <input id="chatInput" class="form-input" autocomplete="off"
+                 placeholder="e.g. What do I need for BIS certification?  |  Which lab can test my product?">
+          <button type="submit" class="btn-pill btn-orange">Ask</button>
+        </form>
+        <div class="chat-suggest">
+          {% for s in ["What standard applies to my product?",
+                       "What do I need for BIS certification?",
+                       "Which BIS scheme applies to me?",
+                       "Where can I get my product tested?",
+                       "What documents do I need?"] %}
+            <button type="button" class="suggest-chip">{{ s }}</button>
+          {% endfor %}
+        </div>
+      </section>
+
+      <div id="answerArea" class="answer-grid">
+        {% for a in seven %}
+          {% include 'partials/answer_card.html' %}
+        {% endfor %}
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script id="sevenData" type="application/json">{{ seven | tojson }}</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+{% endblock %}

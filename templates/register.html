@@ -1,15 +1,15 @@
 {% extends 'auth_layout.html' %}
 {% set active_step = 1 %}
 
-{% block title %}Create Account · Step 1 — BIS Compliance Copilot{% endblock %}
+{% block title %}Create Account - BIS Assistant{% endblock %}
 
 {% block auth_form %}
   <span class="eyebrow-tag">Get started</span>
   <h2>Create your account</h2>
-  <p class="auth-sub">Step 1 of 3 — your login details.</p>
+  <p class="auth-sub">Just your name, email and a password. You'll pick your product next.</p>
 
-  <a href="{{ url_for('google_auth') }}" class="btn-pill btn-dark-outline" style="width:100%; margin-top:16px; text-decoration:none;">
-    <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right:8px;">
+  <a href="{{ url_for('google_auth') }}" class="btn-pill btn-dark-outline auth-google">
+    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
       <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
       <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
       <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.21 0 10.05 0 12s.47 3.79 1.29 5.42l3.99-3.15z"/>
@@ -26,12 +26,6 @@
       <input class="form-input" id="full_name" type="text" name="full_name"
              value="{{ data.full_name or '' }}" required placeholder="Enter your full name">
       {% if errors.full_name %}<div class="form-error">{{ errors.full_name }}</div>{% endif %}
-    </div>
-
-    <div class="form-field">
-      <label class="form-label" for="company_name">Company / business name</label>
-      <input class="form-input" id="company_name" type="text" name="company_name"
-             value="{{ data.company_name or '' }}" placeholder="Optional">
     </div>
 
     <div class="form-field">
@@ -56,7 +50,7 @@
     </div>
 
     <div class="auth-actions">
-      <button type="submit" class="btn-pill btn-orange">Continue &rarr;</button>
+      <button type="submit" class="btn-pill btn-orange">Create account &rarr;</button>
     </div>
   </form>
 

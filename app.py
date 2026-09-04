@@ -33,56 +33,105 @@ _llm_ok, _llm_detail = llm.check_connectivity()
 print(f"[STARTUP] OpenAI: {'connected' if _llm_ok else 'OFFLINE'} - {_llm_detail}")
 print(f"[STARTUP] SMTP: {'configured' if smtp_is_configured() else 'dev mode (codes to console)'}")
 
-# Ordered guided-tour walkthrough shown right after a user verifies their email.
-TOUR_STEPS = [
-    {'endpoint': 'product_finder',     'label': 'Find Your Standard',   'blurb': 'Search 900+ compulsory products and get the exact IS number that applies.'},
-    {'endpoint': 'scheme_identifier',  'label': 'Check Your Scheme',    'blurb': 'See which BIS scheme covers your product — and which ones explicitly do not.'},
-    {'endpoint': 'licensing_timeline', 'label': 'Licensing Timeline',   'blurb': 'A day-by-day roadmap and a printable document checklist for your licence.'},
-    {'endpoint': 'labs_view',          'label': 'Labs Near You',        'blurb': 'Find NABL / BIS-recognised testing labs and draft an enquiry email.'},
-    {'endpoint': 'isi_photo_check',    'label': 'Verify an ISI Mark',   'blurb': 'Check that an ISI mark / hallmark carries every mandatory element.'},
-    {'endpoint': 'copilot_view',       'label': 'Ask the Copilot',      'blurb': 'A source-cited assistant for any BIS compliance question.'},
+# Top navigation shown to a logged-in user with an active product workspace.
+# (endpoint, label) — kept pointing at current endpoints; M3 renames the routes.
+NAV_LINKS = [
+    ('home',               'Home'),
+    ('product_finder',     'Standards'),
+    ('scheme_identifier',  'Schemes'),
+    ('labs_view',          'Testing & Labs'),
+    ('licensing_timeline', 'Licensing'),
+    ('documents_view',     'Documents'),
+    ('checklist',          'Checklist'),
+    ('cases_list',         'My Cases'),
+    ('isi_photo_check',    'Photo Check'),
 ]
+
+SUPPORTED_LANGS = {'en': 'English', 'hi': 'हिंदी', 'te': 'తెలుగు'}
+
+# Endpoints a logged-in user may hit before finishing onboarding.
+_ONBOARDING_EXEMPT = {
+    'onboarding', 'logout', 'static', 'set_language', 'index',
+    'my_cases', 'cases_list', 'google_auth',
+}
 
 
 @app.context_processor
-def inject_tour_context():
-    """Expose tour state to every template (drives templates/partials/tour_bar.html)."""
-    try:
-        active = request.args.get('tour') == '1'
-        idx = int(request.args.get('step', '1'))
-    except (ValueError, TypeError):
-        active, idx = False, 1
-
-    ctx = {'active': False, 'index': idx, 'total': len(TOUR_STEPS)}
-    if active and 1 <= idx <= len(TOUR_STEPS):
-        this_step = TOUR_STEPS[idx - 1]
-        if idx < len(TOUR_STEPS):
-            nxt = TOUR_STEPS[idx]
-            next_url = url_for(nxt['endpoint'], tour=1, step=idx + 1)
-        else:
-            next_url = url_for('home', tour='done')
-        ctx.update({
-            'active': True,
-            'label': this_step['label'],
-            'blurb': this_step['blurb'],
-            'next_url': next_url,
-            'skip_url': url_for('home', tour='done'),
-            'percent': int(idx / len(TOUR_STEPS) * 100),
-            'is_last': idx == len(TOUR_STEPS),
-        })
-    return {'tour_ctx': ctx, 'tour_steps': TOUR_STEPS}
+def inject_globals():
+    """Nav links, language state and the active product for every template."""
+    case = None
+    if session.get('user_id') and session.get('active_case_id'):
+        try:
+            conn = get_db_connection()
+            row = conn.execute("SELECT * FROM compliance_cases WHERE id = ?",
+                               (session['active_case_id'],)).fetchone()
+            conn.close()
+            case = dict(row) if row else None
+        except Exception:
+            case = None
+    return {
+        'nav_links': NAV_LINKS,
+        'supported_langs': SUPPORTED_LANGS,
+        'current_lang': session.get('lang', 'en'),
+        'active_case': case,
+    }
 
 
 @app.before_request
 def ensure_default_session():
-    public_endpoints = {'index', 'login', 'register', 'register_step2', 'register_step3',
-                        'register_verify', 'register_resend_otp',
-                        'google_auth', 'logout', 'static'}
-    if session.get('user_id') or request.endpoint in public_endpoints:
+    public_endpoints = {'index', 'login', 'register', 'register_verify',
+                        'register_resend_otp', 'google_auth', 'logout', 'static'}
+    if request.endpoint in public_endpoints:
         return None
-    if request.path.startswith('/api/'):
-        return jsonify({'status': 'error', 'message': 'Authentication required'}), 401
-    return redirect(url_for('login'))
+    if not session.get('user_id'):
+        if request.path.startswith('/api/'):
+            return jsonify({'status': 'error', 'message': 'Authentication required'}), 401
+        return redirect(url_for('login'))
+    # Logged in but hasn't picked a product yet -> conversational onboarding.
+    if not session.get('active_case_id') and request.endpoint not in _ONBOARDING_EXEMPT \
+            and not request.path.startswith('/api/'):
+        return redirect(url_for('onboarding'))
+    return None
+
+
+import re as _re
+from markupsafe import escape, Markup
+
+
+@app.template_filter('md')
+def render_markdown(text):
+    """Lightweight, safe Markdown: bold, inline code, headings, bullet lists,
+    [text](url) links and paragraphs. Enough for KB answer bodies."""
+    if not text:
+        return Markup("")
+    out_blocks = []
+    for block in _re.split(r'\n{2,}', str(text).strip()):
+        lines = block.split('\n')
+        if all(l.lstrip().startswith(('- ', '* ')) for l in lines if l.strip()):
+            items = "".join(f"<li>{_inline_md(l.lstrip()[2:])}</li>" for l in lines if l.strip())
+            out_blocks.append(f"<ul>{items}</ul>")
+        else:
+            html = "<br>".join(_inline_md(l) for l in lines)
+            out_blocks.append(f"<p>{html}</p>")
+    return Markup("".join(out_blocks))
+
+
+def _inline_md(s):
+    s = str(escape(s))
+    s = _re.sub(r'\[([^\]]+)\]\((https?://[^)\s]+)\)',
+                r'<a href="\2" target="_blank" rel="noopener">\1</a>', s)
+    s = _re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', s)
+    s = _re.sub(r'(?<!\*)\*([^*]+)\*(?!\*)', r'<em>\1</em>', s)
+    s = _re.sub(r'`([^`]+)`', r'<code>\1</code>', s)
+    return s
+
+
+@app.route('/set-language', methods=['POST'])
+def set_language():
+    lang = (request.form.get('lang') or request.args.get('lang') or 'en').lower()
+    if lang in SUPPORTED_LANGS:
+        session['lang'] = lang
+    return redirect(request.referrer or url_for('home'))
 
 # ==============================================================================
 # AUTHENTICATION & USER SESSION ROUTES
@@ -110,25 +159,17 @@ def login():
     return render_template('login.html')
 
 def _create_user_from_pending(pending):
-    """Insert the verified registration into the DB and sign the user in."""
+    """Insert the verified account (name + email + password only) and sign in.
+    Product / user-type / location are collected afterwards in /onboarding."""
     conn = get_db_connection()
     try:
-        conn.execute("INSERT INTO users (full_name, company_name, email, password_hash, role, auth_provider, city, state, user_type, business_stage, product_category, product_name, product_description, monthly_quantity, profile_completed) VALUES (?, ?, ?, ?, 'manufacturer', 'email', ?, ?, ?, ?, ?, ?, ?, ?, 1)",
-                     (pending['full_name'], pending['company_name'], pending['email'], pending['password_hash'],
-                      pending['city'], pending['state'], pending['user_type'], pending['business_stage'],
-                      pending['product_category'], pending['product_name'], pending['product_description'],
-                      pending['monthly_quantity']))
+        conn.execute(
+            "INSERT INTO users (full_name, email, password_hash, role, auth_provider, profile_completed) "
+            "VALUES (?, ?, ?, 'manufacturer', 'email', 0)",
+            (pending['full_name'], pending['email'], pending['password_hash']),
+        )
         conn.commit()
         user = conn.execute("SELECT * FROM users WHERE email = ?", (pending['email'],)).fetchone()
-        conn.execute("INSERT OR REPLACE INTO user_profiles (user_id, user_type, business_stage, company_name, product_category, product_name, product_description, monthly_quantity, city, state, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'India')",
-                     (user['id'], pending['user_type'], pending['business_stage'], pending['company_name'],
-                      pending['product_category'], pending['product_name'], pending['product_description'],
-                      pending['monthly_quantity'], pending['city'], pending['state']))
-        conn.execute("INSERT OR REPLACE INTO user_onboarding_profiles (user_id, persona_role, industry_sector, compliance_stage, product_name, product_description, monthly_production_quantity) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                     (user['id'], pending['user_type'] or 'Manufacturer', pending['product_category'] or 'Other',
-                      pending['business_stage'] or 'Commercial production', pending['product_name'] or '',
-                      pending['product_description'], pending['monthly_quantity']))
-        conn.commit()
     finally:
         conn.close()
 
@@ -136,14 +177,13 @@ def _create_user_from_pending(pending):
     session['user_name'] = user['full_name']
     session['user_email'] = user['email']
     session['user_role'] = user['role']
-    session['user_city'] = pending['city']
-    session['user_state'] = pending['state']
-    session['show_tour'] = True
-    session.pop('reg_wizard', None)
+    session.pop('active_case_id', None)
+    for k in ('pending_registration', 'reg_otp', 'reg_otp_expires', 'reg_wizard'):
+        session.pop(k, None)
 
 
 def get_full_user(user_id):
-    """Load the persisted user row + onboarding profile for display on the hub."""
+    """Load the persisted user row + onboarding profile."""
     conn = get_db_connection()
     try:
         user = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
@@ -151,15 +191,6 @@ def get_full_user(user_id):
     finally:
         conn.close()
     return (dict(user) if user else None), (dict(onb) if onb else None)
-
-
-def _wizard_guard(*required_keys):
-    """Return a redirect to step 1 if the wizard session is missing earlier steps."""
-    data = session.get('reg_wizard') or {}
-    if not all(data.get(k) for k in required_keys):
-        flash("Let's start your registration from the top.", "info")
-        return redirect(url_for('register'))
-    return None
 
 
 def _issue_registration_otp(pending):
@@ -173,22 +204,19 @@ def _issue_registration_otp(pending):
 
 
 # ------------------------------------------------------------------
-# Registration wizard — 3 server-driven steps, then the OTP screen.
-# Answers accumulate in session['reg_wizard'] until email is verified.
+# Registration — name + email + password, then the OTP screen.
+# Product / user type / location are asked afterwards in /onboarding.
 # ------------------------------------------------------------------
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """Step 1 of 3 — account details."""
-    wiz = session.get('reg_wizard') or {}
     if request.method == 'POST':
         full_name = request.form.get('full_name', '').strip()
-        company_name = request.form.get('company_name', '').strip() or request.form.get('business_name', '').strip()
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')
         confirm_password = request.form.get('confirm_password', '')
 
-        data = {'full_name': full_name, 'company_name': company_name, 'email': email}
+        data = {'full_name': full_name, 'email': email}
         errors = {}
         if not full_name:
             errors['full_name'] = "Please enter your full name."
@@ -209,101 +237,24 @@ def register():
                 errors['email'] = "That email is already registered. Sign in instead."
 
         if errors:
-            return render_template('register.html', active_step=1, data=data, errors=errors)
-
-        wiz.update({
-            'full_name': full_name,
-            'company_name': company_name,
-            'email': email,
-            'password_hash': generate_password_hash(password),
-        })
-        session['reg_wizard'] = wiz
-        return redirect(url_for('register_step2'))
-
-    return render_template('register.html', active_step=1, data=wiz, errors={})
-
-
-@app.route('/register/step-2', methods=['GET', 'POST'])
-def register_step2():
-    """Step 2 of 3 — about you & your product."""
-    guard = _wizard_guard('email', 'password_hash')
-    if guard:
-        return guard
-    wiz = session['reg_wizard']
-
-    if request.method == 'POST':
-        fields = ['user_type', 'business_stage', 'product_category',
-                  'product_name', 'product_description', 'monthly_quantity']
-        data = {f: request.form.get(f, '').strip() for f in fields}
-        errors = {}
-        for f, msg in [('user_type', "Tell us who you are."),
-                       ('business_stage', "Pick your business stage."),
-                       ('product_category', "Pick a product category."),
-                       ('product_name', "Name the product."),
-                       ('monthly_quantity', "Choose a monthly quantity.")]:
-            if not data[f]:
-                errors[f] = msg
-        if errors:
-            return render_template('register_step2.html', active_step=2, data=data, errors=errors)
-
-        wiz.update(data)
-        session['reg_wizard'] = wiz
-        return redirect(url_for('register_step3'))
-
-    return render_template('register_step2.html', active_step=2, data=wiz, errors={})
-
-
-@app.route('/register/step-3', methods=['GET', 'POST'])
-def register_step3():
-    """Step 3 of 3 — location & consent, then issue the OTP."""
-    guard = _wizard_guard('email', 'password_hash', 'user_type')
-    if guard:
-        return guard
-    wiz = session['reg_wizard']
-
-    if request.method == 'POST':
-        city = request.form.get('city', '').strip()
-        state = request.form.get('state', '').strip()
-        agree = request.form.get('agree_terms')
-        data = {'city': city, 'state': state}
-        errors = {}
-        if not city:
-            errors['city'] = "Enter your city."
-        if not state:
-            errors['state'] = "Enter your state."
-        if not agree:
-            errors['agree_terms'] = "Please accept the Terms & Conditions to continue."
-        if errors:
-            return render_template('register_step3.html', active_step=3, data=data, errors=errors)
-
-        wiz.update({'city': city, 'state': state})
-        session['reg_wizard'] = wiz
+            return render_template('register.html', data=data, errors=errors)
 
         pending = {
-            'full_name': wiz['full_name'],
-            'company_name': wiz.get('company_name', ''),
-            'email': wiz['email'],
-            'password_hash': wiz['password_hash'],
-            'user_type': wiz.get('user_type', ''),
-            'business_stage': wiz.get('business_stage', ''),
-            'city': city,
-            'state': state,
-            'product_category': wiz.get('product_category', ''),
-            'product_name': wiz.get('product_name', ''),
-            'product_description': wiz.get('product_description', ''),
-            'monthly_quantity': wiz.get('monthly_quantity', ''),
+            'full_name': full_name,
+            'email': email,
+            'password_hash': generate_password_hash(password),
         }
         ok, detail = _issue_registration_otp(pending)
         if ok:
             if smtp_is_configured():
-                flash(f"We emailed a 6-digit verification code to {pending['email']}. Enter it below to activate your account.", "info")
+                flash(f"We emailed a 6-digit verification code to {email}. Enter it below to activate your account.", "info")
             else:
                 flash("SMTP is not configured, so the verification code was printed to the server console (dev mode).", "info")
             return redirect(url_for('register_verify'))
         flash(f"Could not send the verification email ({detail}). Please check the SMTP settings and try again.", "error")
-        return render_template('register_step3.html', active_step=3, data=data, errors={})
+        return render_template('register.html', data=data, errors={})
 
-    return render_template('register_step3.html', active_step=3, data=wiz, errors={})
+    return render_template('register.html', data={}, errors={})
 
 
 @app.route('/register/verify', methods=['GET', 'POST'])
@@ -320,10 +271,10 @@ def register_verify():
 
         if not expected or time.time() > expires:
             flash("That code has expired. We can send you a new one.", "error")
-            return render_template('verify_otp.html', email=pending['email'], active_step=4)
+            return render_template('verify_otp.html', email=pending['email'])
         if entered != expected:
             flash("Incorrect verification code. Please try again.", "error")
-            return render_template('verify_otp.html', email=pending['email'], active_step=4)
+            return render_template('verify_otp.html', email=pending['email'])
 
         try:
             _create_user_from_pending(pending)
@@ -333,12 +284,10 @@ def register_verify():
                 session.pop(k, None)
             return redirect(url_for('login'))
 
-        for k in ('pending_registration', 'reg_otp', 'reg_otp_expires', 'reg_wizard'):
-            session.pop(k, None)
-        flash("Email verified. Your account and compliance profile have been saved.", "success")
-        return redirect(url_for('home'))
+        flash("Email verified. Let's set up your BIS workspace.", "success")
+        return redirect(url_for('onboarding'))
 
-    return render_template('verify_otp.html', email=pending['email'], active_step=4)
+    return render_template('verify_otp.html', email=pending['email'])
 
 
 @app.route('/register/resend-otp', methods=['POST'])
@@ -409,41 +358,169 @@ def index():
     return render_template('index.html')
 
 
+INDIAN_STATES = [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa",
+    "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala",
+    "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland",
+    "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+    "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi (NCT)",
+    "Jammu & Kashmir", "Ladakh", "Puducherry", "Chandigarh",
+    "Andaman & Nicobar Islands", "Dadra & Nagar Haveli and Daman & Diu", "Lakshadweep",
+]
+USER_TYPES = ["Manufacturer", "Importer", "Trader / Distributor", "Startup / MSME",
+              "Compliance consultant", "Student", "Consumer"]
+
+ONB_QUESTIONS = [
+    {"key": "user_type", "prompt": "To set up your workspace, what best describes you?",
+     "type": "choice", "options": USER_TYPES},
+    {"key": "product", "prompt": "Which product are you working with?",
+     "type": "product"},
+    {"key": "location", "prompt": "Where are you located?", "type": "location"},
+]
+
+
+@app.route('/onboarding', methods=['GET', 'POST'])
+def onboarding():
+    """Conversational onboarding: user type -> product -> location -> workspace."""
+    if session.get('active_case_id'):
+        return redirect(url_for('home'))
+    onb = session.get('onb') or {}
+
+    if request.method == 'POST':
+        step = int(request.form.get('step', len(onb)))
+        q = ONB_QUESTIONS[step] if 0 <= step < len(ONB_QUESTIONS) else None
+        if q:
+            if q["type"] == "choice":
+                val = request.form.get(q["key"], "").strip()
+                if val in q["options"]:
+                    onb[q["key"]] = val
+            elif q["type"] == "product":
+                raw = request.form.get("product", "").strip()
+                slug = kb.match_product(raw)
+                if slug:
+                    onb["product_slug"] = slug
+                    onb["product_raw"] = raw
+                else:
+                    session['onb'] = onb
+                    return render_template('onboarding.html', questions=ONB_QUESTIONS,
+                                           onb=onb, step=step, states=INDIAN_STATES,
+                                           kb_products=kb.list_products(),
+                                           error=f"\"{raw}\" isn't in the BIS knowledge base yet. "
+                                                 f"Supported now: {', '.join(kb.supported_names())}.")
+            elif q["type"] == "location":
+                onb["city"] = request.form.get("city", "").strip()
+                onb["state"] = request.form.get("state", "").strip()
+        session['onb'] = onb
+
+        # all three collected? create the workspace case.
+        if onb.get("user_type") and onb.get("product_slug") and onb.get("city") and onb.get("state"):
+            meta = kb.product_meta(onb["product_slug"]) or {}
+            prod = kb.get_product(onb["product_slug"]) or {}
+            std = prod.get("areas", {}).get("standards", {}).get("primary", {})
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(
+                "INSERT INTO compliance_cases (user_id, product_name, product_slug, category, is_number, "
+                "qco_status, scheme, current_step, user_type, city, state, checklist_json, saved_areas_json) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, 'Onboarded', ?, ?, ?, ?, ?)",
+                (session['user_id'], meta.get('display_name', onb.get('product_raw', '')),
+                 onb["product_slug"], meta.get('category', ''), std.get('is_number', meta.get('is_number', '')),
+                 'Under compulsory certification', meta.get('scheme', ''),
+                 onb["user_type"], onb["city"], onb["state"], json.dumps([]), json.dumps({})),
+            )
+            case_id = cur.lastrowid
+            cur.execute(
+                "INSERT OR REPLACE INTO user_onboarding_profiles "
+                "(user_id, persona_role, industry_sector, compliance_stage, product_name, product_description, monthly_production_quantity) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (session['user_id'], onb["user_type"], meta.get('category', 'Other'),
+                 'Onboarded', meta.get('display_name', ''), '', ''),
+            )
+            cur.execute("UPDATE users SET user_type=?, city=?, state=?, product_name=?, profile_completed=1 WHERE id=?",
+                        (onb["user_type"], onb["city"], onb["state"], meta.get('display_name', ''), session['user_id']))
+            conn.commit()
+            conn.close()
+            session['active_case_id'] = case_id
+            session['user_city'] = onb["city"]
+            session['user_state'] = onb["state"]
+            session.pop('onb', None)
+            flash(f"Workspace ready for {meta.get('display_name', 'your product')}.", "success")
+            return redirect(url_for('home'))
+
+        return redirect(url_for('onboarding'))
+
+    step = len(onb) if not onb.get("product_slug") or not onb.get("city") else 2
+    step = min(step, len(ONB_QUESTIONS) - 1)
+    # find first unanswered
+    if not onb.get("user_type"):
+        step = 0
+    elif not onb.get("product_slug"):
+        step = 1
+    else:
+        step = 2
+    return render_template('onboarding.html', questions=ONB_QUESTIONS, onb=onb, step=step,
+                           states=INDIAN_STATES, kb_products=kb.list_products(), error=None)
+
+
 @app.route('/home')
 def home():
-    """Post-signup hub: shows the saved profile + a card per feature + the guided tour."""
-    user, onboarding = get_full_user(session['user_id'])
+    """Personalised BIS workspace: 7 source-backed answers + AI assistant + history."""
+    user, _onb = get_full_user(session['user_id'])
     if not user:
         session.clear()
         flash("Please sign in again.", "info")
         return redirect(url_for('login'))
 
-    if request.args.get('tour') == 'done':
-        session['show_tour'] = False
-        flash("You're all set — jump into any tool below whenever you need it.", "success")
-        return redirect(url_for('home'))
+    case = _active_case()
+    if not case:
+        return redirect(url_for('onboarding'))
+
+    slug = case.get('product_slug')
+    meta = kb.product_meta(slug) or {}
+    lang = session.get('lang', 'en')
+    location = {'city': case.get('city'), 'state': case.get('state')}
+    seven = answer_engine.answer_seven(slug, location, lang) if slug else []
 
     conn = get_db_connection()
-    case_count = conn.execute("SELECT COUNT(*) AS c FROM compliance_cases WHERE user_id = ?",
-                              (user['id'],)).fetchone()['c']
+    history = conn.execute(
+        "SELECT id, query, mode, area, created_at FROM search_history "
+        "WHERE user_id = ? AND case_id = ? ORDER BY id DESC LIMIT 40",
+        (user['id'], case['id']),
+    ).fetchall()
     conn.close()
 
-    profile_rows = [
-        ("Full name", user.get('full_name')),
-        ("Email", user.get('email')),
-        ("Company", user.get('company_name')),
-        ("You are a", user.get('user_type')),
-        ("Business stage", user.get('business_stage')),
-        ("Product category", user.get('product_category')),
-        ("Product", user.get('product_name')),
-        ("Monthly quantity", user.get('monthly_quantity')),
-        ("Location", ", ".join([p for p in [user.get('city'), user.get('state')] if p])),
-    ]
-    profile_rows = [(k, v) for k, v in profile_rows if v]
+    return render_template(
+        'home.html',
+        user=user, case=case, product=meta, slug=slug,
+        seven=seven, history=[dict(h) for h in history],
+        llm_active=llm.llm_available(),
+    )
 
-    return render_template('hub.html', user=user, onboarding=onboarding,
-                           profile_rows=profile_rows, case_count=case_count,
-                           show_tour=session.get('show_tour', False))
+
+@app.route('/checklist')
+def checklist():
+    """Progress tracker across the 7 areas for the active product (full build in M3)."""
+    case = _active_case()
+    if not case:
+        return redirect(url_for('onboarding'))
+    try:
+        saved = json.loads(case.get('saved_areas_json') or '{}')
+    except Exception:
+        saved = {}
+    rows = [
+        ("Applicable Standard", "standards"),
+        ("Certification Requirement", "certification"),
+        ("BIS Scheme", "scheme"),
+        ("Testing Requirement", "testing"),
+        ("Recognised Laboratory", "supporting"),
+        ("Required Documents", "supporting"),
+        ("Licensing Process", "licensing"),
+    ]
+    items = [{"label": lbl, "area": ar, "status": saved.get(ar, {}).get("status", "Not Started")}
+             for lbl, ar in rows]
+    reviewed = sum(1 for it in items if it["status"] in ("Reviewed", "Completed"))
+    return render_template('checklist.html', case=case, items=items,
+                           reviewed=reviewed, total=len(items))
 
 @app.route('/copilot')
 def copilot_view():

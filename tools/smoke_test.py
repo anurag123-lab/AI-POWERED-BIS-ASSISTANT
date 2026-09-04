@@ -28,6 +28,11 @@ POST_PROBES = [
     ("/api/chat", {"message": "What standard applies to an electric iron?"}),
 ]
 
+# POST endpoints exercised with form data
+POST_FORM_PROBES = [
+    ("/set-language", {"lang": "en"}),
+]
+
 
 def iter_get_paths(client_app):
     for rule in client_app.url_map.iter_rules():
@@ -70,6 +75,18 @@ def main():
     for path, body in POST_PROBES:
         try:
             r = c.post(path, json=body, follow_redirects=False)
+        except Exception as exc:  # noqa: BLE001
+            failures.append((path, f"EXCEPTION {type(exc).__name__}: {exc}"))
+            continue
+        checked += 1
+        flag = "ok " if r.status_code in OK else "FAIL"
+        if r.status_code not in OK:
+            failures.append((path, f"status {r.status_code}"))
+        print(f"  [{flag}] POST {path:42} {r.status_code}")
+
+    for path, form in POST_FORM_PROBES:
+        try:
+            r = c.post(path, data=form, follow_redirects=False)
         except Exception as exc:  # noqa: BLE001
             failures.append((path, f"EXCEPTION {type(exc).__name__}: {exc}"))
             continue

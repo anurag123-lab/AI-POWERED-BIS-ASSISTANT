@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Set up your workspace - BIS Assistant{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/onboarding.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="onb-wrap">
+  <div class="onb-card">
+
+    <span class="eyebrow-tag">AI Assistant - Onboarding</span>
+    <h1 class="onb-title">Let's set up your BIS workspace</h1>
+    <p class="onb-lead">Three quick questions. Your <strong>product</strong> decides what the
+       rest of the site shows you.</p>
+
+    <ol class="onb-progress">
+      <li class="{{ 'done' if onb.user_type }} {{ 'now' if step == 0 }}">You</li>
+      <li class="{{ 'done' if onb.product_slug }} {{ 'now' if step == 1 }}">Product</li>
+      <li class="{{ 'done' if onb.city }} {{ 'now' if step == 2 }}">Location</li>
+    </ol>
+
+    {# transcript of answered questions #}
+    <div class="onb-thread">
+      {% if onb.user_type %}
+        <div class="q">To set up your workspace, what best describes you?</div>
+        <div class="a">{{ onb.user_type }}</div>
+      {% endif %}
+      {% if onb.product_slug %}
+        <div class="q">Which product are you working with?</div>
+        <div class="a">{{ (kb_products | selectattr('slug','equalto',onb.product_slug) | first).display_name }}</div>
+      {% endif %}
+    </div>
+
+    {% if error %}<div class="onb-error">{{ error }}</div>{% endif %}
+
+    {# current question #}
+    {% if step == 0 %}
+    <form method="POST" action="{{ url_for('onboarding') }}" class="onb-q">
+      <input type="hidden" name="step" value="0">
+      <p class="onb-prompt">To set up your workspace, what best describes you?</p>
+      <div class="onb-choices">
+        {% for t in questions[0].options %}
+          <button type="submit" name="user_type" value="{{ t }}" class="onb-choice">{{ t }}</button>
+        {% endfor %}
+      </div>
+    </form>
+
+    {% elif step == 1 %}
+    <form method="POST" action="{{ url_for('onboarding') }}" class="onb-q">
+      <input type="hidden" name="step" value="1">
+      <p class="onb-prompt">Which product are you working with?</p>
+      <input class="form-input" name="product" list="kbProducts" autocomplete="off"
+             placeholder="e.g. electric iron, helmet, LED lamp, steel pipe, cement" required autofocus>
+      <datalist id="kbProducts">
+        {% for p in kb_products %}<option value="{{ p.display_name }}">{% endfor %}
+      </datalist>
+      <p class="onb-hint">Supported now:
+        {% for p in kb_products %}<span class="onb-chip">{{ p.display_name }}</span>{% endfor %}
+      </p>
+      <button type="submit" class="btn-pill btn-orange">Continue &rarr;</button>
+    </form>
+
+    {% elif step == 2 %}
+    <form method="POST" action="{{ url_for('onboarding') }}" class="onb-q">
+      <input type="hidden" name="step" value="2">
+      <p class="onb-prompt">Where are you located?</p>
+      <div class="onb-loc">
+        <input class="form-input" name="city" placeholder="City" required autofocus>
+        <select class="form-input" name="state" required>
+          <option value="">Select state / UT</option>
+          {% for s in states %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn-pill btn-orange">Build my workspace &rarr;</button>
+    </form>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

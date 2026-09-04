@@ -40,11 +40,8 @@
 
       </div>
     </header>
-    {% if session.get('user_id') %}
-      {% include 'partials/feature_nav.html' %}
-    {% endif %}
-    {% if tour_ctx is defined and tour_ctx.active %}
-      {% include 'partials/tour_bar.html' %}
+    {% if session.get('user_id') and active_case %}
+      {% include 'partials/app_nav.html' %}
     {% endif %}
     {% endif %}
 
@@ -68,7 +65,7 @@
 
     {% if request.endpoint != 'index' %}
     <footer class="app-footer">
-      <div>&copy; 2026 BIS Compliance Copilot — Powered by 7-Searches Fanout RAG & Deterministic Rule Engine</div>
+      <div>&copy; 2026 BIS Assistant &mdash; source-cited BIS compliance guidance. Not officially affiliated with the Bureau of Indian Standards.</div>
     </footer>
     {% endif %}
 

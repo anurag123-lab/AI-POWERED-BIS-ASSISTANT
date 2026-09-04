@@ -1,0 +1,19 @@
+{# Top feature navigation + language selector. Shown when the user has an active product workspace. #}
+<nav class="app-nav" aria-label="BIS workspace">
+  <div class="app-nav__inner">
+    <div class="app-nav__links">
+      {% for endpoint, label in nav_links %}
+        <a href="{{ url_for(endpoint) }}"
+           class="{{ 'is-active' if request.endpoint == endpoint }}">{{ label }}</a>
+      {% endfor %}
+    </div>
+    <form class="app-nav__lang" method="POST" action="{{ url_for('set_language') }}">
+      <label for="langSel" class="sr-only">Language</label>
+      <select id="langSel" name="lang" onchange="this.form.submit()">
+        {% for code, name in supported_langs.items() %}
+          <option value="{{ code }}" {{ 'selected' if code == current_lang }}>{{ name }}</option>
+        {% endfor %}
+      </select>
+    </form>
+  </div>
+</nav>

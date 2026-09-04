@@ -1,38 +1,42 @@
 {% extends 'base.html' %}
 
 {#
-  Shared shell for the registration wizard, login and OTP screens.
-  Child templates set `active_step` (1=Account, 2=About, 3=Location, 4=Verify)
+  Shared shell for the register, OTP-verify and login screens.
+  Child templates set `active_step` (1=Account, 2=Verify; 0/none = login)
   and fill {% block auth_form %}.
 #}
 
-{% set steps = [('Account', 1), ('About', 2), ('Location', 3), ('Verify', 4)] %}
-{% set active_step = active_step | default(1) %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% set active_step = active_step | default(0) %}
 
 {% block content %}
 <div class="auth-split">
 
   <div class="auth-brand-side">
-    <span class="eyebrow-tag">Start strong</span>
-    <h1>Build your<br>compliance edge.</h1>
-    <p>Join a focused, high-signal BIS compliance engine designed to keep your
-       products market-ready and fully certified.</p>
+    <span class="eyebrow-tag">BIS Assistant</span>
+    <h1>Source-cited BIS<br>guidance, per product.</h1>
+    <p>Tell the assistant one product. Get the applicable standard, scheme,
+       tests, labs, licensing steps and documents &mdash; every answer traced to
+       an official BIS source.</p>
     <div class="auth-stat-pills">
       <div>
-        <div class="stat-value is-accent">900+ PRODUCTS</div>
-        <div class="stat-label">Ground-truth DB</div>
+        <div class="stat-value is-accent">7 answers</div>
+        <div class="stat-label">One question</div>
       </div>
       <div>
-        <div class="stat-value">24/7</div>
-        <div class="stat-label">Smart tracking</div>
+        <div class="stat-value">bis.gov.in</div>
+        <div class="stat-label">Cited sources</div>
       </div>
     </div>
   </div>
 
   <div class="auth-form-card">
-    {% block auth_stepper %}
+    {% if active_step %}
     <nav class="auth-stepper" aria-label="Progress">
-      {% for label, num in steps %}
+      {% for label, num in [('Account', 1), ('Verify', 2)] %}
         <div class="auth-step {% if num == active_step %}is-active{% elif num < active_step %}is-done{% endif %}">
           <span class="auth-step__dot">{% if num < active_step %}&#10003;{% else %}{{ num }}{% endif %}</span>
           <span class="auth-step__label">{{ label }}</span>
@@ -40,7 +44,7 @@
         {% if not loop.last %}<span class="auth-step__sep"></span>{% endif %}
       {% endfor %}
     </nav>
-    {% endblock %}
+    {% endif %}
 
     {% block auth_form %}{% endblock %}
   </div>
