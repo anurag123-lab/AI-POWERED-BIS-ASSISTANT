@@ -101,6 +101,22 @@
   }
 
   function handleResult(data) {
+    // Orchestrator routed this to a service page.
+    if (data.action === "navigate" && data.target_url) {
+      bubble("bot", md(data.response || "Opening the right service…"));
+      setTimeout(function () { window.location.href = data.target_url; }, 750);
+      return;
+    }
+    if (data.action === "unsupported") {
+      bubble("bot", md(data.response || "That is not in the BIS knowledge base."), "refused");
+      return;
+    }
+    // product_info / other direct orchestrator answer
+    if (data.action === "answer" && data.response && !data.answers && data.mode == null) {
+      bubble("bot", md(data.response));
+      loadHistory();
+      return;
+    }
     if (data.mode === "refused") {
       var a = data.answer || {};
       bubble("bot", "<strong>" + esc(a.title || "Not covered") + "</strong>" + md(a.body_md || ""), "refused");

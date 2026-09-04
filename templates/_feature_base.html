@@ -6,6 +6,7 @@
 #}
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/feature.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ask_anything.css') }}">
 {% if css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/' ~ css) }}">{% endif %}
 {% endblock %}
 
@@ -18,6 +19,9 @@
     <div class="product-chip">For your product: <strong>{{ product.display_name or case.product_name }}</strong>
       {% if product.is_number %}&bull; {{ product.is_number }}{% endif %}</div>
   </div>
+
+  {% set ask_service = page_eyebrow %}
+  {% include 'partials/ask_anything.html' %}
 
   {% block feature_body %}
     {% for v in views %}

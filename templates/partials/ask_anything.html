@@ -1,0 +1,17 @@
+{# "Ask Anything" bar - the AI orchestrator entry point. Present on every service
+   page. Detects intent, routes to the right service, or answers in place. #}
+<div class="ask-anything" data-service="{{ ask_service | default('') }}">
+  {% if request.args.get('ask') %}
+  <div class="ask-context">You asked: &ldquo;{{ request.args.get('ask') }}&rdquo;
+    <span>&mdash; this is the <strong>{{ page_title | default('service') }}</strong> answer.</span>
+  </div>
+  {% endif %}
+  <form class="ask-form" autocomplete="off">
+    <span class="ask-icon">&#129302;</span>
+    <input class="form-input ask-input" name="q"
+           placeholder="Ask anything about {{ (active_case.product_name if active_case else 'your product') }}&hellip;">
+    <button class="btn-pill btn-orange" type="submit">Ask</button>
+  </form>
+  <div class="ask-result" hidden></div>
+</div>
+<script src="{{ url_for('static', filename='js/ask_anything.js') }}"></script>

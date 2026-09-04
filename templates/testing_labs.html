@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/feature.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ask_anything.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/testing_labs.css') }}">
 {% endblock %}
 
@@ -15,6 +16,9 @@
     <div class="product-chip">For your product: <strong>{{ product.display_name or case.product_name }}</strong>
       {% if product.is_number %}&bull; {{ product.is_number }}{% endif %}</div>
   </div>
+
+  {% set ask_service = 'Testing & Labs' %}{% set page_title = 'Testing & Labs' %}
+  {% include 'partials/ask_anything.html' %}
 
   {% set v = testing_view %}
   {% include 'partials/area_section.html' %}

@@ -20,6 +20,7 @@ from services.pdf_generator import generate_compliance_pdf
 from services import llm
 from services import knowledge_base as kb
 from services import answer_engine
+from services import ai_orchestrator
 
 load_dotenv()
 
@@ -917,23 +918,48 @@ def _save_search_history(query, result):
 
 
 # API 5: AI Assistant - 7-answer engine over the curated BIS knowledge base
-@app.route('/api/chat', methods=['POST'])
-def api_chat():
+@app.route('/api/ai', methods=['POST'])
+def api_ai():
+    """AI Orchestrator entry point: intent detection -> service router -> action.
+    Body: {message, product_id?, service?, language?}. product_id defaults to the
+    active workspace case; it is never assumed to be a single hard-coded product."""
     data = request.get_json() or {}
-    message = data.get('message', '').strip()
-    language = data.get('language') or session.get('lang', 'en')
-
+    message = (data.get('message') or '').strip()
     if not message:
         return jsonify({'status': 'error', 'message': 'Empty message'}), 400
 
+    product_id = data.get('product_id') or session.get('active_case_id')
+    language = data.get('language') or session.get('lang', 'en')
+    current_service = data.get('service') or request.args.get('from')
+
+    result = ai_orchestrator.orchestrate(product_id, message, current_service, language)
+    return jsonify({'status': 'success', **result})
+
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    """Back-compat: Home's rich chat. Runs the orchestrator; for 'answer'/overview
+    intents it returns the full answer_engine result so the 7 cards can refresh."""
+    data = request.get_json() or {}
+    message = data.get('message', '').strip()
+    language = data.get('language') or session.get('lang', 'en')
+    if not message:
+        return jsonify({'status': 'error', 'message': 'Empty message'}), 400
+
+    product_id = session.get('active_case_id')
+    orch = ai_orchestrator.orchestrate(product_id, message, 'home', language)
+
+    # Navigation / product-info / unsupported -> return the orchestrator verdict.
+    if orch['action'] != 'answer' or orch.get('intent') == 'product_info':
+        return jsonify({'status': 'success', **orch})
+
+    # Overview -> full KB result (mode seven/area) so Home can rebuild the cards.
     case = _active_case()
     slug = case.get('product_slug') if case else None
     location = {'city': case.get('city'), 'state': case.get('state')} if case else None
-
     result = answer_engine.answer_question(slug, message, location=location, language=language)
     _save_search_history(message, result)
-
-    payload = {'status': 'success'}
+    payload = {'status': 'success', 'intent': orch['intent'], 'action': 'answer'}
     payload.update(result)
     payload.setdefault('refusal_threshold', answer_engine.MEASURED_REFUSAL_THRESHOLD)
     return jsonify(payload)
