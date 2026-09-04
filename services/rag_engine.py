@@ -28,10 +28,11 @@ def get_query_embedding(query_text):
         return vec
     return compute_local_embedding(query_text)
 
-def perform_hybrid_search(query, top_k=4, product_slug=None):
+def perform_hybrid_search(query, top_k=4, product_slug=None, use_embedding=True):
     """BM25 + embedding hybrid search over document_chunks.
     When product_slug is given, only that product's ingested chunks are searched
-    (falls back to the whole corpus if that product has none)."""
+    (falls back to the whole corpus if that product has none).
+    use_embedding=False -> BM25 only (no network embedding call; fast)."""
     conn = get_db_connection()
     cursor = conn.cursor()
     base = ("SELECT c.id, c.document_id, c.doc_code, c.doc_title, c.page_number, "
@@ -56,29 +57,31 @@ def perform_hybrid_search(query, top_k=4, product_slug=None):
     max_bm25 = max(bm25_scores) if max(bm25_scores) > 0 else 1.0
     norm_bm25 = [score / max_bm25 for score in bm25_scores]
 
-    query_emb = get_query_embedding(query)
-    cosine_sims = []
-    
-    for c in chunks:
-        emb_json = c.get('embedding_json')
-        if emb_json:
-            doc_emb = json.loads(emb_json)
-            if len(doc_emb) == len(query_emb):
-                sim = np.dot(doc_emb, query_emb) / (np.linalg.norm(doc_emb) * np.linalg.norm(query_emb) + 1e-9)
+    if use_embedding:
+        query_emb = get_query_embedding(query)
+        cosine_sims = []
+        for c in chunks:
+            emb_json = c.get('embedding_json')
+            if emb_json:
+                doc_emb = json.loads(emb_json)
+                if len(doc_emb) == len(query_emb):
+                    sim = np.dot(doc_emb, query_emb) / (np.linalg.norm(doc_emb) * np.linalg.norm(query_emb) + 1e-9)
+                else:
+                    loc_emb = compute_local_embedding(c['content'])
+                    loc_qemb = compute_local_embedding(query)
+                    sim = np.dot(loc_emb, loc_qemb) / (np.linalg.norm(loc_emb) * np.linalg.norm(loc_qemb) + 1e-9)
             else:
-                loc_emb = compute_local_embedding(c['content'])
-                loc_qemb = compute_local_embedding(query)
-                sim = np.dot(loc_emb, loc_qemb) / (np.linalg.norm(loc_emb) * np.linalg.norm(loc_qemb) + 1e-9)
-        else:
-            sim = 0.0
-        cosine_sims.append(float(sim))
-
-    max_sim = max(cosine_sims) if max(cosine_sims) > 0 else 1.0
-    norm_cosine = [sim / max_sim for sim in cosine_sims]
+                sim = 0.0
+            cosine_sims.append(float(sim))
+        max_sim = max(cosine_sims) if max(cosine_sims) > 0 else 1.0
+        norm_cosine = [sim / max_sim for sim in cosine_sims]
+    else:
+        norm_cosine = [0.0] * len(chunks)
 
     fused_results = []
     for idx, chunk in enumerate(chunks):
-        final_score = 0.6 * norm_cosine[idx] + 0.4 * norm_bm25[idx]
+        w_cos = 0.6 if use_embedding else 0.0
+        final_score = w_cos * norm_cosine[idx] + (1.0 - w_cos) * norm_bm25[idx]
         fused_results.append({
             'chunk_id': chunk['id'],
             'doc_code': chunk['doc_code'],

@@ -18,9 +18,9 @@ import re
 import time
 import threading
 
-_CHAT_TIMEOUT = 20.0
-_FAIL_LIMIT = 3
-_COOLDOWN = 300.0
+_CHAT_TIMEOUT = 30.0
+_FAIL_LIMIT = 4
+_COOLDOWN = 180.0
 
 UNAVAILABLE = "__LLM_UNAVAILABLE__"
 NOT_COVERED = "NOT_COVERED"
@@ -39,11 +39,11 @@ def _key():
 
 
 def chat_model():
-    return (os.getenv("GEMINI_MODEL") or "gemini-2.0-flash").strip()
+    return (os.getenv("GEMINI_MODEL") or "gemini-flash-lite-latest").strip()
 
 
 def embed_model():
-    return (os.getenv("GEMINI_EMBEDDING_MODEL") or "text-embedding-004").strip()
+    return (os.getenv("GEMINI_EMBEDDING_MODEL") or "gemini-embedding-001").strip()
 
 
 def active_provider():

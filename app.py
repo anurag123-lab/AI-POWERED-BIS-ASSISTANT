@@ -749,7 +749,7 @@ def case_detail(case_id):
     lang = session.get('lang', 'en')
     areas = ['standards', 'related_standards', 'certification', 'scheme',
              'testing', 'licensing', 'supporting']
-    views = [answer_engine.answer_area(slug, a, language=lang) for a in areas] if slug else []
+    views = [answer_engine.answer_area(slug, a, language=lang, use_llm=False) for a in areas] if slug else []
     saved = _saved_areas(case)
     return render_template('case_detail.html', case=case, product=meta, slug=slug,
                            views=views, saved=saved)
@@ -1051,7 +1051,7 @@ def get_case_pdf(case_id):
     if slug:
         for area in ['standards', 'related_standards', 'certification', 'scheme',
                      'testing', 'licensing', 'supporting']:
-            v = answer_engine.answer_area(slug, area, language=lang)
+            v = answer_engine.answer_area(slug, area, language=lang, use_llm=False)
             if not v.get('refused'):
                 views.append(v)
 

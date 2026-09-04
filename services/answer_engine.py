@@ -1,11 +1,11 @@
 """
 Answer engine — turns a product + question into grounded, cited answers.
 
-- ~90% comes from the curated BIS knowledge base (services/knowledge_base.py),
-  rendered deterministically. Always available.
-- ~10% is OpenAI (services/llm.py): it tightens phrasing and answers the
-  specific question strictly from the KB context. If the model is unavailable
-  or says NOT_COVERED, the deterministic text stands.
+- ~70% is grounded BIS content: the curated knowledge base + verbatim
+  passages from the ingested BIS Product Manual PDFs. Always available.
+- ~30% is Google Gemini (services/llm.py): within that BIS context only, it
+  rephrases, connects and answers the specific question, citing each fact.
+  If the model is unavailable / says NOT_COVERED, the 100%-BIS text stands.
 - Off-topic / no-product questions get a measured refusal and are logged to
   audit_logs for the Documentation Gap Report (spec section 17-18).
 """
@@ -46,13 +46,15 @@ def _product_has_chunks(slug):
     return n > 0
 
 
-def verbatim_excerpts(slug, area, question=None, limit=2):
-    """Top matching passages from the product's ingested BIS PDFs (or [])."""
+def verbatim_excerpts(slug, area, question=None, limit=2, fast=False):
+    """Top matching passages from the product's ingested BIS PDFs (or []).
+    fast=True -> BM25 only, no network embedding call."""
     if not slug or not _product_has_chunks(slug):
         return []
     q = (question or "").strip() or _AREA_QUERY.get(area, area)
     try:
-        hits = perform_hybrid_search(q, top_k=limit, product_slug=slug)
+        hits = perform_hybrid_search(q, top_k=limit, product_slug=slug,
+                                     use_embedding=not fast)
     except Exception:
         return []
     out = []
@@ -115,12 +117,12 @@ BLEND_SYNTH = {"bis": 70, "ai": 30}
 
 def _compose_bis_context(slug, area, question):
     """The '70%': KB area facts + verbatim passages from the ingested BIS PDFs."""
-    parts = [kb.area_context(slug, area)]
-    for ex in verbatim_excerpts(slug, area, question, limit=3):
+    parts = [kb.area_context(slug, area)[:2200]]
+    for ex in verbatim_excerpts(slug, area, question, limit=2):
         cite = f"{ex.get('doc', 'BIS document')}"
         if ex.get("page"):
             cite += f" p.{ex['page']}"
-        parts.append(f'VERBATIM [{cite}]:\n"{ex.get("text", "")}"')
+        parts.append(f'VERBATIM [{cite}]:\n"{ex.get("text", "")[:340]}"')
     return "\n\n".join(p for p in parts if p)
 
 
@@ -136,7 +138,7 @@ def _synthesize(slug, area, question, deterministic_md):
         f"Write the answer in Markdown, ~70% direct-from-context with [citations], "
         f"~30% your own connective explanation. Nothing after the answer."
     )
-    out = llm.chat(_LLM_SYSTEM, user, temperature=0.15, max_tokens=700)
+    out = llm.chat(_LLM_SYSTEM, user, temperature=0.15, max_tokens=550)
     if out == llm.UNAVAILABLE or not out.strip():
         return deterministic_md, False, BLEND_GROUNDED
     if out.strip().upper().startswith(llm.NOT_COVERED):
@@ -150,24 +152,49 @@ def _maybe_translate(text, language):
     return text
 
 
-def answer_area(slug, area, question=None, language="en"):
-    """One area answer: {area,title,body_md,sources,feature_endpoint,grounded,refused,llm_used}."""
+# In-process cache for the LLM-synthesised area bodies. The BIS context per
+# (product, area, question) is static, so a synthesised answer is stable; this
+# keeps repeat page loads instant and free-tier quota use low.
+_AREA_CACHE = {}
+_AREA_CACHE_MAX = 400
+
+
+def answer_area(slug, area, question=None, language="en", use_llm=True):
+    """One area answer. use_llm=False -> fast 100%-BIS deterministic body
+    (used for the 7-card Home); use_llm=True -> 70% BIS / 30% AI (feature pages,
+    chatbot), cached per (slug, area, question, lang)."""
     view = kb.area_view(slug, area)
     if not view:
         return {
             "area": area, "title": kb.AREA_TITLES.get(area, area),
             "body_md": "This area is not covered for the selected product in the BIS knowledge base.",
             "sources": [], "feature_endpoint": kb.AREA_ENDPOINT.get(area, "home"),
-            "grounded": False, "refused": True, "llm_used": False,
+            "excerpts": [], "grounded": False, "refused": True, "llm_used": False,
+            "blend": BLEND_GROUNDED,
         }
-    body, llm_used, blend = _synthesize(slug, area, question, view["body_md"])
-    body = _maybe_translate(body, language)
+
+    excerpts = verbatim_excerpts(slug, area, question, fast=not use_llm)
+
+    if use_llm and llm.llm_available():
+        ck = (slug, area, (question or "").strip().lower(), language)
+        if ck in _AREA_CACHE:
+            body, llm_used, blend = _AREA_CACHE[ck]
+        else:
+            body, llm_used, blend = _synthesize(slug, area, question, view["body_md"])
+            body = _maybe_translate(body, language)
+            if len(_AREA_CACHE) >= _AREA_CACHE_MAX:
+                _AREA_CACHE.clear()
+            _AREA_CACHE[ck] = (body, llm_used, blend)
+    else:
+        body = _maybe_translate(view["body_md"], language)
+        llm_used, blend = False, BLEND_GROUNDED
+
     return {
         "area": area,
         "title": view["title"],
         "body_md": body,
         "sources": view["sources"],
-        "excerpts": verbatim_excerpts(slug, area, question),
+        "excerpts": excerpts,
         "feature_endpoint": view["endpoint"],
         "grounded": True,
         "refused": False,
@@ -176,11 +203,13 @@ def answer_area(slug, area, question=None, language="en"):
     }
 
 
-def answer_seven(slug, location=None, language="en"):
-    """The 7 area answers in spec order (skips related_standards only if the KB has none)."""
+def answer_seven(slug, location=None, language="en", use_llm=False):
+    """The 7 area answers in spec order. Deterministic (fast) by default so the
+    Home page renders instantly; the AI 30% is applied when a user opens a
+    feature page or asks the assistant a specific question."""
     out = []
     for area in SEVEN_AREAS:
-        a = answer_area(slug, area, question=None, language=language)
+        a = answer_area(slug, area, question=None, language=language, use_llm=use_llm)
         if a["refused"] and area == "related_standards":
             continue
         out.append(a)
@@ -272,7 +301,7 @@ def answer_question(slug, question, location=None, language="en"):
             "product": slug,
             "product_name": meta.get("display_name", slug),
             "language": language,
-            "answers": answer_seven(slug, location, language),
+            "answers": answer_seven(slug, location, language, use_llm=True),
         }
 
     picked = [answer_area(slug, a, question=question, language=language) for a in areas[:3]]
