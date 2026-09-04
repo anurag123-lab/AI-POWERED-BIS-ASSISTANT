@@ -4,16 +4,7 @@ import os
 import numpy as np
 from rank_bm25 import BM25Okapi
 from database import get_db_connection
-
-# OpenAI client initialization
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-client = None
-if OPENAI_API_KEY:
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=OPENAI_API_KEY)
-    except Exception as e:
-        print(f"OpenAI Client Init Warning: {e}")
+from services import llm
 
 MEASURED_REFUSAL_THRESHOLD = 0.40
 
@@ -29,15 +20,12 @@ def compute_local_embedding(text):
     return vec
 
 def get_query_embedding(query_text):
-    if client:
-        try:
-            response = client.embeddings.create(
-                input=query_text,
-                model="text-embedding-3-small"
-            )
-            return response.data[0].embedding
-        except Exception as e:
-            pass
+    """OpenAI embedding when a working key/credit is available, else a local
+    hashed embedding. `llm.embed` returns None on any failure (no key, 429,
+    timeout) so this always degrades cleanly."""
+    vec = llm.embed(query_text)
+    if vec:
+        return vec
     return compute_local_embedding(query_text)
 
 def perform_hybrid_search(query, top_k=4):

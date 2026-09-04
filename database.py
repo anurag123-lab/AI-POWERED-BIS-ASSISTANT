@@ -49,6 +49,40 @@ def ensure_schema_compatibility():
     );
     ''')
 
+    # compliance_cases gains the "active product workspace" columns
+    case_cols = {row[1] for row in cursor.execute("PRAGMA table_info(compliance_cases)").fetchall()}
+    for col, ddl in {
+        'product_slug': 'TEXT',
+        'user_type': 'TEXT',
+        'city': 'TEXT',
+        'state': 'TEXT',
+        'saved_areas_json': 'TEXT',
+    }.items():
+        if col not in case_cols:
+            cursor.execute(f'ALTER TABLE compliance_cases ADD COLUMN {col} {ddl}')
+
+    # laboratories gains a real state column (code already reads lab.get('state'))
+    lab_cols = {row[1] for row in cursor.execute("PRAGMA table_info(laboratories)").fetchall()}
+    if 'state' not in lab_cols:
+        cursor.execute('ALTER TABLE laboratories ADD COLUMN state TEXT')
+
+    # search_history (also created in init_db; here for already-migrated DBs)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS search_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        case_id INTEGER,
+        product_slug TEXT,
+        query TEXT NOT NULL,
+        mode TEXT,
+        answer_md TEXT,
+        sources_json TEXT,
+        area TEXT,
+        language TEXT DEFAULT 'en',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -242,6 +276,25 @@ def init_db():
         action_type TEXT NOT NULL,
         details TEXT,
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    ''')
+
+    # 11. Search / AI-assistant history (shown on the left of the personalised Home)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS search_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        case_id INTEGER,
+        product_slug TEXT,
+        query TEXT NOT NULL,
+        mode TEXT,
+        answer_md TEXT,
+        sources_json TEXT,
+        area TEXT,
+        language TEXT DEFAULT 'en',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id),
+        FOREIGN KEY(case_id) REFERENCES compliance_cases(id)
     );
     ''')
 

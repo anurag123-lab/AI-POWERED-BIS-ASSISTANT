@@ -1,0 +1,22 @@
+# BIS Compliance Copilot — Python dependencies
+# Install:  python -m pip install -r requirements.txt
+
+Flask==3.1.3
+Werkzeug==3.1.8
+python-dotenv==1.2.3
+
+# RAG / retrieval
+numpy==2.5.2
+rank-bm25==0.2.2
+
+# OpenAI (embeddings + synthesis + translation) — optional at runtime,
+# app falls back to the offline engine when OPENAI_API_KEY is unset
+openai==3.6.0
+
+# PDF report generation
+reportlab==5.0.1
+
+# Building the curated BIS knowledge base from bis.gov.in (tools/build_kb.py)
+requests==2.34.2
+beautifulsoup4==4.15.0
+pdfplumber==0.11.10

@@ -1,0 +1,393 @@
+{
+  "slug": "led_lamp",
+  "display_name": "Self-Ballasted LED Lamp (General Lighting)",
+  "category": "Electrical & Appliances",
+  "aliases": [
+    "led lamp",
+    "led bulb",
+    "led light",
+    "self ballasted led lamp",
+    "self-ballasted led lamp",
+    "general lighting led",
+    "led",
+    "is 16102"
+  ],
+  "fetched_at": "2026-09-04T08:26:13+00:00",
+  "areas": {
+    "standards": {
+      "primary": {
+        "is_number": "IS 16102 (Part 1) : 2012",
+        "title": "Self-ballasted LED lamps for general lighting services - Part 1: Safety requirements",
+        "summary": "IS 16102 (Part 1) specifies the safety and interchangeability requirements for self-ballasted LED lamps with integral means for stable operation, for domestic and similar general lighting, rated 1 W to 60 W, rated voltage above 50 V up to 250 V at 50 Hz, with E14, E27, B22d and B15d caps. It covers marking, protection against electric shock, insulation resistance and electric strength, mechanical strength, cap temperature rise, resistance to heat and fire, and fault conditions.",
+        "sources": [
+          {
+            "doc": "IS 16102 (Part 1) : 2012 - Self-ballasted LED lamps, safety",
+            "page": null,
+            "clause": null,
+            "url": "https://www.services.bis.gov.in/tmp/tbl5_2024-11-13-04-02.pdf"
+          },
+          {
+            "doc": "BIS - Indian Standards on LED (LED series list)",
+            "page": null,
+            "clause": null,
+            "url": "https://bis.gov.in/other/LEDSeries.pdf"
+          }
+        ]
+      },
+      "related": [
+        {
+          "is_number": "IS 16102 (Part 2) : 2012",
+          "title": "Self-ballasted LED lamps for general lighting services - Part 2: Performance requirements",
+          "relation": "Performance companion standard (lumen output, efficacy, colour, life) - tested for BIS registration alongside Part 1.",
+          "sources": [
+            {
+              "doc": "BIS - Indian Standards on LED",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/other/LEDSeries.pdf"
+            }
+          ]
+        },
+        {
+          "is_number": "IS 15885 (Part 2/Sec 13)",
+          "title": "Safety of lamp control gear - Particular requirements for d.c. or a.c. supplied electronic control gear for LED modules",
+          "relation": "Applies where a separate LED driver/module is used.",
+          "sources": [
+            {
+              "doc": "BIS Power/Energy sector standards",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/wp-content/uploads/2022/01/Indian-Standards-on-Power-Energy-sector_compressed.pdf"
+            }
+          ]
+        }
+      ]
+    },
+    "certification": {
+      "mandatory": true,
+      "summary": "Self-ballasted LED lamps for general lighting are notified for compulsory registration. The manufacturer must obtain a BIS Registration Number under the Compulsory Registration Scheme (CRS) and mark the lamp with the Standard Mark for CRS (self-declaration of conformity) before it is manufactured, imported or sold in India.",
+      "qco": {
+        "title": "Electronics and Information Technology Goods (Requirement for Compulsory Registration) Order - LED lamps / general lighting notified for compulsory registration",
+        "ministry": "Ministry of Electronics and Information Technology (MeitY)",
+        "notified": "LED lamps added to the CRS notified list by MeitY",
+        "enforced": "As per the MeitY notification dates for the LED lamp category",
+        "gazette": "MeitY Gazette notification (CRS notified products)"
+      },
+      "sources": [
+        {
+          "doc": "Scheme - II (Registration Scheme) - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/?lang=en"
+        },
+        {
+          "doc": "BIS - LED Bulbs",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/led-bulbs/?lang=en"
+        },
+        {
+          "doc": "Annexure - List of consumer products notified for compulsory marking",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/wp-content/uploads/2025/03/temp_2131689472.pdf"
+        }
+      ]
+    },
+    "scheme": {
+      "applicable": {
+        "name": "Scheme II - Compulsory Registration Scheme (CRS)",
+        "covers": "Registration of the model with BIS on the basis of a test report from a BIS-recognised laboratory against IS 16102 (Part 1). The manufacturer then self-declares conformity and uses the Standard Mark with the BIS registration number.",
+        "why": "LED lamps for general lighting are an electronics/IT good notified by MeitY under CRS; CRS uses registration and lab testing, not a full factory ISI-mark licence.",
+        "you_receive": "A BIS Registration Number for each registered model and the right to apply the CRS Standard Mark; registration is normally valid for 2 years and renewable."
+      },
+      "not_applicable": [
+        {
+          "name": "Scheme I (ISI Mark Scheme)",
+          "why": "Scheme I with a factory Scheme of Inspection and Testing is not used for CRS-notified electronics; LED lamps are covered by registration under Scheme II."
+        },
+        {
+          "name": "Scheme X",
+          "why": "Scheme X applies to specified machinery/equipment to a purchaser's specification, not to general-lighting LED lamps."
+        }
+      ],
+      "sources": [
+        {
+          "doc": "Scheme - II (Registration Scheme) - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/?lang=en"
+        }
+      ]
+    },
+    "testing": {
+      "summary": "One sample per model (and per manufacturing location) is tested at a BIS-recognised CRS laboratory against IS 16102 (Part 1). The test report is uploaded with the registration application.",
+      "tests": [
+        {
+          "name": "Marking and interchangeability of the cap",
+          "clause": null,
+          "condition": "Type test for registration"
+        },
+        {
+          "name": "Protection against electric shock / accessibility of live parts",
+          "clause": null,
+          "condition": "Type test for registration"
+        },
+        {
+          "name": "Insulation resistance and electric strength",
+          "clause": null,
+          "condition": "Type test for registration"
+        },
+        {
+          "name": "Mechanical strength (cap and torque, bending)",
+          "clause": null,
+          "condition": "Type test for registration"
+        },
+        {
+          "name": "Cap temperature rise",
+          "clause": null,
+          "condition": "Type test for registration"
+        },
+        {
+          "name": "Resistance to heat and to flame and ignition",
+          "clause": null,
+          "condition": "Type test for registration"
+        },
+        {
+          "name": "Fault conditions / abnormal operation",
+          "clause": null,
+          "condition": "Type test for registration"
+        },
+        {
+          "name": "Creepage distances and clearances",
+          "clause": null,
+          "condition": "Type test for registration"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "Uniform Test Report Formats for CRS - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/laboratorys/utrf/?lang=en"
+        }
+      ]
+    },
+    "labs": {
+      "note": "CRS testing must be at a BIS-recognised laboratory with IS 16102 (Part 1) in its CRS scope. Check the recognised-labs list for the LED lamp product category.",
+      "directory_url": "https://lims.bis.gov.in/home/labs/",
+      "entries": [
+        {
+          "name": "Electronics Regional Test Laboratory (ERTL) North",
+          "city": "New Delhi",
+          "state": "Delhi",
+          "scope": "CRS - lighting and electronics",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "Central Power Research Institute (CPRI)",
+          "city": "Bhopal",
+          "state": "Madhya Pradesh",
+          "scope": "Lighting products, LED lamps",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "Bureau Veritas / TUV / SGS empanelled CRS labs",
+          "city": "Multiple",
+          "state": "Multiple",
+          "scope": "Confirm IS 16102 Part 1 CRS scope per location",
+          "sources": [
+            {
+              "doc": "BIS empanelled laboratories",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/empaneled_labs/"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS recognised / empanelled laboratories",
+          "page": null,
+          "clause": null,
+          "url": "https://lims.bis.gov.in/home/labs/"
+        }
+      ]
+    },
+    "licensing": {
+      "summary": "CRS registration for an LED lamp model is applied for online on the BIS CRS portal: get the model tested at a recognised lab -> file the registration application with the test report and firm documents -> BIS scrutiny -> grant of the BIS Registration Number. No routine BIS factory inspection is done for CRS, but BIS carries out market surveillance.",
+      "steps": [
+        {
+          "n": 1,
+          "title": "Get the model tested",
+          "detail": "Send one sample per model (and per factory) to a BIS-recognised CRS laboratory for testing against IS 16102 (Part 1); obtain the test report in the prescribed format.",
+          "timeline": "Lab-queue dependent; typically a few weeks"
+        },
+        {
+          "n": 2,
+          "title": "File the registration application online",
+          "detail": "On the BIS CRS portal (crsbis.in), create the manufacturer account, enter model details, upload the test report, firm documents and (for importers) the AIR papers, and pay the fee.",
+          "timeline": "Applicant-driven"
+        },
+        {
+          "n": 3,
+          "title": "Scrutiny by BIS",
+          "detail": "BIS scrutinises the application and test report; raises queries if any information is missing.",
+          "timeline": "About 15-20 working days for a complete application"
+        },
+        {
+          "n": 4,
+          "title": "Grant of the BIS Registration Number",
+          "detail": "BIS grants a registration number for the model; the manufacturer may then self-declare conformity and apply the CRS Standard Mark with the registration number.",
+          "timeline": "Commonly around 3-4 weeks from a clean application"
+        },
+        {
+          "n": 5,
+          "title": "Maintain and renew",
+          "detail": "Keep records and continue conformance; registration is valid for 2 years and is renewable. BIS conducts market surveillance sampling.",
+          "timeline": "Ongoing"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS Compulsory Registration Scheme portal",
+          "page": null,
+          "clause": null,
+          "url": "https://www.crsbis.in/BIS/about-crs.do"
+        },
+        {
+          "doc": "CRS registration process",
+          "page": null,
+          "clause": null,
+          "url": "https://www.crsbis.in/BIS/registration-page.do"
+        }
+      ]
+    },
+    "documents": {
+      "summary": "Documents for the CRS registration application for an LED lamp model. Conditional items depend on the firm and whether the applicant is an importer.",
+      "items": [
+        {
+          "name": "Test report against IS 16102 (Part 1) in the prescribed format",
+          "explanation": "From a BIS-recognised CRS laboratory, per model and per manufacturing location. This is the core of the application.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "Uniform Test Report Formats for CRS",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/laboratorys/utrf/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Firm / factory registration proof",
+          "explanation": "Business registration, GST, factory licence or Udyam registration and factory address proof.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS CRS registration requirements",
+              "page": null,
+              "clause": null,
+              "url": "https://www.crsbis.in/BIS/registration-page.do"
+            }
+          ]
+        },
+        {
+          "name": "Trademark / brand certificate or authorisation",
+          "explanation": "Registration or ownership proof for the brand under which the lamp is sold, or a brand-use authorisation.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS CRS registration requirements",
+              "page": null,
+              "clause": null,
+              "url": "https://www.crsbis.in/BIS/registration-page.do"
+            }
+          ]
+        },
+        {
+          "name": "Authorised signatory authorisation and ID proof",
+          "explanation": "Board resolution or authorisation letter plus ID of the person signing.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS CRS registration requirements",
+              "page": null,
+              "clause": null,
+              "url": "https://www.crsbis.in/BIS/registration-page.do"
+            }
+          ]
+        },
+        {
+          "name": "Details / photographs / marking layout of the model",
+          "explanation": "Model name, wattage, cap type, rating plate and proposed Standard Mark placement.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS CRS registration requirements",
+              "page": null,
+              "clause": null,
+              "url": "https://www.crsbis.in/BIS/registration-page.do"
+            }
+          ]
+        },
+        {
+          "name": "Bill of materials / critical components list",
+          "explanation": "Key components (LED driver, LEDs, cap) with their sources, to support the series/model grouping.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS CRS guidelines",
+              "page": null,
+              "clause": null,
+              "url": "https://www.crsbis.in/BIS/about-crs.do"
+            }
+          ]
+        },
+        {
+          "name": "Importer: Authorised Indian Representative (AIR) appointment and undertaking",
+          "explanation": "A foreign manufacturer registers through an AIR resident in India who takes legal responsibility.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS CRS - foreign manufacturers",
+              "page": null,
+              "clause": null,
+              "url": "https://www.crsbis.in/BIS/about-crs.do"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "_provenance": {
+    "generated_by": "tools/build_kb.py",
+    "generated_at": "2026-09-04T08:26:13+00:00",
+    "bis_index_pages": {
+      "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en": "cache",
+      "https://www.bis.gov.in/upcoming-qcos-notified-and-due-for-implementation/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en": "fetched 200 (1248056 bytes)",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/?lang=en": "cache",
+      "https://www.crsbis.in/BIS/about-crs.do": "UNREACHABLE (ConnectionError: HTTPSConnectionPool(host='www.crsbis.in', port=443): Max retries exceeded with url: /BIS/about-crs.do (Caused by NameResolutionError(\"HTTPSConnection(host='www.crsbis.in', port=443): Failed to resolve 'www.crsbis.in' ([Errno 11002] getaddrinfo failed)\")))",
+      "https://lims.bis.gov.in/home/labs/": "cache"
+    },
+    "source_urls_checked": 11,
+    "source_urls_unreachable": []
+  }
+}

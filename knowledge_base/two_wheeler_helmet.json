@@ -1,0 +1,405 @@
+{
+  "slug": "two_wheeler_helmet",
+  "display_name": "Two-Wheeler Protective Helmet",
+  "category": "Safety Equipment",
+  "aliases": [
+    "helmet",
+    "two wheeler helmet",
+    "motorcycle helmet",
+    "motorbike helmet",
+    "rider helmet",
+    "protective helmet",
+    "bike helmet",
+    "is 4151"
+  ],
+  "fetched_at": "2026-09-04T08:26:13+00:00",
+  "areas": {
+    "standards": {
+      "primary": {
+        "is_number": "IS 4151 : 2015",
+        "title": "Protective helmets for motorcycle riders - Specification (Third Revision)",
+        "summary": "IS 4151 specifies construction, materials, field of vision, shock absorption, penetration resistance, retention system strength and effectiveness, rigidity, chin-bar and visor requirements for protective helmets for riders and pillion riders of two-wheeled motor vehicles. All helmets manufactured or sold in India for two-wheeler use must conform to IS 4151 and carry the ISI mark.",
+        "sources": [
+          {
+            "doc": "IS 4151 : 2015 - Protective helmets for motorcycle riders",
+            "page": null,
+            "clause": null,
+            "url": "https://www.services.bis.gov.in/tmp/tbl5_2024-11-12-01-36.pdf"
+          },
+          {
+            "doc": "BIS Product Manual for IS 4151 (June 2020, revised)",
+            "page": null,
+            "clause": null,
+            "url": "https://bis.gov.in/wp-content/uploads/2020/06/PM-IS-4151-JUNE-2020-REVISED.pdf"
+          }
+        ]
+      },
+      "related": [
+        {
+          "is_number": "IS 4151 (Amendments)",
+          "title": "Amendments to IS 4151 : 2015",
+          "relation": "Amendments tighten mass limits and test details; the current amended text applies.",
+          "sources": [
+            {
+              "doc": "BIS standard IS 4151 page",
+              "page": null,
+              "clause": null,
+              "url": "https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/standard_review/Standard_review/Isdetails?ID=MTA3OTE%3D"
+            }
+          ]
+        },
+        {
+          "is_number": "IS 15071",
+          "title": "Face shields / visors for protective helmets",
+          "relation": "Referenced for the optical and mechanical performance of the visor.",
+          "sources": [
+            {
+              "doc": "BIS Product Manual for IS 4151",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/2020/06/PM-IS-4151-JUNE-2020-REVISED.pdf"
+            }
+          ]
+        }
+      ]
+    },
+    "certification": {
+      "mandatory": true,
+      "summary": "Two-wheeler helmets are under compulsory BIS certification. A manufacturer must hold a Scheme I licence and put the ISI mark with the CM/L number on every helmet. Manufacture, import, storage for sale or sale of a helmet without the ISI mark is prohibited.",
+      "qco": {
+        "title": "Helmet for Riders of Two Wheeler Motor Vehicles (Quality Control) Order, 2020",
+        "ministry": "Ministry of Road Transport and Highways (MoRTH)",
+        "notified": "S.O. 4252 (E) dated 26 November 2020",
+        "enforced": "1 June 2021",
+        "gazette": "S.O. 4252 (E), Gazette of India, 26 November 2020"
+      },
+      "sources": [
+        {
+          "doc": "Helmet for riders of Two Wheeler Motor Vehicles (Quality Control) Order, 2020 - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/whats_new/helmet-for-riders-of-two-wheeler-motor-vehicles-quality-control-order-2020/"
+        },
+        {
+          "doc": "PIB - BIS standards revised for two wheeler helmets",
+          "page": null,
+          "clause": null,
+          "url": "https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=1676466"
+        }
+      ]
+    },
+    "scheme": {
+      "applicable": {
+        "name": "Scheme I (ISI Mark Scheme)",
+        "covers": "Licence to use the ISI mark on protective helmets after factory assessment and testing of samples against IS 4151.",
+        "why": "The QCO issued by MoRTH places helmets under mandatory ISI-mark certification with a factory Scheme of Inspection and Testing.",
+        "you_receive": "A BIS licence with a CM/L number and the right to mark each helmet with the ISI mark; normally valid for 2 years and renewable."
+      },
+      "not_applicable": [
+        {
+          "name": "Scheme II (CRS)",
+          "why": "CRS is only for electronics and IT goods notified by MeitY. Helmets are safety equipment under Scheme I."
+        },
+        {
+          "name": "Scheme X",
+          "why": "Scheme X is for machinery/equipment to a purchaser's specification, not for a mass-market safety helmet."
+        }
+      ],
+      "sources": [
+        {
+          "doc": "Scheme - I (ISI Mark Scheme) - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+        }
+      ]
+    },
+    "testing": {
+      "summary": "Sample helmets drawn from the factory are tested at a BIS / BIS-recognised laboratory against IS 4151. The factory also conducts routine and acceptance tests under its SIT.",
+      "tests": [
+        {
+          "name": "Shock absorption (impact) test at specified points and temperatures",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Penetration resistance test",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Retention system strength and effectiveness (roll-off) test",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Rigidity test (lateral compression)",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Field of vision measurement",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Mass of helmet within specified limit",
+          "clause": null,
+          "condition": "Type test + routine check"
+        },
+        {
+          "name": "Visor luminous transmittance and mechanical strength",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Chin bar test (for full-face helmets)",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Conditioning: ambient, high temperature, low temperature, water immersion, solar radiation before impact",
+          "clause": null,
+          "condition": "Type test"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS Product Manual for IS 4151 - tests and SIT",
+          "page": null,
+          "clause": null,
+          "url": "https://bis.gov.in/wp-content/uploads/2020/06/PM-IS-4151-JUNE-2020-REVISED.pdf"
+        }
+      ]
+    },
+    "labs": {
+      "note": "Helmet testing needs a laboratory with IS 4151 in its recognised scope and a helmet impact rig. Confirm scope and validity in the BIS LIMS directory before dispatching samples.",
+      "directory_url": "https://lims.bis.gov.in/home/labs/",
+      "entries": [
+        {
+          "name": "Central Institute of Petrochemicals Engineering & Technology (CIPET)",
+          "city": "Chennai",
+          "state": "Tamil Nadu",
+          "scope": "Polymer products, protective helmets",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "National Test House (NTH)",
+          "city": "Ghaziabad",
+          "state": "Uttar Pradesh",
+          "scope": "Mechanical / safety testing incl. helmets",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "SGS India / other empanelled labs",
+          "city": "Multiple",
+          "state": "Multiple",
+          "scope": "Check IS 4151 scope per location",
+          "sources": [
+            {
+              "doc": "BIS empanelled laboratories",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/empaneled_labs/"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS recognised / empanelled laboratories",
+          "page": null,
+          "clause": null,
+          "url": "https://lims.bis.gov.in/home/labs/"
+        }
+      ]
+    },
+    "licensing": {
+      "summary": "Scheme I (ISI mark) licence for helmets is applied for online on Manak Online: apply and pay -> scrutiny -> factory inspection and sample drawal -> testing against IS 4151 -> grant of licence with CM/L number.",
+      "steps": [
+        {
+          "n": 1,
+          "title": "Apply online on Manak Online",
+          "detail": "Register the firm, file the Scheme I application for IS 4151, upload documents, declare the SIT and in-house test facility, and pay the fee.",
+          "timeline": "Applicant-driven"
+        },
+        {
+          "n": 2,
+          "title": "Scrutiny of application",
+          "detail": "BIS checks the manufacturing capability, machinery and test facility and raises queries.",
+          "timeline": "About 15-30 days after a complete application"
+        },
+        {
+          "n": 3,
+          "title": "Factory inspection and sample drawal",
+          "detail": "A BIS officer inspects the unit, witnesses in-house tests and seals samples for independent testing.",
+          "timeline": "Scheduled after scrutiny"
+        },
+        {
+          "n": 4,
+          "title": "Independent testing against IS 4151",
+          "detail": "Samples tested at a BIS / recognised lab; conditioning plus impact, penetration, retention, rigidity, vision and mass checks.",
+          "timeline": "Several weeks depending on lab queue"
+        },
+        {
+          "n": 5,
+          "title": "Grant of licence",
+          "detail": "On a satisfactory report, BIS grants the licence and CM/L number; helmets may then be ISI-marked. Licence normally valid 2 years, renewable.",
+          "timeline": "Commonly around 4 months from a clean application"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS Product Certification overview",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+        },
+        {
+          "doc": "BIS Manak Online portal",
+          "page": null,
+          "clause": null,
+          "url": "https://www.manakonline.in/MANAK/login"
+        }
+      ]
+    },
+    "documents": {
+      "summary": "Documents for the Scheme I helmet application. Conditional items depend on the firm's constitution, brand and whether the applicant is an importer.",
+      "items": [
+        {
+          "name": "Firm / factory establishment proof",
+          "explanation": "Business registration, GST, factory licence or Udyam registration, and factory address proof.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application requirements",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Manufacturing process flow chart and machinery list",
+          "explanation": "Shows shell moulding, EPS liner forming, assembly and finishing are done in-house.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual for IS 4151",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/2020/06/PM-IS-4151-JUNE-2020-REVISED.pdf"
+            }
+          ]
+        },
+        {
+          "name": "List of test equipment with calibration certificates",
+          "explanation": "In-house facility for routine checks (mass, dimensions, retention, visor transmittance).",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual for IS 4151 - SIT",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/2020/06/PM-IS-4151-JUNE-2020-REVISED.pdf"
+            }
+          ]
+        },
+        {
+          "name": "Scheme of Inspection and Testing (SIT)",
+          "explanation": "Documented raw-material, in-process, routine and acceptance test plan with records.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I guidelines",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Product test report against IS 4151 (if available)",
+          "explanation": "Supports the application; independent BIS testing is still carried out.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Authorised signatory authorisation and ID",
+          "explanation": "Board resolution / partnership authorisation plus ID of the signatory.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Trademark / brand ownership proof",
+          "explanation": "If the helmet carries a registered brand owned or licensed by the applicant.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Importer: Authorised Indian Representative (AIR) papers",
+          "explanation": "Foreign manufacturers apply through an AIR with the appointment letter and undertakings.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS Foreign Manufacturers Certification Scheme",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "_provenance": {
+    "generated_by": "tools/build_kb.py",
+    "generated_at": "2026-09-04T08:26:13+00:00",
+    "bis_index_pages": {
+      "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en": "cache",
+      "https://www.bis.gov.in/upcoming-qcos-notified-and-due-for-implementation/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en": "fetched 200 (1248056 bytes)",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/?lang=en": "cache",
+      "https://www.crsbis.in/BIS/about-crs.do": "UNREACHABLE (ConnectionError: HTTPSConnectionPool(host='www.crsbis.in', port=443): Max retries exceeded with url: /BIS/about-crs.do (Caused by NameResolutionError(\"HTTPSConnection(host='www.crsbis.in', port=443): Failed to resolve 'www.crsbis.in' ([Errno 11002] getaddrinfo failed)\")))",
+      "https://lims.bis.gov.in/home/labs/": "cache"
+    },
+    "source_urls_checked": 10,
+    "source_urls_unreachable": []
+  }
+}

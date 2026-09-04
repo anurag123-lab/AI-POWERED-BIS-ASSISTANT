@@ -1,0 +1,415 @@
+{
+  "slug": "portland_cement",
+  "display_name": "Ordinary Portland Cement, 43 Grade (IS 269)",
+  "category": "Cement & Construction",
+  "aliases": [
+    "cement",
+    "portland cement",
+    "ordinary portland cement",
+    "opc",
+    "opc 43",
+    "43 grade cement",
+    "opc 43 grade",
+    "is 269"
+  ],
+  "fetched_at": "2026-09-04T08:26:13+00:00",
+  "areas": {
+    "standards": {
+      "primary": {
+        "is_number": "IS 269 : 2015",
+        "title": "Ordinary Portland Cement - Specification (Sixth Revision)",
+        "summary": "IS 269 : 2015 merged the earlier 33, 43 and 53 grade OPC standards into one. It covers ordinary Portland cement in grades OPC 33, OPC 43, OPC 53 and the sulphate-resisting-blend grades OPC 43S and OPC 53S. It specifies chemical requirements (lime saturation factor, alumina-iron ratio, insoluble residue, magnesia, sulphuric anhydride, loss on ignition, chloride), physical requirements (fineness, soundness by Le Chatelier and autoclave, setting time, compressive strength at 3, 7 and 28 days) and packing and marking.",
+        "sources": [
+          {
+            "doc": "IS 269 : 2015 - Ordinary Portland Cement, Specification (Sixth Revision)",
+            "page": null,
+            "clause": null,
+            "url": "https://www.services.bis.gov.in/tmp/tbl5_2024-11-13-05-31.pdf"
+          },
+          {
+            "doc": "BIS Product Manual PM/IS 269 (Final)",
+            "page": null,
+            "clause": null,
+            "url": "https://www.bis.gov.in/wp-content/uploads/2018/12/IS-269-Final-Product-Manual.pdf"
+          },
+          {
+            "doc": "BIS - IS 269 : 2015 page",
+            "page": null,
+            "clause": null,
+            "url": "https://www.bis.gov.in/is-269-2015/?lang=en"
+          }
+        ]
+      },
+      "related": [
+        {
+          "is_number": "IS 4031 (Parts 1 to 15)",
+          "title": "Methods of physical tests for hydraulic cement",
+          "relation": "The test methods (fineness, setting time, soundness, strength) called up by IS 269.",
+          "sources": [
+            {
+              "doc": "BIS Compendium of Cement Standards",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/wp-content/uploads/2025/05/COMPENDIUM-OF-CEMENT-STANDARDS.pdf"
+            }
+          ]
+        },
+        {
+          "is_number": "IS 4032",
+          "title": "Method of chemical analysis of hydraulic cement",
+          "relation": "Chemical analysis method for the requirements in IS 269.",
+          "sources": [
+            {
+              "doc": "BIS Compendium of Cement Standards",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/wp-content/uploads/2025/05/COMPENDIUM-OF-CEMENT-STANDARDS.pdf"
+            }
+          ]
+        },
+        {
+          "is_number": "IS 3535 / IS 12269 / IS 1489",
+          "title": "Methods of sampling hydraulic cement; 53 grade OPC; Portland pozzolana cement",
+          "relation": "Sampling method and neighbouring cement specifications.",
+          "sources": [
+            {
+              "doc": "BIS Compendium of Cement Standards",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/wp-content/uploads/2025/05/COMPENDIUM-OF-CEMENT-STANDARDS.pdf"
+            }
+          ]
+        }
+      ]
+    },
+    "certification": {
+      "mandatory": true,
+      "summary": "All cement manufactured or sold in India is under compulsory BIS certification through the Cement (Quality Control) Order, 2003. An OPC 43 grade plant must hold a BIS Scheme I licence for IS 269 and mark every bag / consignment with the ISI mark and the CM/L number.",
+      "qco": {
+        "title": "Cement (Quality Control) Order, 2003 (as amended)",
+        "ministry": "Department for Promotion of Industry and Internal Trade (DPIIT), Ministry of Commerce and Industry",
+        "notified": "2003; amended from time to time to update the referenced standards",
+        "enforced": "In force since 2003 for all varieties of cement",
+        "gazette": "Cement (Quality Control) Order, 2003, Gazette of India"
+      },
+      "sources": [
+        {
+          "doc": "BIS Product Manual PM/IS 269 - QCO and marking",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/wp-content/uploads/2018/12/IS-269-Final-Product-Manual.pdf"
+        },
+        {
+          "doc": "Products under Compulsory Certification - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en"
+        }
+      ]
+    },
+    "scheme": {
+      "applicable": {
+        "name": "Scheme I (ISI Mark Scheme)",
+        "covers": "Licence to use the ISI mark on OPC to IS 269 after assessment of the cement plant and testing of samples for the full chemical and physical requirements, including 28-day compressive strength.",
+        "why": "Cement under the Cement (Quality Control) Order, 2003 requires full ISI-mark certification with a plant Scheme of Inspection and Testing and continuous quality control.",
+        "you_receive": "A BIS licence with a CM/L number and the right to mark bags and bulk consignments with the ISI mark and grade (e.g. OPC 43); normally valid for 2 years and renewable."
+      },
+      "not_applicable": [
+        {
+          "name": "Scheme II (CRS)",
+          "why": "CRS is only for MeitY-notified electronics and IT goods. Cement is a construction material under Scheme I."
+        },
+        {
+          "name": "Scheme X",
+          "why": "Scheme X is for machinery/equipment to a purchaser's specification, not for a bulk building material."
+        }
+      ],
+      "sources": [
+        {
+          "doc": "Scheme - I (ISI Mark Scheme) - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+        }
+      ]
+    },
+    "testing": {
+      "summary": "Samples are drawn from the plant and tested at a BIS / BIS-recognised laboratory against IS 269 using the IS 4031 and IS 4032 methods. Because 28-day strength takes 28 days, the licence timeline is dominated by the strength test. The plant runs daily routine tests under its SIT.",
+      "tests": [
+        {
+          "name": "Fineness (specific surface by Blaine)",
+          "clause": null,
+          "condition": "Type test + daily routine test"
+        },
+        {
+          "name": "Soundness (Le Chatelier expansion and autoclave)",
+          "clause": null,
+          "condition": "Type test + routine test"
+        },
+        {
+          "name": "Setting time (initial and final by Vicat)",
+          "clause": null,
+          "condition": "Type test + daily routine test"
+        },
+        {
+          "name": "Compressive strength at 3, 7 and 28 days",
+          "clause": null,
+          "condition": "Type test + routine test (28-day is the governing test)"
+        },
+        {
+          "name": "Chemical requirements: LSF, alumina-iron ratio, insoluble residue, MgO, SO3, loss on ignition, chloride",
+          "clause": null,
+          "condition": "Type test + periodic routine test"
+        },
+        {
+          "name": "Heat of hydration / air content (where specified)",
+          "clause": null,
+          "condition": "Type test as applicable"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS Product Manual PM/IS 269 - tests and SIT",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/wp-content/uploads/2018/12/IS-269-Final-Product-Manual.pdf"
+        },
+        {
+          "doc": "BIS Compendium of Cement Standards (IS 4031, IS 4032 methods)",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/wp-content/uploads/2025/05/COMPENDIUM-OF-CEMENT-STANDARDS.pdf"
+        }
+      ]
+    },
+    "labs": {
+      "note": "Cement testing needs a laboratory with IS 269 / IS 4031 / IS 4032 in its recognised scope and a cement testing setup (compression machine, Blaine apparatus, Le Chatelier, chemical lab). Confirm scope in the BIS LIMS directory. Many large plants have their own BIS-recognised in-house labs.",
+      "directory_url": "https://lims.bis.gov.in/home/labs/",
+      "entries": [
+        {
+          "name": "National Council for Cement and Building Materials (NCB / NCCBM)",
+          "city": "Ballabgarh, Faridabad",
+          "state": "Haryana",
+          "scope": "Cement and building materials testing",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "National Test House (NTH)",
+          "city": "Ghaziabad",
+          "state": "Uttar Pradesh",
+          "scope": "Construction materials, cement",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "Shri Ram Institute for Industrial Research",
+          "city": "Delhi",
+          "state": "Delhi",
+          "scope": "Cement and concrete testing",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS recognised / empanelled laboratories",
+          "page": null,
+          "clause": null,
+          "url": "https://lims.bis.gov.in/home/labs/"
+        }
+      ]
+    },
+    "licensing": {
+      "summary": "Scheme I (ISI mark) licence for OPC to IS 269 is applied for online on Manak Online: apply and pay -> scrutiny -> plant inspection and sample drawal -> independent testing (including 28-day strength) -> grant of licence with the CM/L number.",
+      "steps": [
+        {
+          "n": 1,
+          "title": "Apply online on Manak Online",
+          "detail": "Register the firm, file the Scheme I application for IS 269 with the grade(s) applied for (e.g. OPC 43), upload documents, declare the SIT and in-house laboratory, and pay the fee.",
+          "timeline": "Applicant-driven"
+        },
+        {
+          "n": 2,
+          "title": "Scrutiny of application",
+          "detail": "BIS verifies the plant process (raw mill, kiln, cement mill, packing), quality control set-up and in-house lab, and raises queries.",
+          "timeline": "About 15-30 days after a complete application"
+        },
+        {
+          "n": 3,
+          "title": "Plant inspection and sample drawal",
+          "detail": "A BIS officer inspects the plant and laboratory, witnesses routine tests and seals samples for independent testing.",
+          "timeline": "Scheduled after scrutiny"
+        },
+        {
+          "n": 4,
+          "title": "Independent testing against IS 269",
+          "detail": "Full chemical and physical testing at a BIS / recognised lab; the 28-day compressive strength test sets the minimum duration.",
+          "timeline": "About 5-6 weeks (dominated by the 28-day strength test)"
+        },
+        {
+          "n": 5,
+          "title": "Grant of licence",
+          "detail": "On a satisfactory inspection and test report, BIS grants the licence and CM/L number for the grade; bags/consignments may then be ISI-marked. Licence normally valid 2 years, renewable.",
+          "timeline": "Commonly around 4 to 5 months from a clean application"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS Product Certification overview",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+        },
+        {
+          "doc": "BIS Manak Online portal",
+          "page": null,
+          "clause": null,
+          "url": "https://www.manakonline.in/MANAK/login"
+        }
+      ]
+    },
+    "documents": {
+      "summary": "Documents for the Scheme I application for OPC 43 to IS 269. Conditional items depend on the firm's constitution and grades applied for.",
+      "items": [
+        {
+          "name": "Firm / plant establishment proof",
+          "explanation": "Company registration, GST, factory licence, industrial licence / consent to operate, and plant address proof.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application requirements",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Manufacturing process flow chart and machinery list",
+          "explanation": "Quarry, raw mill, kiln, clinker storage, cement mill, packing plant, with capacity.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 269",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/wp-content/uploads/2018/12/IS-269-Final-Product-Manual.pdf"
+            }
+          ]
+        },
+        {
+          "name": "In-house laboratory equipment list with calibration certificates",
+          "explanation": "Compression testing machine, Blaine apparatus, Vicat, Le Chatelier, autoclave, XRF / wet chemistry for the SIT.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 269 - SIT",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/wp-content/uploads/2018/12/IS-269-Final-Product-Manual.pdf"
+            }
+          ]
+        },
+        {
+          "name": "Scheme of Inspection and Testing (SIT)",
+          "explanation": "Daily routine test plan for clinker and cement, lot definition, retained-sample policy and records.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I guidelines",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Recent internal test data / trend charts for the grade",
+          "explanation": "3, 7 and 28-day strength and chemistry trends demonstrating consistent conformance to IS 269 for OPC 43.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 269",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/wp-content/uploads/2018/12/IS-269-Final-Product-Manual.pdf"
+            }
+          ]
+        },
+        {
+          "name": "Bag / marking artwork",
+          "explanation": "Proposed bag printing showing the ISI mark, grade (OPC 43), CM/L number, week and year of packing and net mass.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 269 - marking",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/wp-content/uploads/2018/12/IS-269-Final-Product-Manual.pdf"
+            }
+          ]
+        },
+        {
+          "name": "Authorised signatory authorisation and ID",
+          "explanation": "Board resolution and ID of the person signing the application.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Importer: Authorised Indian Representative (AIR) papers",
+          "explanation": "Foreign cement manufacturers apply through an AIR with appointment letter and undertakings.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS Foreign Manufacturers Certification Scheme",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "_provenance": {
+    "generated_by": "tools/build_kb.py",
+    "generated_at": "2026-09-04T08:26:13+00:00",
+    "bis_index_pages": {
+      "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en": "cache",
+      "https://www.bis.gov.in/upcoming-qcos-notified-and-due-for-implementation/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en": "fetched 200 (1248056 bytes)",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/?lang=en": "cache",
+      "https://www.crsbis.in/BIS/about-crs.do": "UNREACHABLE (ConnectionError: HTTPSConnectionPool(host='www.crsbis.in', port=443): Max retries exceeded with url: /BIS/about-crs.do (Caused by NameResolutionError(\"HTTPSConnection(host='www.crsbis.in', port=443): Failed to resolve 'www.crsbis.in' ([Errno 11002] getaddrinfo failed)\")))",
+      "https://lims.bis.gov.in/home/labs/": "cache"
+    },
+    "source_urls_checked": 9,
+    "source_urls_unreachable": []
+  }
+}

@@ -17,6 +17,9 @@ from services.rag_engine import perform_hybrid_search, fanout_7_searches, genera
 from services.rule_engine import match_product_standard, analyze_scheme_applicability, inspect_isi_hallmark_photo, get_msme_licensing_timeline
 from services.action_agent import get_action_recommendations, draft_lab_enquiry_email, execute_user_approved_action
 from services.pdf_generator import generate_compliance_pdf
+from services import llm
+from services import knowledge_base as kb
+from services import answer_engine
 
 load_dotenv()
 
@@ -25,6 +28,10 @@ app.secret_key = os.getenv('SECRET_KEY', 'bis_copilot_secret_key_sih2026_ianurag
 
 init_db()
 seed_database()
+
+_llm_ok, _llm_detail = llm.check_connectivity()
+print(f"[STARTUP] OpenAI: {'connected' if _llm_ok else 'OFFLINE'} - {_llm_detail}")
+print(f"[STARTUP] SMTP: {'configured' if smtp_is_configured() else 'dev mode (codes to console)'}")
 
 # Ordered guided-tour walkthrough shown right after a user verifies their email.
 TOUR_STEPS = [
@@ -571,60 +578,108 @@ def api_schemes_analyze():
     res = analyze_scheme_applicability(is_number)
     return jsonify({'status': 'success', 'analysis': res})
 
-# API 5: Seven Searches Fan-Out RAG & Multilingual Chat API
+def _active_case():
+    """Return the current user's active workspace case row, or None."""
+    cid = session.get('active_case_id')
+    if not cid:
+        return None
+    conn = get_db_connection()
+    row = conn.execute("SELECT * FROM compliance_cases WHERE id = ?", (cid,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def _active_slug():
+    case = _active_case()
+    if case and case.get('product_slug'):
+        return case['product_slug']
+    return None
+
+
+def _save_search_history(query, result):
+    """Persist one AI-assistant turn for the Home sidebar."""
+    mode = result.get('mode')
+    answers = result.get('answers') or ([result['answer']] if result.get('answer') else [])
+    # store a compact rendering of the answer(s)
+    body = "\n\n---\n\n".join(a.get('body_md', '') for a in answers) if answers else ''
+    sources = []
+    for a in answers:
+        sources.extend(a.get('sources', []) or [])
+    area = answers[0].get('area') if answers and isinstance(answers[0], dict) else None
+    try:
+        conn = get_db_connection()
+        conn.execute(
+            "INSERT INTO search_history (user_id, case_id, product_slug, query, mode, answer_md, sources_json, area, language) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (session.get('user_id'), session.get('active_case_id'), result.get('product'),
+             query, mode, body, json.dumps(sources), area, result.get('language', 'en')),
+        )
+        conn.commit()
+        conn.close()
+    except Exception as exc:  # noqa: BLE001
+        print(f"[api_chat] history save failed: {exc}")
+
+
+# API 5: AI Assistant - 7-answer engine over the curated BIS knowledge base
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
     data = request.get_json() or {}
     message = data.get('message', '').strip()
-    language = data.get('language', 'en') # 'en', 'hi', 'te'
+    language = data.get('language') or session.get('lang', 'en')
 
     if not message:
         return jsonify({'status': 'error', 'message': 'Empty message'}), 400
 
-    deterministic_result = match_product_standard(message)
-    matched_std = deterministic_result['matched_standard']
-    qco_info = deterministic_result['qco_info']
-    eligible_labs = deterministic_result['eligible_labs']
-    decision_tree = deterministic_result['decision_tree']
-    distinction_badge = deterministic_result['distinction_badge']
+    case = _active_case()
+    slug = case.get('product_slug') if case else None
+    location = {'city': case.get('city'), 'state': case.get('state')} if case else None
 
-    # SEVEN SEARCHES INSTEAD OF ONE (Multi-angle Fan-out)
-    chunks = fanout_7_searches(message)
+    result = answer_engine.answer_question(slug, message, location=location, language=language)
+    _save_search_history(message, result)
 
-    # RAG Response with Refusal Threshold & Multilingual support
-    ai_answer, citations, max_score = generate_rag_response(message, chunks, deterministic_result, language=language)
+    payload = {'status': 'success'}
+    payload.update(result)
+    payload.setdefault('refusal_threshold', answer_engine.MEASURED_REFUSAL_THRESHOLD)
+    return jsonify(payload)
 
-    actions = get_action_recommendations(matched_std, qco_info, eligible_labs)
 
-    user_id = session.get('user_id', 1)
+@app.route('/api/history', methods=['GET', 'DELETE'])
+def api_history():
+    uid = session.get('user_id')
+    if not uid:
+        return jsonify({'status': 'error', 'message': 'Authentication required'}), 401
     conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT id FROM chat_sessions WHERE user_id = ? ORDER BY id DESC LIMIT 1", (user_id,))
-    sess_row = cursor.fetchone()
-    if sess_row:
-        session_id = sess_row['id']
-    else:
-        cursor.execute("INSERT INTO chat_sessions (user_id, session_title) VALUES (?, ?)", (user_id, message[:30]))
-        session_id = cursor.lastrowid
-
-    cursor.execute("INSERT INTO chat_messages (session_id, sender, content) VALUES (?, 'user', ?)", (session_id, message))
-    cursor.execute("INSERT INTO chat_messages (session_id, sender, content, citations_json, decision_tree_json) VALUES (?, 'copilot', ?, ?, ?)",
-                   (session_id, ai_answer, json.dumps(citations), json.dumps(decision_tree)))
-    conn.commit()
+    if request.method == 'DELETE':
+        conn.execute("DELETE FROM search_history WHERE user_id = ? AND case_id IS ?",
+                     (uid, session.get('active_case_id')))
+        conn.commit()
+        conn.close()
+        return jsonify({'status': 'success'})
+    rows = conn.execute(
+        "SELECT id, query, mode, area, created_at FROM search_history "
+        "WHERE user_id = ? AND (case_id IS ? OR ? IS NULL) ORDER BY id DESC LIMIT 40",
+        (uid, session.get('active_case_id'), session.get('active_case_id')),
+    ).fetchall()
     conn.close()
+    return jsonify({'status': 'success', 'items': [dict(r) for r in rows]})
 
-    return jsonify({
-        'status': 'success',
-        'answer': ai_answer,
-        'citations': citations,
-        'decision_tree': decision_tree,
-        'distinction': distinction_badge,
-        'matched_standard': matched_std,
-        'action_recommendations': actions,
-        'grounding_score': max_score,
-        'refusal_threshold': 0.40
-    })
+
+@app.route('/api/history/<int:hid>')
+def api_history_item(hid):
+    uid = session.get('user_id')
+    if not uid:
+        return jsonify({'status': 'error', 'message': 'Authentication required'}), 401
+    conn = get_db_connection()
+    row = conn.execute("SELECT * FROM search_history WHERE id = ? AND user_id = ?", (hid, uid)).fetchone()
+    conn.close()
+    if not row:
+        return jsonify({'status': 'error', 'message': 'Not found'}), 404
+    item = dict(row)
+    try:
+        item['sources'] = json.loads(item.get('sources_json') or '[]')
+    except Exception:
+        item['sources'] = []
+    return jsonify({'status': 'success', 'item': item})
 
 @app.route('/api/case/create', methods=['POST'])
 def api_create_case():

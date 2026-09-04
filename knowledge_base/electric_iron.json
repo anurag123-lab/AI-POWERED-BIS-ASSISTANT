@@ -1,0 +1,430 @@
+{
+  "slug": "electric_iron",
+  "display_name": "Electric Iron",
+  "category": "Electrical & Appliances",
+  "aliases": [
+    "electric iron",
+    "electric dry iron",
+    "electric smoothing iron",
+    "steam iron",
+    "clothes iron",
+    "press iron",
+    "iron box",
+    "is 302-2-3"
+  ],
+  "fetched_at": "2026-09-04T08:26:13+00:00",
+  "areas": {
+    "standards": {
+      "primary": {
+        "is_number": "IS 302-2-3 : 2007",
+        "title": "Household and similar electrical appliances - Safety - Part 2: Particular requirements for electric irons",
+        "summary": "IS 302-2-3 is the safety standard for mains-operated electric irons (dry and steam) for household and similar use. It is applied together with the general standard IS 302 (Part 1). It covers protection against electric shock, heating and temperature rise, moisture resistance, mechanical strength of the soleplate and cord, thermal cut-outs and endurance.",
+        "sources": [
+          {
+            "doc": "IS 302-2-3 : 2007 - Particular requirements for electric irons",
+            "page": null,
+            "clause": null,
+            "url": "https://www.services.bis.gov.in/php/BIS_2.0/bisconnect/knowyourstandards/Indian_standards/isdetails/"
+          },
+          {
+            "doc": "BIS Product Manual for IS 302-2-3 (electric irons)",
+            "page": null,
+            "clause": null,
+            "url": "https://bis.gov.in/wp-content/uploads/2019/05/Revised-PRODUCT-MANUAL-FOR-302-2-3.pdf"
+          }
+        ]
+      },
+      "related": [
+        {
+          "is_number": "IS 302-1 : 2008",
+          "title": "Household and similar electrical appliances - Safety - Part 1: General requirements",
+          "relation": "Parent general-safety standard; every IS 302-2-x particular standard is read with Part 1.",
+          "sources": [
+            {
+              "doc": "IS 302 (Part 1) : 2008",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en"
+            }
+          ]
+        },
+        {
+          "is_number": "IS 694",
+          "title": "PVC insulated flexible cords and cables",
+          "relation": "Applies to the supply cord fitted to the iron.",
+          "sources": [
+            {
+              "doc": "IS 694 - PVC insulated cables",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en"
+            }
+          ]
+        },
+        {
+          "is_number": "IS 1293",
+          "title": "Plugs and socket-outlets of rated voltage up to and including 250 V and rated current up to and including 16 A",
+          "relation": "Applies to the plug fitted to the appliance.",
+          "sources": [
+            {
+              "doc": "IS 1293",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en"
+            }
+          ]
+        }
+      ]
+    },
+    "certification": {
+      "mandatory": true,
+      "summary": "Electric irons are under compulsory BIS certification. A manufacturer must hold a valid BIS licence and mark every iron with the Standard Mark (ISI mark with the CM/L number) before it can be manufactured, imported, stored for sale or sold in India. Selling unmarked or non-conforming product is an offence under the BIS Act, 2016.",
+      "qco": {
+        "title": "Safety of Household, Commercial and Similar Electrical Appliances (Quality Control) Order, 2024 (electric irons were first notified under the Electrical Appliances QCO, 2023)",
+        "ministry": "Department for Promotion of Industry and Internal Trade (DPIIT), Ministry of Commerce and Industry",
+        "notified": "2023 (Electrical Appliances QCO); consolidated 2024",
+        "enforced": "As per the dates in the Quality Control Order / its amendments",
+        "gazette": "Published in the Gazette of India"
+      },
+      "sources": [
+        {
+          "doc": "Products under Compulsory Certification - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en"
+        },
+        {
+          "doc": "Electrical appliance for commercial dispensing and vending QCO 2023 (gazette, same appliance family)",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/wp-content/uploads/2024/03/Electrical-appliance-for-commercial-dispensing-and-vending-QCO-2023.pdf"
+        }
+      ]
+    },
+    "scheme": {
+      "applicable": {
+        "name": "Scheme I (ISI Mark Scheme)",
+        "covers": "Grant of a licence to use the Standard Mark (ISI mark) on electric irons after assessment of the manufacturing unit and testing of samples against IS 302-2-3 read with IS 302 (Part 1).",
+        "why": "Household electrical appliances placed under a Quality Control Order require full ISI-mark certification with a factory Scheme of Inspection and Testing - not self-declaration.",
+        "you_receive": "A BIS licence with a CM/L number and the right to affix the ISI mark on each iron; the licence is normally granted for 2 years and is renewable."
+      },
+      "not_applicable": [
+        {
+          "name": "Scheme II (Compulsory Registration Scheme / CRS)",
+          "why": "CRS covers electronics and IT goods notified by MeitY on the basis of a registration and self-declaration. Electric irons are household electrical appliances under Scheme I, not CRS."
+        },
+        {
+          "name": "Scheme X",
+          "why": "Scheme X is for specified machinery/equipment built to a purchaser's specification; it does not apply to a mass-produced household iron."
+        }
+      ],
+      "sources": [
+        {
+          "doc": "Scheme - I (ISI Mark Scheme) - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+        },
+        {
+          "doc": "Specific guidelines for Scheme-I (grouping guidelines) - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/grouping-guidelines/?lang=en"
+        }
+      ]
+    },
+    "testing": {
+      "summary": "Type testing is done on samples drawn from the factory, in a BIS-recognised laboratory (or the BIS lab), against IS 302-2-3 with IS 302 (Part 1). The factory must also run routine and acceptance tests under its Scheme of Inspection and Testing (SIT).",
+      "tests": [
+        {
+          "name": "Protection against electric shock / accessibility of live parts",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Input power and current",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Heating / temperature rise of handle, soleplate and surroundings",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Leakage current and electric strength at operating temperature",
+          "clause": null,
+          "condition": "Type test + routine test"
+        },
+        {
+          "name": "Moisture resistance / humidity treatment",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Endurance test (repeated thermostat cycling)",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Stability and mechanical hazards; cord anchorage and flexing",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "Resistance to heat, fire and tracking of insulating material",
+          "clause": null,
+          "condition": "Type test"
+        },
+        {
+          "name": "High-voltage (dielectric strength) test on every unit",
+          "clause": null,
+          "condition": "Routine test on 100% of production"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS Product Manual for IS 302-2-3 - testing and SIT",
+          "page": null,
+          "clause": null,
+          "url": "https://bis.gov.in/wp-content/uploads/2019/05/Revised-PRODUCT-MANUAL-FOR-302-2-3.pdf"
+        }
+      ]
+    },
+    "labs": {
+      "note": "Testing must be done in a BIS laboratory or a BIS-recognised laboratory with IS 302-2-3 in its recognised scope. Use the BIS LIMS directory to find one and confirm scope and validity before sending samples.",
+      "directory_url": "https://lims.bis.gov.in/home/labs/",
+      "entries": [
+        {
+          "name": "Central Power Research Institute (CPRI)",
+          "city": "Bengaluru",
+          "state": "Karnataka",
+          "scope": "Household electrical appliance safety (IS 302 series)",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "Electronics Regional Test Laboratory (ERTL)",
+          "city": "Mumbai",
+          "state": "Maharashtra",
+          "scope": "Electrical and electronic product safety",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "National Test House (NTH)",
+          "city": "Ghaziabad",
+          "state": "Uttar Pradesh",
+          "scope": "Electrical appliances, general engineering",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS recognised / empanelled laboratories",
+          "page": null,
+          "clause": null,
+          "url": "https://lims.bis.gov.in/home/labs/"
+        },
+        {
+          "doc": "Group-1 recognised laboratories list (PDF)",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/wp-content/uploads/2026/06/Group_1_24062026.pdf"
+        }
+      ]
+    },
+    "licensing": {
+      "summary": "Scheme I (ISI mark) licence for electric irons is applied for online on the BIS Manak Online portal. The process is: apply and pay -> BIS records verification -> factory inspection and sample draw -> testing against IS 302-2-3 -> grant of licence with the CM/L number.",
+      "steps": [
+        {
+          "n": 1,
+          "title": "Prepare and apply online",
+          "detail": "Create a firm account on Manak Online (manakonline.in), fill the Scheme I application for IS 302-2-3, upload the required documents, nominate the in-house testing facility and the Scheme of Inspection and Testing, and pay the application fee.",
+          "timeline": "Applicant-driven"
+        },
+        {
+          "n": 2,
+          "title": "Application scrutiny and recording of factory details",
+          "detail": "BIS scrutinises the application, the manufacturing process, machinery list and test facilities; raises queries if any.",
+          "timeline": "About 15-30 days after a complete application"
+        },
+        {
+          "n": 3,
+          "title": "Factory inspection and sample drawal",
+          "detail": "A BIS officer visits the unit, verifies manufacturing and testing capability, witnesses in-house tests and draws sealed samples for independent testing.",
+          "timeline": "Scheduled after scrutiny is cleared"
+        },
+        {
+          "n": 4,
+          "title": "Independent testing",
+          "detail": "Samples are tested at a BIS / BIS-recognised laboratory against IS 302-2-3 read with IS 302 (Part 1).",
+          "timeline": "Depends on lab queue; typically a few weeks"
+        },
+        {
+          "n": 5,
+          "title": "Grant of licence",
+          "detail": "On a satisfactory inspection report and passing test report, BIS grants the licence and CM/L number; the ISI mark may then be affixed. Licence is normally valid for 2 years and renewable.",
+          "timeline": "Overall, commonly around 4 months from a clean application; longer if there are test failures or query loops"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS Product Certification - process and Scheme I guidelines",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+        },
+        {
+          "doc": "BIS Manak Online application portal",
+          "page": null,
+          "clause": null,
+          "url": "https://www.manakonline.in/MANAK/login"
+        }
+      ]
+    },
+    "documents": {
+      "summary": "Documents to prepare for the Scheme I application for electric irons. Exact list is on the application form and the product manual; conditional items depend on the firm's constitution and location.",
+      "items": [
+        {
+          "name": "Proof of establishment of the firm / factory",
+          "explanation": "Registration certificate, GST registration, factory licence or Udyam / MSME registration, and proof of the factory address.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application requirements",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Manufacturing process flow chart and list of plant and machinery",
+          "explanation": "Shows the firm can manufacture the iron in-house, from sub-assembly to final assembly and packing.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual for IS 302-2-3",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/2019/05/Revised-PRODUCT-MANUAL-FOR-302-2-3.pdf"
+            }
+          ]
+        },
+        {
+          "name": "List of test equipment with calibration certificates",
+          "explanation": "The in-house lab must have the equipment to run the routine and acceptance tests in the SIT (e.g. HV tester, earth continuity tester, power meter).",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual for IS 302-2-3 - SIT",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/2019/05/Revised-PRODUCT-MANUAL-FOR-302-2-3.pdf"
+            }
+          ]
+        },
+        {
+          "name": "Scheme of Inspection and Testing (SIT)",
+          "explanation": "The firm's documented plan of raw-material, in-process, routine and acceptance tests with frequency and records.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I guidelines",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Test report of the product (if available) against IS 302-2-3",
+          "explanation": "An in-house or third-party test report supports the application; independent BIS testing is still done.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Authorised signatory / board resolution and ID proof",
+          "explanation": "Authorisation of the person signing the application on behalf of the firm.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Trademark registration / brand ownership proof",
+          "explanation": "Needed if the iron carries a brand name owned by the applicant or used under licence.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "For importers: Authorised Indian Representative (AIR) documents",
+          "explanation": "A foreign manufacturer applies through an AIR with the AIR appointment and undertaking.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS Foreign Manufacturers Certification Scheme",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "_provenance": {
+    "generated_by": "tools/build_kb.py",
+    "generated_at": "2026-09-04T08:26:13+00:00",
+    "bis_index_pages": {
+      "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en": "cache",
+      "https://www.bis.gov.in/upcoming-qcos-notified-and-due-for-implementation/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en": "fetched 200 (1248056 bytes)",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/?lang=en": "cache",
+      "https://www.crsbis.in/BIS/about-crs.do": "UNREACHABLE (ConnectionError: HTTPSConnectionPool(host='www.crsbis.in', port=443): Max retries exceeded with url: /BIS/about-crs.do (Caused by NameResolutionError(\"HTTPSConnection(host='www.crsbis.in', port=443): Failed to resolve 'www.crsbis.in' ([Errno 11002] getaddrinfo failed)\")))",
+      "https://lims.bis.gov.in/home/labs/": "cache"
+    },
+    "source_urls_checked": 10,
+    "source_urls_unreachable": []
+  }
+}

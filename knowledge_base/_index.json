@@ -1,0 +1,46 @@
+{
+  "_note": "Curated BIS knowledge base. Facts and IS/QCO numbers are drawn from bis.gov.in and Government of India gazette notifications; every area carries source URLs. Clause/page numbers are given only where verified, else null (no invention).",
+  "generated_by": "tools/build_kb.py",
+  "products": [
+    {
+      "slug": "electric_iron",
+      "display_name": "Electric Iron",
+      "category": "Electrical & Appliances",
+      "is_number": "IS 302-2-3",
+      "scheme": "Scheme I (ISI Mark)",
+      "aliases": ["electric iron", "electric dry iron", "electric smoothing iron", "steam iron", "clothes iron", "press iron", "pressing iron", "iron box", "is 302-2-3"]
+    },
+    {
+      "slug": "two_wheeler_helmet",
+      "display_name": "Two-Wheeler Protective Helmet",
+      "category": "Safety Equipment",
+      "is_number": "IS 4151",
+      "scheme": "Scheme I (ISI Mark)",
+      "aliases": ["helmet", "two wheeler helmet", "two-wheeler helmet", "motorcycle helmet", "motorbike helmet", "rider helmet", "protective helmet", "bike helmet", "is 4151"]
+    },
+    {
+      "slug": "led_lamp",
+      "display_name": "Self-Ballasted LED Lamp (General Lighting)",
+      "category": "Electrical & Appliances",
+      "is_number": "IS 16102 (Part 1)",
+      "scheme": "Scheme II (Compulsory Registration Scheme)",
+      "aliases": ["led lamp", "led bulb", "led light", "self ballasted led lamp", "self-ballasted led lamp", "general lighting led", "led", "is 16102"]
+    },
+    {
+      "slug": "steel_pipe",
+      "display_name": "Galvanised Mild Steel Tube (IS 1239 Part 1)",
+      "category": "Pipes & Fittings",
+      "is_number": "IS 1239 (Part 1)",
+      "scheme": "Scheme I (ISI Mark)",
+      "aliases": ["steel pipe", "steel tube", "gi pipe", "galvanised steel pipe", "galvanized steel pipe", "mild steel tube", "ms tube", "ms pipe", "erw pipe", "is 1239"]
+    },
+    {
+      "slug": "portland_cement",
+      "display_name": "Ordinary Portland Cement, 43 Grade (IS 269)",
+      "category": "Cement & Construction",
+      "is_number": "IS 269",
+      "scheme": "Scheme I (ISI Mark)",
+      "aliases": ["cement", "portland cement", "ordinary portland cement", "opc", "opc 43", "43 grade cement", "opc 43 grade", "is 269"]
+    }
+  ]
+}

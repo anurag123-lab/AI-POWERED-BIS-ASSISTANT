@@ -1,0 +1,415 @@
+{
+  "slug": "steel_pipe",
+  "display_name": "Galvanised Mild Steel Tube (IS 1239 Part 1)",
+  "category": "Pipes & Fittings",
+  "aliases": [
+    "steel pipe",
+    "steel tube",
+    "gi pipe",
+    "galvanised steel pipe",
+    "galvanized steel pipe",
+    "mild steel tube",
+    "ms tube",
+    "ms pipe",
+    "erw pipe",
+    "is 1239"
+  ],
+  "fetched_at": "2026-09-04T08:26:13+00:00",
+  "areas": {
+    "standards": {
+      "primary": {
+        "is_number": "IS 1239 (Part 1) : 2004",
+        "title": "Steel tubes, tubulars and other wrought steel fittings - Specification - Part 1: Steel tubes",
+        "summary": "IS 1239 (Part 1) covers welded and seamless plain-end and screwed-and-socketed mild steel tubes of 6 mm to 150 mm nominal bore, in light, medium and heavy classes, for carrying water, gas, air and steam and for structural use, in black and galvanised (hot-dip zinc coated) finish. It specifies chemical composition, tensile properties, dimensions and tolerances, hydraulic/bend/flattening tests, and the mass and uniformity of the zinc coating for galvanised tubes.",
+        "sources": [
+          {
+            "doc": "IS 1239 (Part 1) : 2004 - Steel tubes",
+            "page": null,
+            "clause": null,
+            "url": "https://bis.gov.in/wp-content/uploads/PM-1239-pt1-cmd2.pdf"
+          },
+          {
+            "doc": "BIS Product Manual PM/IS 1239 (Part 1)",
+            "page": null,
+            "clause": null,
+            "url": "https://bis.gov.in/wp-content/uploads/PM-1239-pt1-cmd2.pdf"
+          }
+        ]
+      },
+      "related": [
+        {
+          "is_number": "IS 1239 (Part 2)",
+          "title": "Steel tubes, tubulars and other wrought steel fittings - Part 2: Steel pipe fittings",
+          "relation": "Companion standard for sockets, bends, tees and other screwed fittings used with the tubes.",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 1239 (Part 2)",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/wp-content/uploads/2020/09/PM-IS-1239-Pt-2.pdf"
+            }
+          ]
+        },
+        {
+          "is_number": "IS 4736",
+          "title": "Hot-dip zinc coatings on mild steel tubes",
+          "relation": "Referenced for the zinc coating requirements on galvanised tubes.",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 1239 (Part 1)",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/PM-1239-pt1-cmd2.pdf"
+            }
+          ]
+        },
+        {
+          "is_number": "IS 2629 / IS 6745 / IS 4759",
+          "title": "Methods for zinc coating mass and adhesion; general requirements for galvanised steel",
+          "relation": "Test-method and coating standards called up for galvanising checks.",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 1239 (Part 1)",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/PM-1239-pt1-cmd2.pdf"
+            }
+          ]
+        }
+      ]
+    },
+    "certification": {
+      "mandatory": true,
+      "summary": "Mild steel tubes to IS 1239 (Part 1) are covered by the Steel and Steel Products (Quality Control) Order administered by the Ministry of Steel. Manufacturers and importers must hold a BIS Scheme I licence and apply the ISI mark with the CM/L number on the tubes before manufacture, import, storage for sale or sale in India.",
+      "qco": {
+        "title": "Steel and Steel Products (Quality Control) Order (covers steel tubes to IS 1239 Part 1)",
+        "ministry": "Ministry of Steel",
+        "notified": "Notified and periodically amended by the Ministry of Steel",
+        "enforced": "As per the dates in the relevant Steel Products QCO / amendment for IS 1239",
+        "gazette": "Steel Products QCO, Gazette of India"
+      },
+      "sources": [
+        {
+          "doc": "BIS Product Manual PM/IS 1239 (Part 1) - QCO and marking",
+          "page": null,
+          "clause": null,
+          "url": "https://bis.gov.in/wp-content/uploads/PM-1239-pt1-cmd2.pdf"
+        },
+        {
+          "doc": "Products under Compulsory Certification - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en"
+        }
+      ]
+    },
+    "scheme": {
+      "applicable": {
+        "name": "Scheme I (ISI Mark Scheme)",
+        "covers": "Licence to use the ISI mark on IS 1239 (Part 1) tubes after assessment of the tube mill and testing of samples for chemistry, mechanical properties, dimensions, hydraulic/flattening/bend tests and zinc coating.",
+        "why": "Steel tubes under the Steel Products QCO require full ISI-mark certification with a factory Scheme of Inspection and Testing.",
+        "you_receive": "A BIS licence with a CM/L number and the right to mark each tube (rolling/stencilling) with the ISI mark; normally valid for 2 years and renewable."
+      },
+      "not_applicable": [
+        {
+          "name": "Scheme II (CRS)",
+          "why": "CRS is only for MeitY-notified electronics and IT goods. Steel tubes are covered by Scheme I under the Ministry of Steel QCO."
+        },
+        {
+          "name": "Scheme X",
+          "why": "Scheme X is for machinery/equipment to a purchaser's specification, not for standard-catalogue steel tubes."
+        }
+      ],
+      "sources": [
+        {
+          "doc": "Scheme - I (ISI Mark Scheme) - BIS",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+        }
+      ]
+    },
+    "testing": {
+      "summary": "Samples are drawn per class and size group from the mill and tested at a BIS / BIS-recognised laboratory against IS 1239 (Part 1). The mill also runs routine tests under its SIT on each lot.",
+      "tests": [
+        {
+          "name": "Chemical analysis (carbon, sulphur, phosphorus)",
+          "clause": null,
+          "condition": "Type test + lot test"
+        },
+        {
+          "name": "Tensile test (yield, tensile strength, elongation)",
+          "clause": null,
+          "condition": "Type test + lot test"
+        },
+        {
+          "name": "Dimensions, wall thickness and mass per metre vs class",
+          "clause": null,
+          "condition": "Routine test on each lot"
+        },
+        {
+          "name": "Hydraulic (pressure) test on each tube",
+          "clause": null,
+          "condition": "Routine test on 100% of tubes"
+        },
+        {
+          "name": "Flattening test",
+          "clause": null,
+          "condition": "Type test + lot test"
+        },
+        {
+          "name": "Bend / re-bend test (for smaller sizes)",
+          "clause": null,
+          "condition": "Type test + lot test"
+        },
+        {
+          "name": "Weld ductility / drift-expanding test (for welded tubes)",
+          "clause": null,
+          "condition": "Type test + lot test"
+        },
+        {
+          "name": "Zinc coating mass and uniformity (dip test) for galvanised tubes",
+          "clause": null,
+          "condition": "Type test + lot test"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS Product Manual PM/IS 1239 (Part 1) - tests and SIT",
+          "page": null,
+          "clause": null,
+          "url": "https://bis.gov.in/wp-content/uploads/PM-1239-pt1-cmd2.pdf"
+        }
+      ]
+    },
+    "labs": {
+      "note": "Testing needs a laboratory with IS 1239 (Part 1) in its recognised scope and mechanical / chemical / hydraulic test capability for tubes. Confirm scope and validity in the BIS LIMS directory.",
+      "directory_url": "https://lims.bis.gov.in/home/labs/",
+      "entries": [
+        {
+          "name": "National Test House (NTH)",
+          "city": "Kolkata",
+          "state": "West Bengal",
+          "scope": "Ferrous metals, tubes, mechanical and chemical testing",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "National Test House (NTH)",
+          "city": "Ghaziabad",
+          "state": "Uttar Pradesh",
+          "scope": "Steel products, mechanical testing",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        },
+        {
+          "name": "Shriram Institute for Industrial Research",
+          "city": "Delhi",
+          "state": "Delhi",
+          "scope": "Metals and coatings",
+          "sources": [
+            {
+              "doc": "BIS recognised laboratories directory",
+              "page": null,
+              "clause": null,
+              "url": "https://lims.bis.gov.in/home/labs/"
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS recognised / empanelled laboratories",
+          "page": null,
+          "clause": null,
+          "url": "https://lims.bis.gov.in/home/labs/"
+        }
+      ]
+    },
+    "licensing": {
+      "summary": "Scheme I (ISI mark) licence for IS 1239 (Part 1) tubes is applied for online on Manak Online: apply and pay -> scrutiny -> mill inspection and sample drawal -> independent testing -> grant of licence with the CM/L number.",
+      "steps": [
+        {
+          "n": 1,
+          "title": "Apply online on Manak Online",
+          "detail": "Register the firm, file the Scheme I application for IS 1239 (Part 1) with the classes and size range applied for, upload documents, declare the SIT and in-house lab, and pay the fee.",
+          "timeline": "Applicant-driven"
+        },
+        {
+          "n": 2,
+          "title": "Scrutiny of application",
+          "detail": "BIS verifies the tube-mill process, machinery (mill, galvanising line), and test facilities, and raises queries.",
+          "timeline": "About 15-30 days after a complete application"
+        },
+        {
+          "n": 3,
+          "title": "Factory inspection and sample drawal",
+          "detail": "A BIS officer inspects the mill, witnesses in-house tests and seals samples covering the size/class groups for independent testing.",
+          "timeline": "Scheduled after scrutiny"
+        },
+        {
+          "n": 4,
+          "title": "Independent testing against IS 1239 (Part 1)",
+          "detail": "Samples tested for chemistry, tensile, dimensions, hydraulic, flattening/bend and zinc coating at a BIS / recognised lab.",
+          "timeline": "Several weeks depending on lab queue"
+        },
+        {
+          "n": 5,
+          "title": "Grant of licence",
+          "detail": "On a satisfactory inspection and test report, BIS grants the licence and CM/L number for the covered sizes/classes; tubes may then be ISI-marked. Licence normally valid 2 years, renewable.",
+          "timeline": "Commonly around 4 months from a clean application"
+        }
+      ],
+      "sources": [
+        {
+          "doc": "BIS Product Certification overview",
+          "page": null,
+          "clause": null,
+          "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+        },
+        {
+          "doc": "BIS Manak Online portal",
+          "page": null,
+          "clause": null,
+          "url": "https://www.manakonline.in/MANAK/login"
+        }
+      ]
+    },
+    "documents": {
+      "summary": "Documents for the Scheme I application for IS 1239 (Part 1) tubes. Conditional items depend on the firm and on whether galvanising is done in-house or outsourced.",
+      "items": [
+        {
+          "name": "Firm / factory establishment proof",
+          "explanation": "Business registration, GST, factory licence or Udyam registration and factory address proof.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application requirements",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Manufacturing process flow chart and machinery list",
+          "explanation": "Strip slitting, forming, ERW welding, sizing, testing and (if applicable) the hot-dip galvanising line.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 1239 (Part 1)",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/PM-1239-pt1-cmd2.pdf"
+            }
+          ]
+        },
+        {
+          "name": "List of test equipment with calibration certificates",
+          "explanation": "Hydraulic test bench, UTM, flattening/bend fixtures, spectrometer or chemical lab, zinc-coating dip-test setup.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 1239 (Part 1) - SIT",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/PM-1239-pt1-cmd2.pdf"
+            }
+          ]
+        },
+        {
+          "name": "Scheme of Inspection and Testing (SIT)",
+          "explanation": "Raw-coil, in-process, routine (100% hydraulic) and lot-acceptance test plan with records.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I guidelines",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Raw material (HR/CR coil) test certificates",
+          "explanation": "Mill test certificates for the steel strip/coil used, showing conformance to the grade called up by IS 1239.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Product Manual PM/IS 1239 (Part 1)",
+              "page": null,
+              "clause": null,
+              "url": "https://bis.gov.in/wp-content/uploads/PM-1239-pt1-cmd2.pdf"
+            }
+          ]
+        },
+        {
+          "name": "Galvanising subcontract agreement and the subcontractor's process/test details",
+          "explanation": "Needed if hot-dip galvanising is outsourced rather than done in-house.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS Scheme I guidelines",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Authorised signatory authorisation and ID",
+          "explanation": "Board resolution / partnership authorisation and ID of the signatory.",
+          "status": "required",
+          "sources": [
+            {
+              "doc": "BIS Scheme I application",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        },
+        {
+          "name": "Importer: Authorised Indian Representative (AIR) papers",
+          "explanation": "Foreign manufacturers apply through an AIR with appointment letter and undertakings.",
+          "status": "conditional",
+          "sources": [
+            {
+              "doc": "BIS Foreign Manufacturers Certification Scheme",
+              "page": null,
+              "clause": null,
+              "url": "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "_provenance": {
+    "generated_by": "tools/build_kb.py",
+    "generated_at": "2026-09-04T08:26:13+00:00",
+    "bis_index_pages": {
+      "https://www.bis.gov.in/product-certification/product-certification-overview/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en": "cache",
+      "https://www.bis.gov.in/upcoming-qcos-notified-and-due-for-implementation/?lang=en": "cache",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en": "fetched 200 (1248056 bytes)",
+      "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-ii-registration-scheme/?lang=en": "cache",
+      "https://www.crsbis.in/BIS/about-crs.do": "UNREACHABLE (ConnectionError: HTTPSConnectionPool(host='www.crsbis.in', port=443): Max retries exceeded with url: /BIS/about-crs.do (Caused by NameResolutionError(\"HTTPSConnection(host='www.crsbis.in', port=443): Failed to resolve 'www.crsbis.in' ([Errno 11002] getaddrinfo failed)\")))",
+      "https://lims.bis.gov.in/home/labs/": "cache"
+    },
+    "source_urls_checked": 7,
+    "source_urls_unreachable": []
+  }
+}
