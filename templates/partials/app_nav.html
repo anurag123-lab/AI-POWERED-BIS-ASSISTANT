@@ -1,16 +1,10 @@
 {# Top feature navigation + language selector. Shown when the user has an active product workspace. #}
-{% set nav_icons = {
-  'home': '🏠', 'standards': '📘', 'schemes': '✅', 'testing_labs': '📍',
-  'licensing': '📝', 'documents': '🗂️', 'checklist': '☑️', 'my_cases': '📦',
-  'photo_check': '🔎'
-} %}
 <nav class="app-nav" aria-label="BIS workspace">
   <div class="app-nav__inner">
     <div class="app-nav__links">
       {% for endpoint, label in nav_links %}
         <a href="{{ url_for(endpoint) }}"
-           class="{{ 'is-active' if request.endpoint == endpoint }}">
-          <span class="nav-ico" aria-hidden="true">{{ nav_icons.get(endpoint, '•') }}</span>{{ label }}</a>
+           class="{{ 'is-active' if request.endpoint == endpoint }}">{{ label }}</a>
       {% endfor %}
     </div>
     <form class="app-nav__lang" method="POST" action="{{ url_for('set_language') }}">

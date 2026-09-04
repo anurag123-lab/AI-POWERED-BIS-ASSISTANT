@@ -9,12 +9,11 @@
 {% if css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/' ~ css) }}">{% endif %}
 {% endblock %}
 
-{% set feature_icons = {'Standards': '📘', 'Schemes': '✅', 'Licensing': '📝', 'Documents': '🗂️'} %}
 {% block content %}
 <div class="page-container">
   <div class="feature-head">
     <span class="eyebrow-tag">{{ page_eyebrow }}</span>
-    <h1 class="page-title"><span class="feature-ico" aria-hidden="true">{{ feature_icons.get(page_eyebrow, '📄') }}</span>{{ page_title }}</h1>
+    <h1 class="page-title">{{ page_title }}</h1>
     <p class="page-subtext">{{ page_intro }}</p>
     <div class="product-chip">For your product: <strong>{{ product.display_name or case.product_name }}</strong>
       {% if product.is_number %}&bull; {{ product.is_number }}{% endif %}</div>

@@ -942,3 +942,26 @@ h1, h2, h3, .page-title, .page-header h1,
 .auth-step__dot { background: rgba(120,140,200,0.14); border-color: rgba(120,140,200,0.3); }
 .auth-step__sep { background: rgba(120,140,200,0.3); }
 .onb-choice, .onb-progress li { color: var(--text-primary); }
+
+/* --- headings must be dark on the light theme (no white, no faint gradient) --- */
+.page-title, .workspace-header h1, .hub-hero h1, .onb-title,
+.feature-head .page-title, .labs-section__head h2, .lic-timeline h2,
+.lic-portals h2, .lic-main .glass-panel h2, .checklist .ck-label,
+.area-block__head h2, .answer-card__head h3, .case-card__head h3,
+.lab-card h3, .hub-card__title, .profile-head div, .modal-box__head h3,
+.chat-panel__head strong, .source-table__head, .verbatim__head,
+h1, h2, h3, h4 {
+  color: #1e2937 !important;
+  -webkit-text-fill-color: #1e2937 !important;
+  background: none !important;
+}
+.eyebrow-tag, .section-kicker, .hero-kicker { color: #6f7fd8 !important; -webkit-text-fill-color: #6f7fd8 !important; }
+.answer-card__body strong, .area-block__body strong { color: #1e2937 !important; }
+.hi-q, .ck-status, .lab-card__loc, .lab-card__scope, .case-card__meta { color: #4b5563 !important; }
+
+/* dead icon rule cleanup */
+.feature-ico, .nav-ico { display: none !important; }
+
+/* --- lab-card action logos --- */
+.btn-logo { width: 16px; height: 16px; margin-right: 7px; vertical-align: -3px; flex-shrink: 0; }
+.lab-card__actions .btn-pill { display: inline-flex; align-items: center; }

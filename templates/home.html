@@ -12,7 +12,7 @@
   <div class="workspace-header">
     <div>
       <span class="eyebrow-tag">Your BIS Workspace</span>
-      <h1><span class="feature-ico" aria-hidden="true">🧭</span>{{ product.display_name or case.product_name }}</h1>
+      <h1>{{ product.display_name or case.product_name }}</h1>
       <p class="ws-meta">
         {{ case.user_type }} &bull; {{ case.city }}, {{ case.state }}
         {% if case.is_number %}&bull; {{ case.is_number }}{% endif %}
