@@ -9,9 +9,14 @@ python-dotenv==1.2.3
 numpy==2.5.2
 rank-bm25==0.2.2
 
-# OpenAI (embeddings + synthesis + translation) — optional at runtime,
-# app falls back to the offline engine when OPENAI_API_KEY is unset
+# LLM providers (all optional at runtime; app falls back to the offline
+# knowledge-base engine when no key is set). llm.py tries OpenAI then Gemini.
 openai==3.6.0
+google-genai==2.22.0
+
+# Keyless Hindi / Telugu translation of answer bodies (deep-translator wraps
+# free Google / MyMemory endpoints; no API key required)
+deep-translator==1.11.4
 
 # PDF report generation
 reportlab==5.0.1

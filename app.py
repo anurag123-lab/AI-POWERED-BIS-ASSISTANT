@@ -31,7 +31,8 @@ init_db()
 seed_database()
 
 _llm_ok, _llm_detail = llm.check_connectivity()
-print(f"[STARTUP] OpenAI: {'connected' if _llm_ok else 'OFFLINE'} - {_llm_detail}")
+print(f"[STARTUP] LLM: {'ON (' + (llm.active_provider() or '?') + ')' if _llm_ok else 'offline'} - {_llm_detail}")
+print(f"[STARTUP] Translation: deep-translator (keyless) -> hi/te answer bodies")
 print(f"[STARTUP] SMTP: {'configured' if smtp_is_configured() else 'dev mode (codes to console)'}")
 
 # Top navigation shown to a logged-in user with an active product workspace.
