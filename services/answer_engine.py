@@ -264,18 +264,30 @@ def _topic_of(question):
 _GENERAL_SYSTEM = (
     "You are a knowledgeable assistant for Indian manufacturers, importers and "
     "consumers dealing with BIS (Bureau of Indian Standards) certification. The "
-    "user is currently working on the product: {product}. Answer their question "
-    "clearly and practically. The curated BIS knowledge base did not cover it, so "
-    "you MAY answer from general knowledge and industry practice. Begin the reply "
-    "with the line: _(General guidance - not quoted from an official BIS document. "
-    "Verify specifics on bis.gov.in.)_  Keep Indian Standard numbers exact. Be "
-    "concise (a short paragraph or a few bullets)."
+    "user is currently working on the product: {product}. The curated BIS "
+    "knowledge base did not cover this question, so you MAY answer from general "
+    "knowledge and industry practice — but ONLY if the question is about BIS, "
+    "Indian Standards, this (or any) product's technical specifications, "
+    "certification, testing, licensing or compliance. If the question is "
+    "unrelated to any of that (e.g. general chit-chat, pricing/market "
+    "questions, weather, or any other off-topic subject), reply with the "
+    "single token NOT_COVERED and nothing else. Otherwise answer clearly and "
+    "practically. Begin the reply with the line: _(General guidance - not "
+    "quoted from an official BIS document. Verify specifics on bis.gov.in.)_ "
+    "Keep Indian Standard numbers exact. Be concise (a short paragraph or a "
+    "few bullets)."
+)
+
+_OUT_OF_SCOPE_MSG = (
+    "This query is outside the scope of the BIS Assistant. Please ask a BIS, "
+    "product, standards, technical, or compliance-related question."
 )
 
 
 def general_answer(question, product_name=None, language="en"):
     """A normal-chatbot answer for questions the BIS knowledge base does not
-    cover. Used only by the Home assistant (allow_general=True)."""
+    cover. Used only by the Home assistant (allow_general=True). Refuses with
+    a scope message for anything unrelated to BIS/standards/compliance."""
     if not llm.llm_available():
         return {
             "title": "Not in the BIS knowledge base",
@@ -288,10 +300,11 @@ def general_answer(question, product_name=None, language="en"):
         }
     out = llm.chat(_GENERAL_SYSTEM.format(product=product_name or "a BIS-regulated product"),
                    question, temperature=0.3, max_tokens=550)
-    if out == llm.UNAVAILABLE or not out.strip():
+    if (out == llm.UNAVAILABLE or not out.strip()
+            or out.strip().upper().startswith(llm.NOT_COVERED)):
         return {
-            "title": "Couldn't answer that",
-            "body_md": "The assistant could not answer that just now. Please try again.",
+            "title": "Outside the BIS Assistant's scope",
+            "body_md": _maybe_translate(_OUT_OF_SCOPE_MSG, language),
             "sources": [], "general": True,
         }
     return {

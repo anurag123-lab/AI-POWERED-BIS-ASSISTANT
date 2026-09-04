@@ -8,8 +8,8 @@
 .labs-section__head h2 { font-size: 1.15rem; font-weight: 800; color: #fff; }
 .lab-filter { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-secondary); }
 .lab-filter select {
-  background: rgba(0,0,0,0.55); border: 1px solid var(--border-subtle);
-  border-radius: 8px; color: #fff; padding: 8px 12px; font-size: 0.85rem;
+  background: rgba(255,255,255,0.85); border: 1px solid var(--border-subtle);
+  border-radius: 8px; color: var(--text-primary); padding: 8px 12px; font-size: 0.85rem;
 }
 
 .lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
@@ -34,15 +34,15 @@
 }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-box {
-  width: 100%; max-width: 560px; background: #0f121a;
+  width: 100%; max-width: 560px; background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--border-glow); border-radius: var(--radius-lg);
   padding: 26px; box-shadow: var(--shadow-glow); max-height: 90vh; overflow-y: auto;
 }
 .modal-box__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
-.modal-box__head h3 { font-size: 1.15rem; font-weight: 800; color: #fff; margin-top: 6px; }
+.modal-box__head h3 { font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-top: 6px; }
 .modal-close { background: none; border: none; color: var(--text-muted); font-size: 1.6rem; cursor: pointer; line-height: 1; }
 .modal-note { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5; }
-.modal-static { font-size: 0.85rem; color: #fff; margin: 4px 0 12px; }
+.modal-static { font-size: 0.85rem; color: var(--text-primary); margin: 4px 0 12px; }
 .modal-box .form-label { margin-top: 10px; }
 .modal-box .form-input { margin-bottom: 6px; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
@@ -54,7 +54,7 @@
   display: grid; place-items: center; font-size: 1.8rem; font-weight: 800; color: #fff;
   background: var(--accent-emerald); box-shadow: 0 0 30px rgba(16,185,129,0.5);
 }
-.completion-card h3 { font-size: 1.25rem; font-weight: 800; color: #fff; }
+.completion-card h3 { font-size: 1.25rem; font-weight: 800; color: var(--text-primary); }
 .completion-card p { font-size: 0.88rem; color: var(--text-secondary); margin-top: 8px; }
 .completion-card .modal-actions { justify-content: center; margin-top: 20px; }
 .completion-redirect { font-size: 0.78rem; color: var(--text-muted); margin-top: 14px; }

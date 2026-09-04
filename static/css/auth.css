@@ -78,7 +78,7 @@
   background: var(--accent-orange); border-color: var(--accent-orange);
   color: #fff; box-shadow: 0 0 0 3px rgba(255, 85, 0, 0.18);
 }
-.auth-step.is-active .auth-step__label { color: #fff; }
+.auth-step.is-active .auth-step__label { color: var(--accent-orange); }
 .auth-step.is-done .auth-step__dot {
   background: rgba(255, 85, 0, 0.16); border-color: var(--accent-orange);
   color: var(--accent-orange);
