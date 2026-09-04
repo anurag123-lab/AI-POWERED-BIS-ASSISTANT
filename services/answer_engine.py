@@ -92,31 +92,56 @@ _BROAD_HINTS = [
 
 _LLM_SYSTEM = (
     "You are a BIS (Bureau of Indian Standards) compliance assistant for Indian "
-    "manufacturers, importers and consumers. Answer ONLY from the CONTEXT block. "
-    "Do not add facts that are not in the context. Keep Indian Standard numbers "
-    "(e.g. IS 302-2-3), clause numbers and URLs exactly as given. Be concise and "
-    "practical. If the context does not contain enough to answer, reply with the "
-    "single token NOT_COVERED."
+    "manufacturers, importers and consumers.\n"
+    "SOURCE RULE: answer ONLY from the BIS CONTEXT block. It is drawn from "
+    "bis.gov.in pages, Government of India notifications and BIS Product Manual "
+    "PDFs.\n"
+    "BLEND RULE: about 70% of your answer must be facts, figures, dates, clause "
+    "numbers and short quoted phrases taken straight from the CONTEXT, each "
+    "followed by a [doc p.X] or [doc] citation. The remaining ~30% may be your "
+    "own plain-language connective explanation and practical framing. Never "
+    "introduce a fact, number, standard, scheme or timeline that is not in the "
+    "CONTEXT.\n"
+    "Keep Indian Standard numbers (e.g. IS 302-2-3), clause/section numbers and "
+    "URLs exactly as given. Be concise. If the CONTEXT does not contain enough "
+    "to answer, reply with the single token NOT_COVERED."
 )
+
+BLEND_GROUNDED = {"bis": 100, "ai": 0}
+BLEND_SYNTH = {"bis": 70, "ai": 30}
 
 
 # --------------------------------------------------------------------------
 
-def _refine_with_llm(question, context, deterministic_md):
-    """Return an LLM-tightened answer, or the deterministic text on any miss."""
+def _compose_bis_context(slug, area, question):
+    """The '70%': KB area facts + verbatim passages from the ingested BIS PDFs."""
+    parts = [kb.area_context(slug, area)]
+    for ex in verbatim_excerpts(slug, area, question, limit=3):
+        cite = f"{ex.get('doc', 'BIS document')}"
+        if ex.get("page"):
+            cite += f" p.{ex['page']}"
+        parts.append(f'VERBATIM [{cite}]:\n"{ex.get("text", "")}"')
+    return "\n\n".join(p for p in parts if p)
+
+
+def _synthesize(slug, area, question, deterministic_md):
+    """Return (body_md, ai_used, blend). ~70% BIS context / ~30% AI framing when
+    a model is reachable; otherwise the 100%-deterministic KB body."""
     if not llm.llm_available():
-        return deterministic_md, False
+        return deterministic_md, False, BLEND_GROUNDED
+    ctx = _compose_bis_context(slug, area, question)
     user = (
-        f"QUESTION: {question or 'Give a clear summary of this area for my product.'}\n\n"
-        f"CONTEXT:\n{context}\n\n"
-        f"Write the answer in Markdown. End with nothing extra."
+        f"QUESTION: {question or 'Summarise this area for my product, for someone new to BIS.'}\n\n"
+        f"BIS CONTEXT:\n{ctx}\n\n"
+        f"Write the answer in Markdown, ~70% direct-from-context with [citations], "
+        f"~30% your own connective explanation. Nothing after the answer."
     )
-    out = llm.chat(_LLM_SYSTEM, user, temperature=0.15, max_tokens=650)
+    out = llm.chat(_LLM_SYSTEM, user, temperature=0.15, max_tokens=700)
     if out == llm.UNAVAILABLE or not out.strip():
-        return deterministic_md, False
+        return deterministic_md, False, BLEND_GROUNDED
     if out.strip().upper().startswith(llm.NOT_COVERED):
-        return deterministic_md, False
-    return out.strip(), True
+        return deterministic_md, False, BLEND_GROUNDED
+    return out.strip(), True, BLEND_SYNTH
 
 
 def _maybe_translate(text, language):
@@ -135,7 +160,7 @@ def answer_area(slug, area, question=None, language="en"):
             "sources": [], "feature_endpoint": kb.AREA_ENDPOINT.get(area, "home"),
             "grounded": False, "refused": True, "llm_used": False,
         }
-    body, llm_used = _refine_with_llm(question, kb.area_context(slug, area), view["body_md"])
+    body, llm_used, blend = _synthesize(slug, area, question, view["body_md"])
     body = _maybe_translate(body, language)
     return {
         "area": area,
@@ -147,6 +172,7 @@ def answer_area(slug, area, question=None, language="en"):
         "grounded": True,
         "refused": False,
         "llm_used": llm_used,
+        "blend": blend,
     }
 
 

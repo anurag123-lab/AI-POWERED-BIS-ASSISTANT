@@ -61,9 +61,10 @@
 
   function renderCard(a) {
     var el = document.getElementById("card-" + a.area);
-    var badge = a.llm_used
-      ? '<span class="badge-tag badge-emerald">AI-refined</span>'
-      : '<span class="badge-tag badge-muted">From BIS KB</span>';
+    var bl = a.blend || { bis: 100, ai: 0 };
+    var badge = '<span class="badge-tag ' + (bl.ai ? "badge-emerald" : "badge-muted") +
+      '" title="Grounded in BIS sources; AI only rephrases within that context.">' +
+      bl.bis + "% BIS" + (bl.ai ? " &middot; " + bl.ai + "% AI" : "") + "</span>";
     var srcBlock = "";
     if (a.sources && a.sources.length) {
       srcBlock = '<details class="answer-card__sources"><summary>' + a.sources.length +

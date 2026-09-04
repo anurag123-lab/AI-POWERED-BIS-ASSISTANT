@@ -2,8 +2,10 @@
 <article class="answer-card" id="card-{{ a.area }}" data-area="{{ a.area }}">
   <div class="answer-card__head">
     <h3>{{ a.title }}</h3>
-    {% if a.llm_used %}<span class="badge-tag badge-emerald">AI-refined</span>
-    {% else %}<span class="badge-tag badge-muted">From BIS KB</span>{% endif %}
+    {% set bl = a.blend or {'bis': 100, 'ai': 0} %}
+    <span class="badge-tag {{ 'badge-emerald' if bl.ai else 'badge-muted' }}"
+          title="Grounded in BIS sources; AI only rephrases and connects within that context.">
+      {{ bl.bis }}% BIS{% if bl.ai %} &middot; {{ bl.ai }}% AI{% endif %}</span>
   </div>
 
   <div class="answer-card__body">{{ a.body_md | md }}</div>
