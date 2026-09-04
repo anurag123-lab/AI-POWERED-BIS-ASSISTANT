@@ -10,7 +10,8 @@
       "Bash(git pull *)",
       "Bash(git push *)",
       "Bash(python tools/smoke_test.py)",
-      "Bash(python tools/refusal_eval.py)"
+      "Bash(python tools/refusal_eval.py)",
+      "Bash(git commit -q -m ' *)"
     ]
   }
 }

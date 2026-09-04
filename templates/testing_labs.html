@@ -10,7 +10,7 @@
 <div class="page-container">
   <div class="feature-head">
     <span class="eyebrow-tag">Testing &amp; Labs</span>
-    <h1 class="page-title">Testing requirements &amp; recognised laboratories</h1>
+    <h1 class="page-title"><span class="feature-ico" aria-hidden="true">📍</span>Testing requirements &amp; recognised laboratories</h1>
     <p class="page-subtext">The tests your product must pass, and BIS-recognised labs that can run them.</p>
     <div class="product-chip">For your product: <strong>{{ product.display_name or case.product_name }}</strong>
       {% if product.is_number %}&bull; {{ product.is_number }}{% endif %}</div>
@@ -21,7 +21,7 @@
 
   <section class="labs-section">
     <div class="labs-section__head">
-      <h2>Recognised laboratories</h2>
+      <h2>📍 Recognised laboratories</h2>
       <label class="lab-filter">
         <span>State</span>
         <select id="labStateFilter">
@@ -38,7 +38,7 @@
       <article class="lab-card" data-state="{{ lab.state or '' }}">
         <div class="lab-card__body">
           <h3>{{ lab.name }}</h3>
-          <div class="lab-card__loc">{{ [lab.city, lab.state] | select | join(', ') }}</div>
+          <div class="lab-card__loc">📍 {{ [lab.city, lab.state] | select | join(', ') }}</div>
           {% if lab.scope %}<div class="lab-card__scope">{{ lab.scope }}</div>{% endif %}
           <span class="badge-tag badge-muted">{{ lab.source }}</span>
         </div>
