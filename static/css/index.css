@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
-    --display-font: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --display-font: 'Poppins', 'Segoe UI', sans-serif;
     --technical-font: 'DM Mono', Consolas, monospace;
 }
 
@@ -1064,3 +1064,112 @@ body.landing-body {
         text-align: center;
     }
 }
+
+/* ==========================================================================
+   PASTEL RE-SKIN  (reference: soft blue -> mint -> lavender)
+   Overrides the dark landing theme. Content unchanged.
+   ========================================================================== */
+:root {
+  --p-bg1:#d9e8f6; --p-bg2:#e2efe7; --p-bg3:#ece5f5; --p-bg4:#f4e8ef;
+  --p-ink:#1f2937; --p-ink-soft:#4b5563; --p-ink-mute:#8b94a6;
+  --p-peri:#6f7fd8; --p-lav:#a385d6; --p-mint:#6dc7a6;
+  --p-btn: linear-gradient(105deg,#d8e7f7 0%,#e9ddf4 38%,#f8e0ea 68%,#dcf0e6 100%);
+}
+
+body.landing-body {
+  background: linear-gradient(165deg, var(--p-bg1) 0%, var(--p-bg2) 40%, var(--p-bg3) 74%, var(--p-bg4) 100%) fixed;
+  color: var(--p-ink);
+}
+
+/* hero text */
+.hero-heading { color: var(--p-ink); -webkit-text-fill-color: var(--p-ink); text-shadow: none; }
+.hero-accent {
+  background: linear-gradient(95deg, var(--p-peri), var(--p-lav));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-kicker, .hero-copy .hero-kicker { color: var(--p-peri); }
+.hero-sub { color: var(--p-ink-soft); font-family: var(--display-font); }
+.trust-strip { color: var(--p-ink-mute); }
+.hero-scroll-hint { color: var(--p-ink-mute); }
+.live-indicator { background: var(--p-peri) !important; box-shadow: 0 0 0 4px rgba(111,127,216,0.18) !important; }
+
+/* brand mark */
+.hero-topbar .auth-brand, .auth-brand { color: var(--p-ink); }
+.brand-bis { color: var(--p-peri); }
+.brand-copilot { color: var(--p-ink-soft); }
+.brand-mark {
+  background: var(--p-btn); border-color: rgba(255,255,255,0.7); color: var(--p-ink);
+  box-shadow: 0 5px 14px rgba(150,160,235,0.28);
+}
+
+/* ghost background copy -> faint dark on light */
+.hero-background-copy { mix-blend-mode: multiply; opacity: 0.05; }
+.hero-background-copy span { -webkit-text-stroke-color: rgba(31,41,55,0.5); }
+.hero-background-copy .background-headline,
+.hero-background-copy .background-source { color: rgba(111,127,216,0.14); -webkit-text-stroke-color: rgba(111,127,216,0.4); }
+
+/* buttons: pale iridescent pill, dark text */
+.btn-auth {
+  background: var(--p-btn);
+  background-size: 180% 180%;
+  color: var(--p-ink);
+  border: 1px solid rgba(255,255,255,0.75);
+  border-radius: 9999px;
+  box-shadow: 0 10px 30px -8px rgba(150,160,235,0.45), 0 1px 0 rgba(255,255,255,0.9) inset;
+  transition: background-position .5s ease, transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
+}
+.btn-auth:hover {
+  background: var(--p-btn); background-position: 100% 100%;
+  border-color: rgba(255,255,255,0.95);
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 16px 40px -10px rgba(150,160,235,0.55), 0 1px 0 rgba(255,255,255,1) inset;
+}
+.btn-auth:active { transform: translateY(0) scale(.97); }
+.btn-auth::after { background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%); }
+.hero-auth-actions .btn-auth {
+  box-shadow: 0 6px 16px -4px rgba(150,160,235,0.4), 0 1px 0 rgba(255,255,255,0.9) inset;
+}
+.hero-auth-actions .btn-auth:hover {
+  box-shadow: 0 12px 28px -6px rgba(150,160,235,0.5), 0 1px 0 rgba(255,255,255,1) inset;
+}
+
+/* marketing sections: transparent so the pastel shows, dark text, glass cards */
+.landing-section, .about-section, .features-section, .steps-section,
+.reviews-section, .cta-section { background: transparent !important; }
+.section-kicker { color: var(--p-peri); }
+.section-heading { color: var(--p-ink); background: none; -webkit-text-fill-color: var(--p-ink); }
+.section-desc { color: var(--p-ink-soft); }
+.feature-card, .review-card, .step-item {
+  background: rgba(255,255,255,0.55) !important;
+  border: 1px solid rgba(255,255,255,0.8) !important;
+  box-shadow: 0 18px 40px -20px rgba(120,140,200,0.4) !important;
+  backdrop-filter: blur(6px);
+}
+.feature-title, .step-title, .review-card strong { color: var(--p-ink) !important; }
+.feature-desc, .step-desc, .review-card p, .review-card span { color: var(--p-ink-soft) !important; }
+.step-number { color: var(--p-peri) !important; -webkit-text-fill-color: var(--p-peri) !important; background: none !important; }
+.step-divider { background: linear-gradient(90deg, transparent, rgba(111,127,216,0.4), transparent) !important; }
+.review-stars { color: #f0b429 !important; }
+.persona-chips a {
+  background: rgba(255,255,255,0.6) !important; border: 1px solid rgba(255,255,255,0.85) !important;
+  color: var(--p-ink) !important;
+}
+.persona-chips a:hover { border-color: var(--p-peri) !important; background: rgba(255,255,255,0.85) !important; }
+.cta-heading { color: var(--p-ink) !important; }
+.cta-heading .hero-accent { -webkit-text-fill-color: transparent; }
+.cta-sub { color: var(--p-ink-soft) !important; }
+.landing-footer { background: transparent !important; color: var(--p-ink-mute) !important; border-top: 1px solid rgba(120,140,200,0.2); }
+.footer-brand { color: var(--p-ink) !important; }
+
+/* orbit ring (hero right side) -> pastel */
+.orbit-ring { border-color: rgba(111,127,216,0.35) !important; }
+.orbit-seal { color: var(--p-ink) !important; background: rgba(255,255,255,0.6) !important; border-color: rgba(255,255,255,0.85) !important; }
+.orbit-seal strong { color: var(--p-peri) !important; }
+.orbit-tool { background: rgba(255,255,255,0.65) !important; color: var(--p-ink-soft) !important; border-color: rgba(255,255,255,0.85) !important; }
+
+/* floating badge */
+.preppulse-badge, .hero-badge {
+  background: rgba(255,255,255,0.7) !important; border: 1px solid rgba(255,255,255,0.9) !important;
+  color: var(--p-ink) !important; box-shadow: 0 8px 22px -8px rgba(120,140,200,0.4) !important;
+}
+.preppulse-badge .badge-text { color: var(--p-ink) !important; }

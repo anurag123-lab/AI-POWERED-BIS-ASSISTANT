@@ -7,9 +7,9 @@
   --bg-card: rgba(18, 20, 28, 0.85);
   --bg-card-hover: rgba(26, 29, 40, 0.95);
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-glow: rgba(249, 115, 22, 0.35);
-  --accent-orange: #ff5500;
-  --accent-amber: #f97316;
+  --border-glow: rgba(129, 150, 225, 0.4);
+  --accent-orange: #7f92e6;
+  --accent-amber: #a385d6;
   --accent-emerald: #10b981;
   --accent-cyan: #38bdf8;
   --text-primary: #ffffff;
@@ -18,7 +18,7 @@
   --radius-lg: 16px;
   --radius-md: 12px;
   --radius-sm: 8px;
-  --shadow-glow: 0 0 35px rgba(255, 85, 0, 0.25);
+  --shadow-glow: 0 0 38px rgba(129, 150, 225, 0.3);
 }
 
 * {
@@ -28,7 +28,7 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-obsidian);
   color: var(--text-primary);
   min-height: 100vh;
@@ -43,7 +43,7 @@ body {
   right: -100px;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(255, 85, 0, 0.14) 0%, rgba(9, 10, 15, 0) 70%);
+  background: radial-gradient(circle, rgba(127, 146, 230, 0.14) 0%, rgba(9, 10, 15, 0) 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
@@ -128,13 +128,13 @@ body {
 .btn-orange {
   background: var(--accent-orange);
   color: #ffffff;
-  box-shadow: 0 4px 20px rgba(255, 85, 0, 0.35);
+  box-shadow: 0 4px 20px rgba(127, 146, 230, 0.35);
 }
 
 .btn-orange:hover {
-  background: #ff661a;
+  background: #93a4f0;
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(255, 85, 0, 0.5);
+  box-shadow: 0 6px 25px rgba(127, 146, 230, 0.5);
 }
 
 .btn-dark-outline {
@@ -172,9 +172,9 @@ body {
 }
 
 .badge-orange {
-  background: rgba(255, 85, 0, 0.15);
+  background: rgba(127, 146, 230, 0.15);
   color: var(--accent-orange);
-  border: 1px solid rgba(255, 85, 0, 0.35);
+  border: 1px solid rgba(127, 146, 230, 0.35);
 }
 
 .badge-emerald {
@@ -322,7 +322,7 @@ body {
 }
 
 .chip-btn:hover {
-  background: rgba(255, 85, 0, 0.15);
+  background: rgba(127, 146, 230, 0.15);
   border-color: var(--accent-orange);
   color: #ffffff;
 }
@@ -391,7 +391,7 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(255, 85, 0, 0.15);
+  background: rgba(127, 146, 230, 0.15);
   border: 1px solid var(--accent-orange);
   color: var(--accent-orange);
   font-weight: 800;
@@ -418,7 +418,7 @@ body {
 }
 
 .citation-card:hover {
-  border-color: rgba(255, 85, 0, 0.3);
+  border-color: rgba(127, 146, 230, 0.3);
 }
 
 /* ==========================================================================
@@ -463,7 +463,7 @@ body {
 }
 
 .roadmap-step.active {
-  background: rgba(255, 85, 0, 0.08);
+  background: rgba(127, 146, 230, 0.08);
   border-color: var(--accent-orange);
 }
 
@@ -573,7 +573,7 @@ select.form-input {
 .form-input:focus {
   border-color: var(--accent-orange);
   background: rgba(0, 0, 0, 0.7);
-  box-shadow: 0 0 0 3px rgba(255, 85, 0, 0.15);
+  box-shadow: 0 0 0 3px rgba(127, 146, 230, 0.15);
 }
 
 .form-input option { background: #0f121a; color: var(--text-primary); }
@@ -682,15 +682,15 @@ select.form-input {
 .btn-primary {
   background: var(--accent-orange);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(255, 85, 0, 0.35);
+  box-shadow: 0 4px 20px rgba(127, 146, 230, 0.35);
 }
-.btn-primary:hover { background: #ff661a; transform: translateY(-2px); }
+.btn-primary:hover { background: #93a4f0; transform: translateY(-2px); }
 
 .copilot-grid { min-height: 520px; }
 
 /* Roadmap step states (licensing timeline / case detail) */
-.roadmap-step.is-done .node-num { background: rgba(255, 85, 0, 0.18); color: var(--accent-orange); }
-.roadmap-step.is-current .node-num { background: var(--accent-orange); color: #fff; box-shadow: 0 0 0 4px rgba(255,85,0,0.18); }
+.roadmap-step.is-done .node-num { background: rgba(127, 146, 230, 0.18); color: var(--accent-orange); }
+.roadmap-step.is-current .node-num { background: var(--accent-orange); color: #fff; box-shadow: 0 0 0 4px rgba(127,146,230,0.18); }
 .roadmap-step.is-pending { opacity: 0.55; }
 
 /* Simple themed table (gap report) */
@@ -728,12 +728,12 @@ select.form-input {
    UI POLISH  (typography rhythm, gradients, structure)
    ========================================================================== */
 :root {
-  --grad-accent: linear-gradient(135deg, #ff8a3d 0%, #ff5500 55%, #ff3d81 120%);
+  --grad-accent: linear-gradient(115deg, #8ea8f0 0%, #b79ae6 45%, #f0a9c8 78%, #9ee0c4 115%);
   --grad-heading: linear-gradient(180deg, #ffffff 0%, #c9d2e3 100%);
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.006em;
@@ -741,7 +741,7 @@ body {
 
 h1, h2, h3, .page-title, .workspace-header h1, .onb-title, .feature-head .page-title,
 .auth-form-card h2, .hub-hero h1 {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -753,18 +753,22 @@ h1, h2, h3, .page-title, .workspace-header h1, .onb-title, .feature-head .page-t
   color: transparent;
 }
 
-/* gradient primary buttons */
+/* gradient primary buttons - pastel iridescent, dark ink for contrast */
 .btn-orange, .btn-primary {
   background: var(--grad-accent);
-  background-size: 140% 140%;
-  transition: background-position .35s ease, transform .2s ease, box-shadow .25s ease;
+  background-size: 180% 180%;
+  color: #1f2937;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 8px 22px -8px rgba(127,146,230,0.5), 0 1px 0 rgba(255,255,255,0.4) inset;
+  transition: background-position .4s ease, transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease;
 }
 .btn-orange:hover, .btn-primary:hover {
   background-position: 100% 100%;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 26px rgba(255, 85, 0, 0.45);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 14px 34px -10px rgba(127, 146, 230, 0.6), 0 1px 0 rgba(255,255,255,0.6) inset;
 }
-.btn-orange:active, .btn-primary:active { transform: translateY(0) scale(.985); }
+.btn-orange:active, .btn-primary:active { transform: translateY(0) scale(.97); }
 
 .btn-pill { border-radius: 9999px; letter-spacing: 0.01em; }
 

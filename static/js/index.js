@@ -43,11 +43,18 @@ function drawNetwork(context, width, height, time) {
     nodes.push({ x, y, radius, depth });
   }
 
+  // pastel palette: periwinkle blue, soft lavender, mint
+  const PAL = [
+    { core: '#8ba4ea', glow: '150, 180, 240' },
+    { core: '#b79ce4', glow: '190, 165, 230' },
+    { core: '#7fcdb0', glow: '150, 210, 185' },
+  ];
+
   nodes.forEach((node, index) => {
     nodes.slice(index + 1).forEach((other) => {
       const distance = Math.hypot(node.x - other.x, node.y - other.y);
       if (distance < 170) {
-        context.strokeStyle = `rgba(255, 107, 53, ${0.12 * (1 - distance / 170)})`;
+        context.strokeStyle = `rgba(129, 150, 225, ${0.16 * (1 - distance / 170)})`;
         context.lineWidth = 1;
         context.beginPath();
         context.moveTo(node.x, node.y);
@@ -57,15 +64,16 @@ function drawNetwork(context, width, height, time) {
     });
   });
 
-  nodes.forEach((node) => {
+  nodes.forEach((node, index) => {
+    const c = PAL[index % PAL.length];
     const glow = context.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.radius * 7);
-    glow.addColorStop(0, `rgba(255, 180, 80, ${0.55 * node.depth})`);
-    glow.addColorStop(1, 'rgba(255, 107, 53, 0)');
+    glow.addColorStop(0, `rgba(${c.glow}, ${0.5 * node.depth})`);
+    glow.addColorStop(1, `rgba(${c.glow}, 0)`);
     context.fillStyle = glow;
     context.beginPath();
     context.arc(node.x, node.y, node.radius * 7, 0, Math.PI * 2);
     context.fill();
-    context.fillStyle = '#ff935e';
+    context.fillStyle = c.core;
     context.beginPath();
     context.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
     context.fill();
@@ -83,7 +91,7 @@ function drawSignalField(context, width, height, time) {
       if (column === 0) context.moveTo(column, y);
       else context.lineTo(column, y);
     }
-    context.strokeStyle = `rgba(255, 107, 53, ${0.05 + (row % 3) * 0.018})`;
+    context.strokeStyle = `rgba(140, 170, 230, ${0.05 + (row % 3) * 0.02})`;
     context.stroke();
   }
 }
