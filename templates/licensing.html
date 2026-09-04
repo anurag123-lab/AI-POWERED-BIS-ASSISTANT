@@ -22,7 +22,7 @@
 
     <!-- LEFT: procedure + timeline -->
     <div class="lic-main">
-      <section class="glass-panel">
+      <section class="glass-panel" id="area-licensing" data-area="licensing">
         <div class="area-block__head">
           <h2>Full procedure</h2>
           <button class="save-area-btn btn-pill btn-dark-outline" data-area="licensing">
@@ -83,4 +83,6 @@
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/feature.js') }}"></script>
+{% if ai_upgrade %}<script>window.__AI_UPGRADE__ = {{ ai_upgrade | tojson }};</script>
+<script src="{{ url_for('static', filename='js/ai_upgrade.js') }}"></script>{% endif %}
 {% endblock %}

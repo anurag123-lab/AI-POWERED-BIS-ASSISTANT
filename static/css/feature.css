@@ -86,3 +86,7 @@
   font-size: 0.74rem; color: var(--text-muted);
 }
 .verbatim__quote cite a { color: var(--accent-cyan); }
+
+.ai-refining{display:inline-block;margin-left:8px;font-size:0.72rem;color:var(--accent-cyan);opacity:0.85}
+.ai-refining::before{content:"º8 "}
+.area-block.ai-upgraded{border-color:var(--border-glow)}

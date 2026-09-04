@@ -115,5 +115,7 @@
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/feature.js') }}"></script>
+{% if ai_upgrade %}<script>window.__AI_UPGRADE__ = {{ ai_upgrade | tojson }};</script>
+<script src="{{ url_for('static', filename='js/ai_upgrade.js') }}"></script>{% endif %}
 <script src="{{ url_for('static', filename='js/testing_labs.js') }}"></script>
 {% endblock %}

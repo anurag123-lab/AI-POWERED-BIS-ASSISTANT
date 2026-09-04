@@ -570,9 +570,12 @@ def _area_page(template, css, areas, extra=None):
     slug = case.get('product_slug')
     meta = kb.product_meta(slug) or {}
     lang = session.get('lang', 'en')
-    views = [answer_engine.answer_area(slug, a, language=lang) for a in areas]
+    # Render deterministic (100% BIS) so the page is instant; ai_upgrade.js then
+    # swaps in the 70/30 Gemini answer per area via POST /api/ai/area.
+    views = [answer_engine.answer_area(slug, a, language=lang, use_llm=False)
+             for a in areas]
     ctx = dict(case=case, product=meta, slug=slug, views=views, css=css,
-               saved=_saved_areas(case))
+               saved=_saved_areas(case), ai_upgrade=(areas[0] if areas else None))
     if extra:
         ctx.update(extra)
     return render_template(template, **ctx)
@@ -585,7 +588,7 @@ def standards():
 
 @app.route('/schemes')
 def schemes():
-    return _area_page('schemes.html', 'schemes.css', ['certification', 'scheme'])
+    return _area_page('schemes.html', 'schemes.css', ['scheme', 'certification'])
 
 
 LICENSING_PORTALS = [
@@ -615,7 +618,7 @@ def licensing():
     slug = case.get('product_slug')
     meta = kb.product_meta(slug) or {}
     lang = session.get('lang', 'en')
-    view = answer_engine.answer_area(slug, 'licensing', language=lang)
+    view = answer_engine.answer_area(slug, 'licensing', language=lang, use_llm=False)
 
     prod = kb.get_product(slug) or {}
     lic = prod.get('areas', {}).get('licensing', {}) or {}
@@ -629,7 +632,7 @@ def licensing():
     portals = [p for p in LICENSING_PORTALS
                if p['key'] not in (('manakonline',) if is_crs else ('crsbis',))]
 
-    return render_template('licensing.html', case=case, product=meta, slug=slug,
+    return render_template('licensing.html', ai_upgrade='licensing', case=case, product=meta, slug=slug,
                            view=view, steps=steps, lic_sources=lic_sources,
                            portals=portals, saved=_saved_areas(case))
 
@@ -647,7 +650,7 @@ def testing_labs():
     slug = case.get('product_slug')
     meta = kb.product_meta(slug) or {}
     lang = session.get('lang', 'en')
-    testing_view = answer_engine.answer_area(slug, 'testing', language=lang)
+    testing_view = answer_engine.answer_area(slug, 'testing', language=lang, use_llm=False)
 
     prod = kb.get_product(slug) or {}
     kb_labs = (prod.get('areas', {}).get('labs', {}) or {})
@@ -680,7 +683,7 @@ def testing_labs():
 
     labs = sort_labs_for_user(labs, case.get('city'), case.get('state'))
     states = sorted({(l.get('state') or '').strip() for l in labs if l.get('state')})
-    return render_template('testing_labs.html', case=case, product=meta, slug=slug,
+    return render_template('testing_labs.html', ai_upgrade='testing', case=case, product=meta, slug=slug,
                            testing_view=testing_view, labs=labs, lab_states=states,
                            default_state=case.get('state'), saved=_saved_areas(case))
 
@@ -1073,6 +1076,28 @@ def api_execute_action():
     user_id = session.get('user_id', 1)
     res = execute_user_approved_action(action_id, data, user_id)
     return jsonify(res)
+
+
+@app.route('/api/ai/area', methods=['POST'])
+def api_ai_area():
+    """Progressive upgrade: return the 70/30 Gemini answer for one area so the
+    page can swap it in after the instant deterministic render."""
+    if not session.get('user_id'):
+        return jsonify({'status': 'error'}), 401
+    data = request.get_json() or {}
+    area = (data.get('area') or '').strip()
+    case = _active_case()
+    slug = (case or {}).get('product_slug') or data.get('slug')
+    if not slug or not area:
+        return jsonify({'status': 'error', 'message': 'slug/area required'}), 400
+    lang = session.get('lang', 'en')
+    v = answer_engine.answer_area(slug, area, question=(data.get('question') or None),
+                                  language=lang, use_llm=True)
+    return jsonify({
+        'status': 'success', 'area': area,
+        'body_html': render_markdown(v['body_md']),
+        'blend': v['blend'], 'llm_used': v['llm_used'],
+    })
 
 
 @app.route('/api/case/save-area', methods=['POST'])

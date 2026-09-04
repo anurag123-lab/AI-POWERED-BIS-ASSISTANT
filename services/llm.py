@@ -122,6 +122,8 @@ def chat(system, user, *, temperature=0.2, max_tokens=700):
                 system_instruction=system,
                 temperature=temperature,
                 max_output_tokens=max_tokens,
+                # no tool calling / thinking budget -> faster, cheaper, predictable
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
                 http_options=types.HttpOptions(timeout=int(_CHAT_TIMEOUT * 1000)),
             ),
         )
