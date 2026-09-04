@@ -170,24 +170,22 @@ body.landing-body {
 }
 
 .hero-auth-actions .btn-auth {
-    padding: 10px 20px;
+    padding: 9px 20px;
     font-size: 0.82rem;
+    border-radius: 9999px;
     transform-style: preserve-3d;
+    animation: none;
+    backface-visibility: hidden;
     box-shadow: 0 4px 0 rgba(120, 45, 12, 0.75), 0 9px 18px rgba(0, 0, 0, 0.22);
 }
 
-.hero-auth-actions .btn-auth {
-    animation: none;
-    backface-visibility: hidden;
-}
-
 .hero-auth-actions .btn-auth:hover {
-    transform: translateY(-4px) rotateX(8deg) scale(1.02);
-    box-shadow: 0 7px 0 rgba(120, 45, 12, 0.7), 0 15px 26px rgba(255, 107, 53, 0.26);
+    transform: translateY(-4px) rotateX(8deg) scale(1.05);
+    box-shadow: 0 8px 0 rgba(120, 45, 12, 0.7), 0 16px 30px rgba(255, 107, 53, 0.32);
 }
 
 .hero-auth-actions .btn-auth:active {
-    transform: translateY(2px) scale(0.98);
+    transform: translateY(2px) scale(0.97);
     box-shadow: 0 2px 0 rgba(120, 45, 12, 0.7), 0 5px 10px rgba(0, 0, 0, 0.22);
 }
 
@@ -332,18 +330,20 @@ body.landing-body {
 
 .btn-auth {
     display: inline-block;
-    padding: 14px 32px;
+    padding: 13px 30px;
     font-size: 0.95rem;
     font-weight: 600;
     letter-spacing: 0.3px;
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
     background: transparent;
     color: #ffffff;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 9999px;
     overflow: hidden;
     isolation: isolate;
-    transition: transform 0.28s ease, background 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+    will-change: transform;
+    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.28s ease, border-color 0.28s ease, box-shadow 0.32s ease;
     position: relative;
     text-transform: capitalize;
     text-decoration: none;
@@ -353,13 +353,15 @@ body.landing-body {
 .btn-auth:hover {
     background: #FF6B35;
     border-color: #FF6B35;
-    transform: translateY(-4px) scale(1.015);
-    box-shadow: 0 10px 24px rgba(255, 107, 53, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 12px 28px rgba(255, 107, 53, 0.38),
+                0 0 0 1px rgba(255, 255, 255, 0.14) inset,
+                0 0 22px rgba(255, 107, 53, 0.28);
 }
 
 .btn-auth:active {
-    transform: translateY(-1px) scale(0.985);
-    transition-duration: 0.08s;
+    transform: translateY(0) scale(0.97);
+    transition-duration: 0.09s;
 }
 
 .btn-auth::after {
@@ -367,9 +369,9 @@ body.landing-body {
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.22) 50%, transparent 75%);
+    background: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.28) 50%, transparent 75%);
     transform: translateX(-130%);
-    transition: transform 0.55s ease;
+    transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .btn-auth:hover::after {
